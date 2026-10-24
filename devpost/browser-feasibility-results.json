@@ -1,0 +1,81 @@
+{
+  "schema_version": 2,
+  "doc": "browser-feasibility-evidence-index",
+  "checkpoint": 2,
+  "checkpoint_date": "2026-10-24",
+  "candidate_status": "PROVISIONAL_NOT_FINAL_ARCHITECTURE",
+  "overall_gate": "OPEN",
+  "current_workflow": {
+    "direction_date": "2026-10-24",
+    "policy": "Historical coverage remains incomplete; learner explicitly replaced broad pre-build feasibility gates with a small working POC and focused checks during development. This index is supporting evidence, not the current work queue.",
+    "technical_spec": "spec.md",
+    "checkpoint_archive": "spec-checkpoint-2.md",
+    "browser_choice": "Demonstrated native WebContentsView + scoped CDP + Playwright, provisionally adopted for the POC",
+    "webmcp_report": "feasibility/runs/2026-10-24T15-35-34-179Z-webmcp.json",
+    "webmcp_status": "AVAILABLE_EXPERIMENTAL",
+    "workspace_architecture": {
+      "package_manager": "npm Workspaces",
+      "application": "apps/desktop",
+      "desktop_process_entries": ["main", "preload", "renderer", "utility"],
+      "packages": ["contracts", "agent-core", "browser-runtime", "ai-providers", "persistence"],
+      "root_lockfile": "package-lock.json",
+      "main_owns": "Native windows/browser, lifecycle, security/privileged IPC, Utility supervision, secure credentials and Persistence execution",
+      "utility_hosts": "Agent Core business orchestration, Browser Runtime Playwright/CDP/evidence/WebMCP, and AI Providers",
+      "renderer_boundary": "UI through typed Preload/Main IPC only; no direct SQLite, saved-key, Node or debugging access",
+      "package_rule": "Shared code boundaries, not separate processes; Contracts/public exports and injected ports avoid cycles; Utility storage requests go through Main"
+    },
+    "implementation_authorized": false,
+    "next": "Documentation checkpoint only; await explicit authorization before 5-build implementation. Preserve the approved six-slice order; 6-ship waits for real acceptance/final review."
+  },
+  "approval": { "scope": "approved_unchanged", "prd": "approved_unchanged", "spec": "approved", "4_spec": "complete", "workspace_architecture": "approved", "5_build": "implementation_paused" },
+  "candidate": "One native WebContentsView, partition-scoped Electron session adapter, authenticated guest-scoped CDP bridge backed by that displayed WebContents' native debugger, and a trusted native input shield",
+  "attachment_note": "Checkpoint 2 tests a scoped CDP attachment variant, not the original unrestricted browser-wide debugging listener. This is not final architectural approval.",
+  "runtime": { "platform": "win32", "arch": "x64", "windows_kernel": "10.0.22631", "host_node": "24.13.0", "electron": "45.0.0", "chromium": "156.0.8078.48", "embedded_node": "24.22.0", "playwright_core": "1.64.1", "ws": "8.22.0", "electron_builder": "26.15.3", "electron_fuses": "2.1.3", "observed_input_dpi": 144 },
+  "scheduling_switches": ["disable-background-timer-throttling", "disable-backgrounding-occluded-windows", "disable-renderer-backgrounding"],
+  "latest_runs": {
+    "contracts": { "path": "feasibility/runs/2026-10-24T14-32-13-810Z-contracts.json", "tests": 9, "pass": 9, "fail": 0, "inconclusive": 0 },
+    "development": { "path": "feasibility/runs/2026-10-24T14-35-35-223Z-development.json", "tests": 32, "pass": 24, "fail": 0, "inconclusive": 8 },
+    "packaged": { "path": "feasibility/runs/2026-10-24T14-33-24-489Z-packaged.json", "tests": 32, "pass": 28, "fail": 0, "inconclusive": 4, "app_isPackaged": true, "app_asar": true, "executable_sha256": "fb6d91fae3c9712b6c886e5ec88ae94b68f299f4af9bc32ffb15450f424a4b5e", "asar_sha256": "720999748b6fb4c70233e66c5ce62c5effb54067df555aed797f021860e6a82c" }
+  },
+  "supporting_prior_runs": {
+    "native_controls": { "path": "feasibility/runs/2026-10-24T13-54-08-317Z-packaged.json", "pass": 31, "fail": 0, "inconclusive": 1, "same_native_component_sources": ["src/host.cjs", "src/ownership.cjs", "test/native-input.ps1"], "qualification": "Earlier, different packaged artifact before the multibyte-authorization fix. It demonstrates the controlled OS input positive/negative routes under valid desktop conditions, not a pass for those inconclusive checks on the latest binary." }
+  },
+  "evidence_contract": {
+    "per_test_fields": ["id", "setup", "expected", "observed", "evidence", "limitations", "status"],
+    "status_semantics": { "PASS": "Expected bounded behavior was observed and asserted.", "FAIL": "An assertion or execution failed; observations are retained.", "INCONCLUSIVE": "Required conditions, human input, or the artifact specific to this stage were not established; never a pass." },
+    "global_limitations_apply_to_every_test": true,
+    "effect_verification": "Native DOM/session observations and an independent controlled server ledger; resolved Playwright promises alone are insufficient.",
+    "source_hashes": "Each run records the executed source hashes. Packaged runs additionally record executable/ASAR hashes and assert archived host/bridge/coordinator source parity plus runtime manifest identity.",
+    "privacy": "Known synthetic session, bootstrap, and broker token values are checked and excluded/redacted; this is not a complete production arbitrary-secret assessment."
+  },
+  "gate_summary": [
+    { "gate": "same_displayed_session", "status": "PASS_BOUNDED", "evidence": ["identity-same-native-target"] },
+    { "gate": "session_and_authentication_fidelity", "status": "PASS_BOUNDED", "evidence": ["session-authentication-reload", "session-adapter-cookie-mutation", "session-storage-native-consistency", "session-logout-consistency"], "limit": "Controlled host/path/HttpOnly/SameSite contract; not CHIPS, OAuth, WebAuthn or complete context API coverage." },
+    { "gate": "native_input_and_handoff", "status": "PARTIAL", "evidence": ["input-agent-cdp-with-shield", "input-agent-cdp-keyboard", "input-native-mouse-agent", "input-native-keyboard-agent", "input-native-wheel-agent", "input-user-native-path", "input-native-wheel-user", "handoff-inflight-serialization", "handoff-return-inspection", "handoff-return-invalid-state", "handoff-unknown-outcome-remains-excluded"], "limit": "Controlled Win32 routes and positive controls at 144 DPI have supporting observations. Several latest-artifact OS-input cases were safely aborted due to obscured/moving desktop conditions and remain inconclusive; repeat them on the latest artifact under valid conditions. Real human hardware/IME/touch/accessibility/drag-drop remain unvalidated." },
+    { "gate": "renderer_failure_and_uncertainty", "status": "PASS_BOUNDED", "evidence": ["recovery-user-control", "recovery-pending-handoff", "recovery-exhaustion-two-failed-attempts", "handoff-unknown-outcome-remains-excluded"], "limit": "Known fixture reconciliation; uncertainty and two recreation failures include explicit injections. Not full Agent/TODO/database or whole-host recovery." },
+    { "gate": "constrained_cdp_and_origin_isolation", "status": "PASS_BOUNDED", "evidence": ["security-cdp-unauthorized", "security-bootstrap-controller", "security-cdp-workspace-confinement", "security-raw-debug-port", "security-navigation-and-isolation"], "limit": "Tested scoped protocol subset and threat cases; not full CDP/OOPIF/worker coverage or compromised trusted-process protection." },
+    { "gate": "operation_level_permissions", "status": "PARTIAL", "evidence": ["security-operation-policy-user", "security-operation-policy-agent"], "limit": "Fixed trusted diagnostic method/path/generation effect catalog. Arbitrary business semantics, payload/resource binding and background-request races are not validated." },
+    { "gate": "packaged_windows_integration", "status": "PASS_BOUNDED", "evidence": ["packaging-runtime", "packaging-source-parity", "packaging-fuses"], "limit": "Unsigned unpacked Windows/ASAR host driven by an external Node controller, not installer/signing, integrity-fuse enforcement, upgrades, packaged Agent-worker startup or complete product distribution." }
+  ],
+  "remaining_blockers": [
+    "Repeat latest-artifact safety-aborted native input checks under valid unobscured-window/foreground/stable-pointer conditions; prior positive runs are supporting evidence only",
+    "Actual human hardware/IME/touch/accessibility/drag-drop and broader DPI/focus/modal/multi-monitor validation",
+    "Production effect-contract provenance and exact operation/payload/resource binding; catalog test is not universal business-effect enforcement",
+    "Full scoped CDP/OOPIF/worker/service-worker/storage/permission/download compatibility and version matrix",
+    "Full Agent/TODO/execution-history reconciliation, automatic uncertainty recovery liveness, durable Interrupted reports and old-partition cleanup",
+    "Whole-host/process termination, signed installer, ASAR integrity enforcement, upgrade lifecycle, long-duration background/energy/performance assessment",
+    "Complete technical blueprint, provider/tool/IPC/data contracts and explicit specification approval"
+  ],
+  "artifacts": {
+    "lab": "feasibility/browser-lab/README.md",
+    "historical_checkpoint_1": "feasibility/checkpoint-1-results.json",
+    "historical_runs": "feasibility/runs/",
+    "unknown_handoff_red_test": "feasibility/runs/2026-10-24T13-48-55-150Z-contracts.json",
+    "malformed_auth_red_test": "feasibility/runs/2026-10-24T14-26-37-613Z-development.json",
+    "malformed_auth_green_test": "feasibility/runs/2026-10-24T14-29-23-994Z-development.json",
+    "dependency_audit": "feasibility/dependency-audit.json",
+    "packaged_executable_local": "feasibility/browser-lab/out/win-unpacked/FlowProof Feasibility Lab.exe"
+  },
+  "review": { "independent_review_attempt": "unavailable_usage_limit", "direct_self_review": "completed; captured and corrected unknown-completion handoff release and malformed multibyte authorization rejection through RED/GREEN regressions and final native/packaged tests", "historical_run_policy": "Earlier failures/inconclusive runs are preserved and superseded, never rewritten as passing." },
+  "approved_document_sha256": { "prd.md": "842b8ac3e96c0a69fa16235e276984f1f777d98457fc7395f1d78f84eb138b7b", "scope.md": "5027530f028167a4c262166e80384f8b13e7caa1944ae68543960692d6810da7" }
+}
