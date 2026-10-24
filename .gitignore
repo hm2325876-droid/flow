@@ -1,0 +1,68 @@
+# Personal learning context
+/devpost/learner-profile.md
+
+# Local credentials; keep the secret-free example shareable
+.env
+.env.*
+!.env.example
+.envrc
+.envrc.*
+!.envrc.example
+*.env
+
+# Local credential stores and private signing material
+.npmrc
+credentials.json
+credentials.*.json
+secrets.json
+secrets.*.json
+api-keys.json
+api_keys.json
+apikeys.json
+*.key
+*.pem
+*.p12
+*.pfx
+*.keystore
+*.jks
+
+# Generated dependencies and build/test output
+node_modules/
+out/
+dist/
+coverage/
+test-results/
+build/
+playwright-report/
+.vite/
+.vite-temp/
+.nyc_output/
+*.tsbuildinfo
+*.log
+
+# Local runtime data and secrets
+/.flowproof/
+userData/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Temporary files, caches, and local OS metadata
+.cache/
+.tmp/
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+/PVR/TEMPTEST.SPD
+
+# Locally installed assistant tooling; review separately before publication
+/.agents/
+/.claude/
+/agent/skills/

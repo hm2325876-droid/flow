@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="An interactive companion for the approved FlowProof AI scope. The canonical document is devpost/scope.md; mandatory UX, preview-fidelity, and reliability requirements carry forward to the PRD.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; font-src data:; base-uri 'none'; form-action 'none'">
+  <title>FlowProof AI — Scope review</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='oklch(.23 .012 110)'/%3E%3Cpath d='M11 28V12h18M11 20h13' fill='none' stroke='oklch(.9 .1 110)' stroke-width='4'/%3E%3C/svg%3E">
+  <style>
+    /* A daylight technical-review binder: clear type, olive annotations, visible relationships.
+       This visual system belongs to the planning companion, not the future desktop app. */
+    :root {
+      --bg: oklch(1 0 0);
+      --surface: oklch(.974 0 0);
+      --ink: oklch(.23 .012 110);
+      --muted: oklch(.45 .012 110);
+      --primary: oklch(.46 .105 110);
+      --mark: oklch(.91 .09 110);
+      --mark-soft: oklch(.97 .03 110);
+      --accent: oklch(.38 .14 264);
+      --line: oklch(.86 .008 110);
+      --rail: oklch(.22 .009 110);
+      --rail-text: oklch(.97 .005 110);
+      --rail-muted: oklch(.77 .012 110);
+      --verified: oklch(.38 .09 155);
+      --verified-bg: oklch(.96 .025 155);
+      --suspected: oklch(.4 .11 55);
+      --suspected-bg: oklch(.97 .025 65);
+      --observation: oklch(.38 .14 264);
+      --observation-bg: oklch(.96 .02 264);
+      --display: "Bahnschrift", "Trebuchet MS", sans-serif;
+      --body: "Trebuchet MS", "Bahnschrift", sans-serif;
+      --mono: "Consolas", "Courier New", monospace;
+      --rail-width: 232px;
+      --z-navigation: 10;
+      --z-skip: 20;
+      --ease-out: cubic-bezier(.16, 1, .3, 1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 28px; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 1rem/1.7 var(--body); }
+    ::selection { color: var(--ink); background: var(--mark); }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:hover { text-decoration-thickness: 2px; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button, a, summary { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
+    .rail :focus-visible { outline-color: var(--mark); }
+    h1, h2, h3, h4 { font-family: var(--display); font-weight: 600; line-height: 1.15; text-wrap: balance; }
+    h1 { margin: .6rem 0 1.4rem; font-size: clamp(2.55rem, 4.5vw, 4.1rem); letter-spacing: -.035em; }
+    h2 { margin: 0; font-size: clamp(1.85rem, 3vw, 2.6rem); letter-spacing: -.025em; }
+    h3 { margin: 0 0 .7rem; font-size: 1.4rem; letter-spacing: -.015em; }
+    h4 { margin: 0 0 .45rem; font-size: 1.12rem; }
+    p { max-width: 72ch; margin: 0 0 1rem; text-wrap: pretty; }
+    ul, ol { padding-left: 1.3rem; }
+    li + li { margin-top: .5rem; }
+    code { font-family: var(--mono); font-size: .9em; overflow-wrap: anywhere; }
+    svg { display: block; max-width: 100%; }
+    .muted { color: var(--muted); }
+    .small { font-size: .875rem; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+    .skip-link { position: fixed; top: -100px; left: 16px; z-index: var(--z-skip); padding: 12px 18px; background: var(--bg); border: 2px solid var(--accent); border-radius: 6px; }
+    .skip-link:focus { top: 12px; }
+    .rail { position: fixed; inset: 0 auto 0 0; width: var(--rail-width); background: var(--rail); color: var(--rail-text); padding: 34px 24px 24px; display: flex; flex-direction: column; z-index: var(--z-navigation); overflow-y: auto; }
+    .brand { display: flex; gap: 11px; align-items: center; color: inherit; text-decoration: none; }
+    .brand-mark { width: 35px; height: 35px; flex: none; color: var(--mark); }
+    .brand-name { font: 600 1.22rem/1 var(--display); letter-spacing: -.025em; }
+    .brand-name span { font-weight: 400; color: var(--rail-muted); }
+    .rail-label { margin: 42px 0 13px; color: var(--rail-muted); font-size: .875rem; }
+    .rail nav { display: flex; flex-direction: column; gap: 5px; }
+    .rail nav a { position: relative; display: flex; gap: 11px; align-items: center; min-height: 43px; padding: 8px 10px; color: var(--rail-text); border-radius: 5px; text-decoration: none; font-size: .9rem; transition: background 180ms var(--ease-out); }
+    .rail nav a::before { content: ""; width: 5px; height: 5px; border: 1px solid var(--rail-muted); border-radius: 50%; flex: none; }
+    .rail nav a:hover, .rail nav a[aria-current="location"] { background: oklch(.3 .012 110); }
+    .rail nav a[aria-current="location"]::before { background: var(--mark); border-color: var(--mark); }
+    .rail-bottom { margin-top: auto; padding-top: 42px; }
+    .rail-bottom p { margin-bottom: 10px; color: var(--rail-muted); font-size: .8rem; }
+    .rail-bottom a { color: var(--mark); font-size: .8rem; }
+    .rail-state { display: inline-flex; gap: 8px; align-items: center; margin-bottom: 15px; font-size: .8rem; }
+    .rail-state::before { content: ""; width: 7px; height: 7px; border: 1px solid var(--mark); border-radius: 50%; }
+    main { margin-left: var(--rail-width); }
+    .page { width: min(100%, 1220px); margin-inline: auto; padding: 32px clamp(24px, 4vw, 66px) 54px; }
+    .topline { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-bottom: 24px; border-bottom: 1px solid var(--line); font-size: .8rem; color: var(--muted); }
+    .topline a { color: var(--muted); }
+    .status-label { display: inline-flex; align-items: center; gap: 8px; }
+    .status-label::before { content: ""; display: inline-block; height: 7px; width: 7px; border-radius: 50%; background: var(--primary); }
+    .hero { padding: 62px 0 54px; }
+    .hero-grid { display: grid; grid-template-columns: 1fr 220px; gap: 36px; align-items: end; }
+    .document-label { font: 500 .9rem/1.4 var(--display); color: var(--primary); }
+    .hero-description { font-size: 1.1rem; line-height: 1.7; color: var(--muted); max-width: 58ch; }
+    .document-meta { border-top: 3px solid var(--primary); padding-top: 17px; padding-bottom: 12px; }
+    .document-meta dt { color: var(--muted); font-size: .8rem; }
+    .document-meta dd { margin: 3px 0 17px; font-family: var(--display); font-size: .98rem; }
+    .document-meta dd:last-child { margin-bottom: 0; }
+    .kernel { display: flex; gap: 17px; align-items: start; padding: 23px 26px; margin-top: 27px; background: var(--mark-soft); border: 1px solid var(--line); border-radius: 8px; }
+    .kernel svg { width: 25px; height: 25px; flex: none; color: var(--primary); margin-top: 2px; }
+    .kernel p { margin: 0; font-size: .97rem; }
+    .kernel strong { font-family: var(--display); font-weight: 600; }
+    section { padding: 45px 0; border-top: 1px solid var(--line); scroll-margin-top: 20px; }
+    .section-head { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 22px; }
+    .section-head p { color: var(--muted); font-size: .93rem; max-width: 42ch; margin: 0; }
+    .section-intro { margin: 14px 0 26px; color: var(--muted); }
+    .flow-board { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    .board-caption { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 15px 21px; font-size: .8rem; border-bottom: 1px solid var(--line); }
+    .board-caption span:last-child { color: var(--muted); }
+    .flow-diagram { width: 100%; padding: 12px 10px 0; font-family: var(--display); }
+    .flow-diagram .node { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; transition: fill 200ms var(--ease-out), stroke 200ms var(--ease-out); }
+    .flow-diagram [data-active="true"] .node { fill: var(--mark-soft); stroke: var(--primary); stroke-width: 2; }
+    .flow-diagram .node-number { fill: var(--mark); }
+    .flow-diagram .node-title { fill: var(--ink); font-size: 19px; font-weight: 600; }
+    .flow-diagram .node-copy { fill: var(--muted); font-size: 14px; }
+    .flow-diagram .number-copy { fill: var(--ink); font-size: 14px; font-weight: 600; }
+    .flow-diagram .connector { fill: none; stroke: var(--primary); stroke-width: 1.6; }
+    .flow-diagram .connector-muted { fill: none; stroke: var(--muted); stroke-width: 1.3; stroke-dasharray: 5 5; }
+    .flow-diagram .annotation { fill: var(--muted); font-size: 13px; }
+    .flow-mobile { display: none; margin: 0; padding: 20px 24px 20px 44px; }
+    .flow-mobile li { padding: 0 0 12px 6px; }
+    .flow-mobile strong { display: block; font-family: var(--display); }
+    .flow-mobile span { display: block; color: var(--muted); font-size: .9rem; }
+    .workflow-controls { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 22px 19px; }
+    .workflow-controls button { width: 38px; height: 38px; border: 1px solid var(--line); color: var(--ink); border-radius: 50%; background: var(--bg); font: 500 .9rem var(--display); transition: background 150ms var(--ease-out), border-color 150ms var(--ease-out); }
+    .workflow-controls button:hover { border-color: var(--primary); }
+    .workflow-controls button[aria-pressed="true"] { color: var(--bg); background: var(--primary); border-color: var(--primary); }
+    .workflow-controls .step-label { align-self: center; font-size: .8rem; color: var(--muted); margin-left: 5px; }
+    .flow-explanation { padding: 23px 26px; border-top: 1px solid var(--line); background: var(--bg); }
+    .flow-explanation article + article { margin-top: 22px; }
+    .flow-explanation h3 { font-size: 1.25rem; }
+    .flow-explanation p { margin: 0; font-size: .94rem; }
+    .loop-note { padding-top: 15px; font-size: .85rem; color: var(--muted); }
+    .workspace-figure { margin: 26px 0 32px; display: grid; grid-template-columns: 1fr 200px 1fr; gap: 0 22px; align-items: center; }
+    .workspace-branches { list-style: none; padding: 0; margin: 0; }
+    .workspace-branches li { position: relative; padding: 16px 0; border-bottom: 1px solid var(--line); margin: 0; }
+    .workspace-branches li:first-child { border-top: 1px solid var(--line); }
+    .workspace-branches strong { display: block; font: 600 1rem/1.4 var(--display); }
+    .workspace-branches span { color: var(--muted); display: block; margin-top: 4px; font-size: .84rem; }
+    .session-hub { position: relative; background: var(--rail); color: var(--rail-text); text-align: center; padding: 32px 15px; border-radius: 50%; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .session-hub::before, .session-hub::after { content: ""; position: absolute; top: 50%; width: 22px; border-top: 1px solid var(--primary); }
+    .session-hub::before { right: 100%; }
+    .session-hub::after { left: 100%; }
+    .session-hub svg { width: 31px; height: 31px; color: var(--mark); margin-bottom: 10px; }
+    .session-hub strong { font: 500 1.1rem/1.25 var(--display); }
+    .session-hub span { margin-top: 7px; color: var(--rail-muted); font-size: .77rem; }
+    .workspace-figure figcaption { grid-column: 1 / -1; margin-top: 16px; font-size: .82rem; color: var(--muted); text-align: center; }
+    .checkpoint { padding: 24px; border: 1px solid var(--line); border-radius: 8px; }
+    .checkpoint h3 { font-size: 1.15rem; }
+    .checkpoint-flow { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin: 16px 0; font: 500 .92rem/1.5 var(--display); }
+    .checkpoint-flow .checkpoint-middle { background: var(--mark); padding: 9px 13px; border-radius: 5px; }
+    .checkpoint-flow .arrow { color: var(--primary); }
+    .checkpoint p { font-size: .9rem; color: var(--muted); margin: 0; }
+    .category-tabs { display: flex; gap: 7px; flex-wrap: wrap; margin: 25px 0 16px; }
+    .category-tabs button { padding: 12px 15px; background: var(--bg); border: 1px solid var(--line); border-radius: 5px; color: var(--muted); font-size: .9rem; transition: color 150ms var(--ease-out), background 150ms var(--ease-out); }
+    .category-tabs button[aria-selected="true"] { color: var(--bg); background: var(--ink); border-color: var(--ink); }
+    .category-panel { padding: 27px 30px; border: 1px solid var(--line); border-radius: 7px; margin-bottom: 16px; }
+    .category-panel[data-kind="verified"] { background: var(--verified-bg); }
+    .category-panel[data-kind="suspected"] { background: var(--suspected-bg); }
+    .category-panel[data-kind="observation"] { background: var(--observation-bg); }
+    .category-panel h3 { display: flex; gap: 10px; align-items: center; font-size: 1.35rem; }
+    .category-panel h3 svg { width: 23px; height: 23px; flex: none; }
+    .category-panel[data-kind="verified"] h3 { color: var(--verified); }
+    .category-panel[data-kind="suspected"] h3 { color: var(--suspected); }
+    .category-panel[data-kind="observation"] h3 { color: var(--observation); }
+    .category-panel p { font-size: .94rem; margin-bottom: 0; }
+    .category-panel p + p { margin-top: 12px; }
+    .gate-title { margin: 31px 0 15px; font-size: 1.2rem; }
+    .gate-list { counter-reset: gate; padding: 0; margin: 0; list-style: none; }
+    .gate-list li { display: flex; gap: 16px; padding: 16px 0; border-top: 1px solid var(--line); margin: 0; }
+    .gate-list li::before { counter-increment: gate; content: counter(gate); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid var(--line); border-radius: 50%; font: 500 .85rem var(--display); flex: none; }
+    .gate-list strong { display: block; font: 600 1.02rem/1.4 var(--display); }
+    .gate-list p { margin: 5px 0 0; font-size: .9rem; color: var(--muted); }
+    .downgrade-note { display: flex; align-items: start; gap: 12px; margin-top: 18px; background: var(--suspected-bg); padding: 18px 21px; border-radius: 6px; }
+    .downgrade-note svg { width: 22px; height: 22px; flex: none; color: var(--suspected); margin-top: 2px; }
+    .downgrade-note p { margin: 0; font-size: .9rem; }
+    details { border: 1px solid var(--line); border-radius: 7px; margin-top: 12px; overflow: clip; background: var(--bg); }
+    summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 23px; cursor: pointer; list-style: none; font: 500 1.05rem/1.4 var(--display); }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; flex: none; color: var(--primary); font: 400 1.5rem/1 var(--display); }
+    details[open] > summary::after { content: "−"; }
+    summary:hover { background: var(--surface); }
+    summary:focus-visible { outline-offset: -5px; }
+    .details-body { border-top: 1px solid var(--line); padding: 22px 24px; font-size: .94rem; }
+    .details-body > :last-child { margin-bottom: 0; }
+    .summary-meta { margin-left: auto; color: var(--muted); font: .8rem var(--body); text-align: right; }
+    .fields { display: flex; flex-wrap: wrap; gap: 9px; list-style: none; padding: 0; margin: 8px 0 18px; }
+    .fields li { padding: 7px 11px; margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; font-size: .84rem; }
+    .section-actions { display: flex; gap: 9px; flex-wrap: wrap; }
+    .text-button { padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--ink); font-size: .8rem; }
+    .text-button:hover { border-color: var(--primary); background: var(--mark-soft); }
+    .boundary-table { display: grid; grid-template-columns: 145px 1fr; margin: 0; }
+    .boundary-table dt, .boundary-table dd { margin: 0; padding: 15px 0; border-top: 1px solid var(--line); }
+    .boundary-table dt:first-of-type, .boundary-table dd:first-of-type { border-top: 0; padding-top: 0; }
+    .boundary-table dt { font: 600 .95rem/1.6 var(--display); padding-right: 16px; }
+    .boundary-table dd { font-size: .91rem; }
+    .provider-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 9px 0 11px; padding: 0; list-style: none; }
+    .provider-list li { margin: 0; padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px; font: 500 .86rem var(--display); }
+    .cut-list { padding-left: 1.15rem; }
+    .cut-list li { padding-left: 3px; }
+    .stack { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 18px 0 0; list-style: none; }
+    .stack li { margin: 0; font-family: var(--mono); font-size: .79rem; padding: 6px 9px; background: var(--surface); border-radius: 3px; }
+    .acceptance-list { list-style: none; padding: 0; margin: 25px 0; counter-reset: acceptance; }
+    .acceptance-list li { counter-increment: acceptance; display: flex; gap: 15px; padding: 17px 0; border-bottom: 1px solid var(--line); margin: 0; font-size: .94rem; }
+    .acceptance-list li::before { content: counter(acceptance, decimal-leading-zero); flex: none; color: var(--primary); font: 500 1rem/1.7 var(--display); }
+    .demo-moment { margin: 30px 0; padding: 27px 29px; background: var(--rail); color: var(--rail-text); border-radius: 8px; }
+    .demo-moment h3 { color: var(--mark); font-size: 1.15rem; }
+    .demo-moment p { margin: 0; font-size: 1.05rem; line-height: 1.8; }
+    .fixture-path { display: inline-block; margin: 2px 0 14px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+    blockquote { margin: 17px 0; padding: 18px 22px; background: var(--surface); border-radius: 5px; font-size: .95rem; }
+    blockquote p { margin: 0; }
+    .source-code { margin: 0; padding: 23px; background: var(--surface); font: .81rem/1.85 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; max-height: 640px; overflow-y: auto; }
+    .source-code:focus-visible { outline-offset: -5px; }
+    .review-footer { margin-top: 20px; padding: 32px 0 0; border-top: 1px solid var(--line); }
+    .review-footer h2 { font-size: 1.7rem; }
+    .review-footer p { margin-top: 12px; color: var(--muted); font-size: .93rem; }
+    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 18px; font-size: .9rem; }
+    .js-only { display: none; }
+    .enhanced .js-only { display: flex; }
+    [hidden] { display: none !important; }
+    @media (min-width: 1100px) and (prefers-reduced-motion: no-preference) {
+      .hero h1 { animation: settle 650ms var(--ease-out) both; }
+      @keyframes settle { from { transform: translateY(8px); } to { transform: translateY(0); } }
+    }
+    @media (max-width: 1190px) {
+      :root { --rail-width: 208px; }
+      .rail { padding-inline: 18px; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .document-meta { display: flex; flex-wrap: wrap; gap: 16px 36px; margin-top: 4px; padding-bottom: 0; }
+      .document-meta dd { margin-bottom: 0; }
+      .workspace-figure { grid-template-columns: 1fr 160px 1fr; gap: 0 15px; }
+      .session-hub::before, .session-hub::after { width: 15px; }
+      .section-head { align-items: start; }
+      .section-head p { max-width: 32ch; }
+    }
+    @media (max-width: 900px) {
+      .rail { position: static; width: 100%; padding: 20px 24px 14px; overflow: visible; }
+      .rail-label, .rail-bottom { display: none; }
+      .rail nav { flex-direction: row; flex-wrap: wrap; margin-top: 18px; gap: 2px; }
+      .rail nav a { font-size: .8rem; padding: 7px 9px; min-height: 38px; }
+      .rail nav a::before { display: none; }
+      main { margin-left: 0; }
+      .page { padding-top: 22px; padding-inline: 28px; }
+      .hero { padding-top: 40px; }
+      .hero-grid { grid-template-columns: 1fr 190px; gap: 28px; }
+      .document-meta { display: block; }
+      .document-meta dd { margin-bottom: 15px; }
+      h1 { font-size: clamp(2.5rem, 6.5vw, 3.65rem); }
+    }
+    @media (max-width: 640px) {
+      .page { padding-inline: 20px; }
+      .rail { padding-inline: 20px; }
+      .hero { padding-top: 30px; padding-bottom: 33px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 12px; }
+      .document-meta { display: flex; gap: 15px 30px; }
+      .document-meta dd { margin-bottom: 0; }
+      .hero-description { font-size: 1rem; }
+      .kernel { padding: 19px; gap: 12px; }
+      section { padding-block: 34px; }
+      .section-head { flex-direction: column; gap: 12px; }
+      .section-head p { max-width: 65ch; }
+      .flow-diagram { display: none; }
+      .flow-mobile { display: block; }
+      .workflow-controls { padding-inline: 18px; gap: 7px; }
+      .workflow-controls .step-label { flex-basis: 100%; margin: 5px 0 0; }
+      .flow-explanation { padding: 20px; }
+      .workspace-figure { grid-template-columns: 1fr; margin-bottom: 24px; }
+      .session-hub { grid-row: 1; border-radius: 7px; aspect-ratio: auto; padding: 20px; margin-bottom: 18px; }
+      .session-hub::before, .session-hub::after { display: none; }
+      .session-hub svg { margin-bottom: 7px; }
+      .workspace-branches li { padding-block: 14px; }
+      .workspace-figure figcaption { text-align: left; }
+      .checkpoint { padding: 19px; }
+      .checkpoint-flow { gap: 10px; }
+      .enhanced .category-tabs { display: grid !important; grid-template-columns: 1fr; }
+      .category-tabs button { text-align: left; }
+      .category-panel { padding: 22px 20px; }
+      summary { padding: 18px; gap: 12px; font-size: 1rem; flex-wrap: wrap; }
+      summary::after { margin-left: auto; }
+      .summary-meta { margin-left: 0; text-align: left; }
+      .details-body { padding: 19px; }
+      .boundary-table { grid-template-columns: 1fr; }
+      .boundary-table dt { padding: 15px 0 4px; }
+      .boundary-table dd { padding: 0 0 15px; border-top: 0; }
+      .boundary-table dt:first-of-type { padding-top: 0; }
+      .boundary-table dd:first-of-type { padding-top: 0; }
+      .demo-moment { padding: 23px; }
+      .topline { font-size: .76rem; }
+      .source-code { padding: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+    @media print {
+      .rail, .skip-link, .js-only, .topline { display: none !important; }
+      main { margin: 0; }
+      .page { width: 100%; padding: 0; }
+      body { font-size: 10pt; }
+      .hero, section { padding-block: 20px; }
+      h1 { font-size: 30pt; }
+      h2 { font-size: 22pt; }
+      .source-code { max-height: none; overflow: visible; }
+      .flow-explanation article[hidden], .category-panel[hidden] { display: block !important; }
+      .flow-explanation article + article { margin-top: 15px; }
+      details, .gate-list li, .demo-moment { break-inside: avoid; }
+      a { color: var(--ink); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Canonical source: scope.md. This is a scope-review document, not a running audit or a product UI specification. -->
+  <a class="skip-link" href="#main">Skip to scope review</a>
+  <aside class="rail" aria-label="Scope document navigation">
+    <a class="brand" href="#overview" aria-label="FlowProof AI scope overview">
+      <svg class="brand-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="8" stroke="currentColor"/><path d="M12 29V12h17M12 20h12" stroke="currentColor" stroke-width="3"/><circle cx="28" cy="28" r="3" fill="currentColor"/></svg>
+      <span class="brand-name">FlowProof <span>AI</span></span>
+    </a>
+    <p class="rail-label">Scope review</p>
+    <nav aria-label="On this page">
+      <a href="#overview" aria-current="location">The product</a>
+      <a href="#workflow">The audit loop</a>
+      <a href="#workspace">Observable workspace</a>
+      <a href="#verification">The evidence contract</a>
+      <a href="#boundaries">Scope boundaries</a>
+      <a href="#acceptance">What working means</a>
+      <a href="#source">Canonical reference</a>
+    </nav>
+    <div class="rail-bottom">
+      <span class="rail-state">Approved · Scope complete</span>
+      <p>Canonical document</p>
+      <a href="scope.md"><code>devpost/scope.md ↗</code></a>
+      <p style="margin-top: 24px">Scope + PRD approved. Technical specification in progress.</p>
+    </div>
+  </aside>
+  <main id="main" tabindex="-1">
+    <div class="page">
+      <div class="topline"><span>Devpost Learn / Build With AI / Scope</span><span class="status-label">Scope approved</span></div>
+
+      <header class="hero" id="overview" data-source="The Unique Kernel">
+        <div class="hero-grid">
+          <div>
+            <p class="document-label">FlowProof AI · Product scope</p>
+            <h1>Follow the flow.<br>Inspect the proof.</h1>
+            <p class="hero-description">A local-first Windows desktop AI agent that tests user-defined flows in localhost web applications and produces evidence-backed functional findings and UX observations.</p>
+          </div>
+          <dl class="document-meta">
+            <div><dt>First release</dt><dd>Windows 11 x64</dd></div>
+            <div><dt>Execution boundary</dt><dd>One active audit</dd></div>
+            <div><dt>Source of truth</dt><dd><a href="scope.md">scope.md ↗</a></dd></div>
+          </dl>
+        </div>
+        <div class="kernel">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 12 2 2 4-4M12 3l8 3v6c0 4-5 8-8 9-3-1-8-5-8-9V6l8-3Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p><strong>The distinctive promise:</strong> observe native embedded Chromium shared with Playwright, answer structured questions, and explicitly take browser control through safe exclusive handoff. Manual actions remain distinct from verified Agent execution; actual evidence and reproduction support findings.</p>
+        </div>
+        <p class="small muted" style="margin-top: 17px; margin-bottom: 0">Planning companion. Diagrams explain the scope; final application layout and detailed behaviors are defined in the PRD.</p>
+      </header>
+
+      <section id="workflow" aria-labelledby="workflow-title" data-source="The Core Loop">
+        <div class="section-head"><h2 id="workflow-title">One complete audit loop.</h2><p>A user-defined goal drives the workflow. Each conclusion traces back to execution.</p></div>
+        <div class="flow-board">
+          <div class="board-caption"><span>From intent to local report</span><span>Explore the six steps below</span></div>
+          <svg class="flow-diagram" viewBox="0 0 1000 390" role="img" aria-labelledby="flow-title flow-desc">
+            <title id="flow-title">The six-step FlowProof AI audit workflow</title>
+            <desc id="flow-desc">Configure a provider/project and authorized goal, let the Agent plan and execute, answer structured questions, and observe native embedded Chromium shared with Playwright. Explicit exclusive handoff grants User control while Agent browser operations are held; inspect state on return, verify actual evidence, and save locally.</desc>
+            <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="m1 1 7 4-7 4" fill="none" stroke="var(--primary)" stroke-width="1.5"/></marker></defs>
+            <path class="connector" d="M305 94H354" marker-end="url(#arrow)"/>
+            <path class="connector" d="M635 94H684" marker-end="url(#arrow)"/>
+            <path class="connector" d="M825 145V243" marker-end="url(#arrow)"/>
+            <path class="connector" d="M684 294H635" marker-end="url(#arrow)"/>
+            <path class="connector" d="M354 294H305" marker-end="url(#arrow)"/>
+            <path class="connector-muted" d="M165 244V180H12V18H165V44" marker-end="url(#arrow)"/>
+            <g data-flow-node="1" data-active="true"><rect class="node" x="25" y="44" width="280" height="101" rx="9"/><circle class="node-number" cx="52" cy="72" r="13"/><text class="number-copy" x="52" y="77" text-anchor="middle">1</text><text class="node-title" x="76" y="80">Configure + select</text><text class="node-copy" x="46" y="115">BYOK, model, local project</text></g>
+            <g data-flow-node="2"><rect class="node" x="355" y="44" width="280" height="101" rx="9"/><circle class="node-number" cx="382" cy="72" r="13"/><text class="number-copy" x="382" y="77" text-anchor="middle">2</text><text class="node-title" x="406" y="80">Define the audit</text><text class="node-copy" x="376" y="115">Authorized URL + goal + context</text></g>
+            <g data-flow-node="3"><rect class="node" x="685" y="44" width="280" height="101" rx="9"/><circle class="node-number" cx="712" cy="72" r="13"/><text class="number-copy" x="712" y="77" text-anchor="middle">3</text><text class="node-title" x="736" y="80">Plan + clarify</text><text class="node-copy" x="706" y="115">TODOs, questions, input pauses</text></g>
+            <g data-flow-node="4"><rect class="node" x="685" y="244" width="280" height="101" rx="9"/><circle class="node-number" cx="712" cy="272" r="13"/><text class="number-copy" x="712" y="277" text-anchor="middle">4</text><text class="node-title" x="736" y="280">Execute + observe</text><text class="node-copy" x="706" y="315">Native shared Chromium</text></g>
+            <g data-flow-node="5"><rect class="node" x="355" y="244" width="280" height="101" rx="9"/><circle class="node-number" cx="382" cy="272" r="13"/><text class="number-copy" x="382" y="277" text-anchor="middle">5</text><text class="node-title" x="406" y="280">Evidence + verify</text><text class="node-copy" x="376" y="315">Reproduce, check, classify</text></g>
+            <g data-flow-node="6"><rect class="node" x="25" y="244" width="280" height="101" rx="9"/><circle class="node-number" cx="52" cy="272" r="13"/><text class="number-copy" x="52" y="277" text-anchor="middle">6</text><text class="node-title" x="76" y="280">Save + review</text><text class="node-copy" x="46" y="315">Local report + linked evidence</text></g>
+            <text class="annotation" x="495" y="193" text-anchor="middle">Structured questions and explicit browser handoff are safe input paths.</text>
+            <text class="annotation" x="495" y="214" text-anchor="middle">Agent browser actions require exclusive Agent ownership.</text>
+            <text class="annotation" x="495" y="378" text-anchor="middle">Return with another goal, target, or application revision.</text>
+          </svg>
+          <ol class="flow-mobile" aria-label="Audit workflow diagram, text view">
+            <li><strong>Configure + select</strong><span>BYOK, model, local project.</span></li>
+            <li><strong>Define the audit</strong><span>Authorized URL, goal, context, limits.</span></li>
+            <li><strong>Plan + clarify</strong><span>TODOs, questions, input pauses.</span></li>
+            <li><strong>Execute + observe</strong><span>Native shared Chromium and exclusive ownership handoff.</span></li>
+            <li><strong>Evidence + verify</strong><span>Reproduce, check, classify.</span></li>
+            <li><strong>Save + review</strong><span>Local report and linked evidence; repeat with another goal.</span></li>
+          </ol>
+          <div class="workflow-controls js-only" role="group" aria-label="Explore the audit workflow">
+            <button type="button" data-step="1" aria-pressed="true" aria-controls="loop-step-1" aria-label="Step 1: Configure and select">1</button>
+            <button type="button" data-step="2" aria-pressed="false" aria-controls="loop-step-2" aria-label="Step 2: Define the audit">2</button>
+            <button type="button" data-step="3" aria-pressed="false" aria-controls="loop-step-3" aria-label="Step 3: Plan and clarify">3</button>
+            <button type="button" data-step="4" aria-pressed="false" aria-controls="loop-step-4" aria-label="Step 4: Execute and observe">4</button>
+            <button type="button" data-step="5" aria-pressed="false" aria-controls="loop-step-5" aria-label="Step 5: Evidence and verification">5</button>
+            <button type="button" data-step="6" aria-pressed="false" aria-controls="loop-step-6" aria-label="Step 6: Save and review">6</button>
+            <span class="step-label">Select a step to read the canonical core-loop description.</span>
+          </div>
+          <div class="flow-explanation" aria-live="polite" aria-atomic="true">
+            <article id="loop-step-1" data-flow-panel="1"><h3>Configure + select</h3><p>Open FlowProof AI, configure an AI provider, API key, and model, and create or select a locally saved project. No FlowProof AI account is required.</p></article>
+            <article id="loop-step-2" data-flow-panel="2"><h3>Define the audit</h3><p>Start an audit with an explicitly authorized localhost URL, a user-defined goal, relevant context, and execution limits.</p></article>
+            <article id="loop-step-3" data-flow-panel="3"><h3>Plan + clarify</h3><p>The agent autonomously forms a plan, creates TODOs, and uses Playwright to inspect and interact with the application. When clarification, a decision, or required information is needed, it calls <code>ask_user</code>, pauses safely in Awaiting Input, and resumes after the user answers.</p></article>
+            <article id="loop-step-4" data-flow-panel="4"><h3>Execute + observe</h3><p>Observe actual activity, TODOs, findings, and native continuously rendered embedded Chromium. Respond through <code>ask_user</code> and, when needed, explicitly hand browser ownership from Agent to User without simultaneous control. Suspend Agent browser operations while the User owns control; on return, inspect actual state before continuing. Distinguish manual actions in history and do not count them automatically as verified Agent execution. There is no persistent composer, general messaging, or generic Pause/Resume/Stop/audit-goal redirection control.</p></article>
+            <article id="loop-step-5" data-flow-panel="5"><h3>Evidence + verify</h3><p>The agent collects actual browser evidence, attempts independent reproduction, checks alternative explanations, and classifies findings according to the verification contract below.</p></article>
+            <article id="loop-step-6" data-flow-panel="6"><h3>Save + review</h3><p>Review a structured report and reopen the saved project, audit session, report, and linked evidence locally. Return with another goal or target, or to check an application revision.</p></article>
+          </div>
+        </div>
+        <p class="loop-note">Source: <a href="scope.md">scope.md · The Core Loop</a>. This explorer describes the plan; it does not run browser actions.</p>
+      </section>
+
+      <section id="workspace" aria-labelledby="workspace-title" data-source="Execution and Product Breadth">
+        <div class="section-head"><h2 id="workspace-title">One shared browser. One owner.</h2><p><strong>Control lifecycle:</strong> Agent in Control → Take Control → Handoff Pending → You are in Control → Return Control to Agent. Pending transfer blocks new Agent browser work and waits for bounded safe completion; return disables manual input, reinspects current state, and reconciles the plan/TODOs before safe continuation. Manual actions retain User attribution. After a User-Control crash, bounded recovery restores User Control with autonomous Agent execution suspended until explicit Return Control to Agent. A Handoff-Pending crash cancels the incomplete handoff and recovers into Awaiting Control Decision, requiring explicit Take Control or Return Control to Agent. Never silently transfer ownership to the Agent. Resumption requires explicit authorization and successful session/boundary validation, actual-page inspection, and reconciliation of TODOs and execution history, without blind non-idempotent replay. After two failed recovery attempts, end as Interrupted and preserve trustworthy partial results. The PRD defines the full recovery policy.</p><p>Agent control by default, with explicit exclusive User handoff inside the same audit session.</p></div>
+        <figure class="workspace-figure" aria-label="Capabilities associated with the current audit session">
+          <ul class="workspace-branches">
+            <li><strong>Autonomous activity feed</strong><span>Streamed progress, actual tool events, observations, and findings.</span></li>
+            <li><strong>Dynamic TODOs</strong><span>Automatically generated and continuously updated.</span></li>
+            <li><strong>Structured ask_user questions</strong><span>Single-choice, multiple-choice, and free-text responses when requested.</span></li>
+          </ul>
+          <div class="session-hub">
+            <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M16 2v5m0 18v5M2 16h5m18 0h5M6 6l4 4m12 12 4 4M6 26l4-4M22 10l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <strong>Current<br>audit session</strong><span>One active audit at a time</span>
+          </div>
+          <ul class="workspace-branches">
+            <li><strong>Native embedded Chromium</strong><span>The exact displayed session attached to Playwright, with exclusive control.</span></li>
+            <li><strong>Inspectable tools</strong><span>Execution events with expandable details and useful evidence.</span></li>
+            <li><strong>Traceable findings</strong><span>Observations and evidence linked to the current audit.</span></li>
+          </ul>
+          <figcaption>One synchronized audit, with User/manual browser actions attributed separately from Agent/Playwright execution and evidence.</figcaption>
+        </figure>
+        <div class="checkpoint">
+          <h3>Safe questions. Exclusive browser ownership.</h3>
+          <div class="checkpoint-flow" aria-label="Structured clarification flow"><span>Agent calls ask_user</span><span class="arrow" aria-hidden="true">→</span><span class="checkpoint-middle">Awaiting Input</span><span class="arrow" aria-hidden="true">→</span><span>Answer continues pending work</span></div>
+          <p>Structured questions and explicit browser handoff are the execution-affecting interactions. Agent browser operations are held during User control; return requires fresh state inspection. Ordinary resizing/navigation is not a handoff, and generic Pause/Resume/Stop or general messaging remain excluded.</p>
+          <p style="margin-top: 12px">Same-session Playwright compatibility, privileged isolation, authorized navigation, and crash recovery for native embedded Chromium are mandatory unvalidated 4-spec checks.</p>
+          <p style="margin-top: 12px">Internal runtime cancellation handles application shutdown, critical failures, exhausted budgets, and other safety conditions. Cleanup preserves trustworthy partial evidence and clearly labels incomplete results.</p>
+        </div>
+        <details id="prd-requirements" open data-source="Mandatory PRD Requirements">
+          <summary>Mandatory requirements for the PRD <span class="summary-meta">Approved carry-forward</span></summary>
+          <div class="details-body">
+            <h4>Premium Desktop UX</h4>
+            <p>A polished startup experience, a first-launch New Audit empty state, an animated New Audit overlay, an off-white workspace, a project sidebar with distinctive letter-based icons, and a professional agent workspace inspired by modern coding agents.</p>
+            <h4>Real Live Browser Preview</h4>
+            <p>Require a real interactive Chromium browser embedded in the workspace with native continuous rendering, including animations, scrolling, navigation, typing, and dynamic updates. Playwright must control that exact displayed session, with explicit exclusive Agent/User handoff, isolation from privileged Electron functionality, and authorized localhost navigation for both owners. Screenshot streaming or a duplicate hidden browser does not meet this requirement. During 4-spec, investigate Electron WebContents embedding and BrowserView alternatives, Chromium DevTools Protocol integration, and Playwright CDP connectivity. Document compatibility, security, session fidelity, and recovery tradeoffs; feasibility is not yet established. Report any limitation preventing a truly shared interactive session before proposing a change to the approved UX.</p>
+            <h4>Agent Reliability</h4>
+            <p>Explicitly define internal cancellation and cleanup for application shutdown, critical failures, execution-budget exhaustion, and other safety conditions, alongside provider disconnection, browser failures, and structured <code>ask_user</code> interactions. Question-driven pausing and resumption are automatic. Internal cancellation preserves trustworthy partial evidence and clearly labels incomplete results; it is not a user-facing execution control.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="verification" aria-labelledby="verification-title" data-source="Finding Verification Contract">
+        <div class="section-head"><h2 id="verification-title">Verification is earned.</h2><p>Reasoning, confidence, or a successful tool call alone cannot verify an issue.</p></div>
+        <div class="category-tabs js-only" role="tablist" aria-label="Finding categories">
+          <button type="button" role="tab" id="tab-verified" data-category="verified" aria-controls="category-verified" aria-selected="true">Verified Finding</button>
+          <button type="button" role="tab" id="tab-suspected" data-category="suspected" aria-controls="category-suspected" aria-selected="false" tabindex="-1">Suspected Finding</button>
+          <button type="button" role="tab" id="tab-observation" data-category="observation" aria-controls="category-observation" aria-selected="false" tabindex="-1">UX Observation</button>
+        </div>
+        <div class="category-panel" id="category-verified" data-kind="verified" role="tabpanel" aria-labelledby="tab-verified" tabindex="0">
+          <h3><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="m8 12 3 3 5-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified Finding</h3>
+          <p>A reproducible issue supported by real browser execution, sufficient evidence, and a clear mismatch between traceable expected behavior and observed behavior.</p>
+          <p>Every requirement below must be satisfied. Confidence is separate from verification status.</p>
+        </div>
+        <div class="category-panel" id="category-suspected" data-kind="suspected" role="tabpanel" aria-labelledby="tab-suspected" tabindex="0">
+          <h3><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M10 9a2 2 0 0 1 4 0c0 2-2 2-2 4m0 3v.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Suspected Finding</h3>
+          <p>A potential issue supported by observations but lacking sufficient evidence, a reliable expectation, or successful independent reproduction.</p>
+          <p>Limitations remain visible. A failed or unsafe reproduction does not earn a verified label.</p>
+        </div>
+        <div class="category-panel" id="category-observation" data-kind="observation" role="tabpanel" aria-labelledby="tab-observation" tabindex="0">
+          <h3><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/></svg>UX Observation</h3>
+          <p>A usability concern or improvement suggestion that is not necessarily a functional defect.</p>
+          <p>The report distinguishes observed behavior from interpretation and communicates relevant uncertainty.</p>
+        </div>
+        <h3 class="gate-title">The required evidence gate</h3>
+        <ol class="gate-list">
+          <li><div><strong>Actual browser execution</strong><p>Real Playwright execution demonstrates the issue. The agent cannot fabricate actions or artifacts.</p></div></li>
+          <li><div><strong>A traceable expectation</strong><p>Document expected and observed behavior. The expected behavior comes from user-provided requirements, an explicit acceptance criterion, or a deterministic application contract.</p></div></li>
+          <li><div><strong>Sufficient linked evidence</strong><p>Screenshots, executed steps, and browser state support the conclusion. Include DOM snapshots, console errors, or network failures when relevant.</p></div></li>
+          <li><div><strong>Independent reproduction</strong><p>At least one successful independent reproduction attempt, when safe and feasible. If it cannot be safely attempted or does not succeed, the finding remains unverified.</p></div></li>
+          <li><div><strong>False-positive checks</strong><p>Check timing issues, navigation delays, test-environment failures, and incorrect test inputs as alternative explanations.</p></div></li>
+          <li><div><strong>An explained conclusion</strong><p>Explain why the actual evidence supports the finding and document remaining limitations.</p></div></li>
+        </ol>
+        <div class="downgrade-note">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 10 17H2L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9v4m0 3v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <p><strong>Insufficient support means a downgrade.</strong> Incomplete evidence, failed reproduction, or unreliable expectations require a Suspected Finding or UX Observation classification as appropriate.</p>
+        </div>
+        <details>
+          <summary>What every finding contains <span class="summary-meta">Report contract</span></summary>
+          <div class="details-body">
+            <ul class="fields"><li>Title + description</li><li>Category / verification status</li><li>Severity</li><li>Evidence-grounded confidence</li><li>Expected vs. actual behavior</li><li>Reproduction steps</li><li>Linked evidence</li><li>Suggested fix</li><li>Limitations + uncertainty</li></ul>
+            <p>Expected behavior that cannot be established is explicitly identified as such. Confidence is separate from verification status; no complex scoring system is needed.</p>
+            <p>The pipeline remains application- and workflow-independent. An LLM may analyze evidence, but cannot fabricate it or replace verification with reasoning.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="boundaries" aria-labelledby="boundaries-title" data-source="The POC Boundary">
+        <div class="section-head"><h2 id="boundaries-title">Depth, with clear boundaries.</h2><div class="section-actions js-only" role="group" aria-label="Scope section controls"><button class="text-button" type="button" id="expand-boundaries">Expand all</button><button class="text-button" type="button" id="collapse-boundaries">Collapse all</button></div></div>
+        <p class="section-intro">Preserve the full interactive audit experience while limiting platforms, targets, and concurrent execution.</p>
+        <div id="boundary-sections">
+          <details open data-boundary="now" data-source="Execution and Product Breadth">
+            <summary>Now · First-release operating envelope <span class="summary-meta">In scope</span></summary>
+            <div class="details-body">
+              <dl class="boundary-table">
+                <dt>Platform</dt><dd>Windows 11 x64.</dd>
+                <dt>Automation</dt><dd>Playwright attached to the exact native embedded Chromium session: one isolated shared session/context and tab per active audit, with no hidden duplicate browser.</dd>
+                <dt>Targets</dt><dd>Localhost applications with configurable ports and paths. Automation is restricted to explicitly authorized targets, with enforced navigation boundaries.</dd>
+                <dt>Concurrency</dt><dd>One active audit at a time; multiple projects and audit sessions can be saved locally.</dd>
+                <dt>AI providers</dt><dd><ul class="provider-list"><li>OpenAI</li><li>Anthropic</li><li>Google Gemini</li><li>OpenRouter</li></ul>BYOK with user-selectable models. Runtime and persisted product data are local; model requests use the selected provider.</dd>
+                <dt>Execution limits</dt><dd>Configurable agent-step and timeout limits, plus token/cost usage limits where provider information is available. Missing usage information remains explicit.</dd>
+                <dt>Preflight + setup drafts</dt><dd>Review &amp; Start automatically checks provider/model connectivity, localhost availability, explicit authorization, and valid budgets, showing exact target/project/goal and individual Checking/Passed/Failed states. Start Audit requires all checks plus immediate pre-start critical revalidation. Offer actionable Retry Checks, retain form data, and invalidate/rerun affected checks on changes. Dismissal preserves non-sensitive draft data/progress for continuation or Start Fresh, but clears consent and invalidates prior checks. Keep secrets out of ordinary drafts; securely saved provider configuration may be reused without revealing its key. Setup stays responsive and distinct from execution, with no empty project/session or accidental launch.</dd>
+                <dt>Workspace</dt><dd>Autonomous default with actual activity, dynamic TODOs, native embedded Chromium, findings, and inspectable tool events. Structured <code>ask_user</code> and explicit exclusive browser handoff are the input paths. Normal UI navigation/resizing does not change ownership. No general composer, messaging, or generic execution controls.</dd>
+                <dt>Structured responses</dt><dd>UI and trusted Agent runtime enforce the question schema: valid single/multiple-choice selections, configured counts, required non-blank text, reasonable lengths, and declared formats. Inline errors preserve entered data under privacy rules; invalid answers never resume execution. Explicitly supported Skip is a distinct outcome, never denial or authorization. Continue safe alternatives with recorded coverage impact, or end as Blocked if skipped required information prevents the goal and no safe continuation remains. Skip history contains only non-sensitive question metadata and its outcome; no fabricated actions/findings/verification. Dismissal stays Awaiting Input, and required questions without Skip support cannot be bypassed.</dd>
+                <dt>Browser ownership</dt><dd>Agent by default. Explicit safe handoff allows direct User interaction while Agent browser operations are suspended. Never control simultaneously; inspect actual state before Agent continuation. Ownership does not bypass scope/security policy, budgets, internal cancellation, or the one-session limit.</dd>
+                <dt>Internal cancellation</dt><dd>Show Terminating when possible and block new Agent/AI/browser/verification work for shutdown, critical failure, exhausted budgets, or other terminal runtime conditions. Signal supported request cancellation; permit only bounded safe completion of in-flight browser operations under a short configurable cleanup deadline, without budget bypass or blind interruption/replay. Record actual observed outcomes or Unknown/Interrupted, then clean up resources and temporary secrets without indefinite waiting; retain securely stored provider credentials. Save trustworthy partial Interrupted results with the recorded reason and incomplete verification. Incrementally persist events and recover incomplete saved sessions on next launch for read-only inspection without automatic execution, uncertain-operation replay, or invented evidence/cleanup success. No user-facing execution controls are added.</dd>
+                <dt>Session integrity</dt><dd>Progress, questions/answers, TODOs, events, evidence, and findings remain synchronized to the audit. Distinguish User/manual actions from Agent/Playwright execution; manual interaction is not automatically verified Agent evidence. Claims must reflect actual execution.</dd>
+                <dt>Persistence</dt><dd>Local projects, audit sessions, reports, and linked evidence.</dd>
+                <dt>Saved-session lists</dt><dd>Compact entries show a concise goal-derived title, final status, local start date/time, available recorded duration, separate Verified/Suspected counts, UX Observation count when space allows, and a short safe blocking/interruption reason when applicable. Sort newest-started first with stable session ID tie-breaking, never by later viewing or report updates. Click through to the saved read-only Audit Overview without restarting or disturbing an active audit. Show an elegant empty state when needed, preserve classifications, and exclude sensitive inputs/raw credentials from all previews.</dd>
+              </dl>
+            </div>
+          </details>
+          <details data-boundary="later" data-source="Later">
+            <summary>Later · Extend the execution breadth <span class="summary-meta">Deferred</span></summary>
+            <div class="details-body"><ul><li>Cross-platform distribution beyond Windows 11 x64.</li><li>Additional browser engines and broader browser-session/tab support.</li><li>Concurrent audits and multi-agent execution.</li><li>Target environments beyond localhost, with appropriate authorization boundaries.</li></ul><p>Keep the architecture extensible for broader targets and user-defined flows while delivering the bounded workflow first.</p></div>
+          </details>
+          <details data-boundary="cut" data-source="Explicitly Cut">
+            <summary>Explicitly cut · Protect the core promise <span class="summary-meta">Excluded</span></summary>
+            <div class="details-body"><ul class="cut-list">
+              <li><strong>Hosted backend, cloud database, and cloud infrastructure:</strong> the runtime and persistence are local-first.</li>
+              <li><strong>FlowProof AI authentication and user accounts:</strong> account-free BYOK is a fixed product decision.</li>
+              <li><strong>Sign-in-specific execution logic and a fixture-first implementation:</strong> the later fixture validates the reusable loop.</li>
+              <li><strong>Complex scoring and unnecessary verification infrastructure:</strong> prioritize a working evidence-and-reproduction pipeline.</li>
+              <li><strong>General chat, a persistent composer, and unsolicited audit-goal instructions:</strong> input follows structured questions and explicit browser handoff.</li>
+              <li><strong>Generic execution controls and simultaneous/uncoordinated browser control:</strong> direct User input requires safe exclusive ownership and never bypasses policy.</li>
+              <li><strong>Screenshot-streaming substitutes and hidden duplicate browsers:</strong> require the exact native shared Chromium session, with compatibility/isolation/recovery validated in 4-spec. Evidence screenshots remain supported.</li>
+              <li><strong>Fabricated evidence, actions, or verification:</strong> preserve actual execution and distinct manual/Agent provenance.</li>
+            </ul></div>
+          </details>
+          <details data-boundary="architecture" data-source="Preserved Architecture and Stack">
+            <summary>Preserved architecture + approved stack <span class="summary-meta">Fixed decisions</span></summary>
+            <div class="details-body"><p>Local-first desktop architecture with no FlowProof AI authentication or user accounts, hosted backend, or cloud database. API keys use secure OS-backed storage. Audits can run without creating a FlowProof AI account.</p><ul class="stack"><li>Electron</li><li>React 19</li><li>TypeScript</li><li>Vite</li><li>Tailwind CSS 4</li><li>shadcn/ui</li><li>Zustand</li><li>TanStack Query</li><li>Node.js agent runtime</li><li>Playwright</li><li>Vercel AI SDK</li><li>SQLite</li><li>Drizzle ORM</li><li>Pino</li><li>electron-builder</li><li>Vitest</li></ul></div>
+          </details>
+        </div>
+      </section>
+
+      <section id="acceptance" aria-labelledby="acceptance-title" data-source="What &quot;Working&quot; Looks Like">
+        <div class="section-head"><h2 id="acceptance-title">What “working” means.</h2><p>Acceptance criteria for the completed proof of concept, pending implementation.</p></div>
+        <ol class="acceptance-list">
+          <li>Real BYOK execution with a selected model, working OpenAI, Anthropic, Google Gemini, and OpenRouter integrations, and OS-backed API-key storage.</li>
+          <li>A user-provided localhost URL and goal drive a real Playwright audit without application-specific execution logic.</li>
+          <li>Live actions, observations, TODOs, actual browser state, tool details, and findings stay synchronized to the current audit session.</li>
+          <li>Structured <code>ask_user</code> interactions supporting single-choice, multiple-choice, and free-text responses, with a safe Awaiting Input pause and resumption after the user answers; no persistent composer or general-purpose messaging during execution.</li>
+          <li>A native embedded browser shared with Playwright, mutually exclusive Agent/User ownership, suspended Agent browser operations during User control, fresh inspection on return, and manual actions clearly separated from verified Agent execution evidence.</li>
+          <li>Working internal cancellation and cleanup for shutdown, critical failures, exhausted budgets, or safety conditions, preserving trustworthy partial evidence and clearly labeling interrupted audit results as incomplete.</li>
+          <li>An evidence-backed Verified Finding on a reproducible seeded defect, with conservative classification when an expectation or reproduction cannot be established.</li>
+          <li>Enforced navigation and execution boundaries. Incomplete or failed execution is reported honestly, with no fabricated actions or evidence.</li>
+          <li>Multiple locally saved projects and sessions, reports and evidence reopening after a restart, and only one audit executing at a time.</li>
+        </ol>
+        <div class="demo-moment"><h3>The moment to demonstrate</h3><p>A user watches the autonomous agent encounter a problem, gather evidence, independently reproduce it in the browser, and produce a finding whose evidence the user can inspect.</p></div>
+        <details data-source="Acceptance Fixture and Implementation Order">
+          <summary>Product first. Acceptance fixture when needed. <span class="summary-meta">Validation strategy</span></summary>
+          <div class="details-body">
+            <p>Build FlowProof AI first. Introduce or reuse a minimal local test application later when needed for end-to-end validation.</p>
+            <code class="fixture-path">http://localhost:3000</code>
+            <p>The initial acceptance fixture is a small React app with a deliberately introduced sign-in usability or functional issue, such as missing feedback after incorrect credentials.</p>
+            <blockquote><p>“Test the complete sign-in flow, identify functional and UX problems, and provide evidence-backed findings with reproducible steps and suggested fixes.”</p></blockquote>
+            <p>Provide a traceable expectation for the seeded defect. Changing the authorized URL, port, path, or goal must not require sign-in-specific product logic.</p>
+            <p>Hackathon delivery includes a short demo video and a public GitHub repository; deployment is optional. The curriculum targets 2–4 hours of active work. This scope remains ambitious for that timebox even with its execution boundaries.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="source" aria-labelledby="source-title">
+        <div class="section-head"><h2 id="source-title">The canonical reference.</h2><p>Markdown is the source of truth. This HTML companion carries a complete review snapshot.</p></div>
+        <details data-source="Who It's For"><summary>Audience + project intention</summary><div class="details-body"><h3>Who it’s for</h3><p>Designers and developers checking a web application running on their own machine, who want actionable findings with reproducible steps and suggested fixes. They supply the target, goal, and any requirements needed to establish expected behavior.</p><h3>Why this matters to the learner</h3><p>Build “a reliable, fully functional end-to-end AI agent workflow that combines intelligent reasoning, browser automation, and evidence-based UX auditing.” The focus is tool orchestration, error handling, and validating AI-generated findings through a concise, spec-driven workflow.</p><h3>Inspiration + identity</h3><p>The execution interfaces of <a href="https://openai.com/codex/" target="_blank" rel="noopener noreferrer">Codex</a>, <a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener noreferrer">Claude Code</a>, and <a href="https://opencode.ai/" target="_blank" rel="noopener noreferrer">OpenCode</a>: autonomous by default, with actual native browser execution, structured questions, explicit exclusive browser handoff, and inspectable evidence. The goal is a focused, reliable, polished desktop product. Visual design specifics belong in the PRD.</p></div></details>
+        <details id="canonical-snapshot"><summary>Read the complete Markdown snapshot <span class="summary-meta">scope.md · approved</span></summary><pre class="source-code" id="scope-source" tabindex="0" aria-label="Complete canonical scope Markdown snapshot">---
+doc: scope
+status: approved
+---
+
+# FlowProof AI
+
+A local-first Windows desktop AI agent that tests user-defined flows in localhost web applications and produces evidence-backed functional findings and UX observations.
+
+## The Unique Kernel
+
+An autonomous-by-default audit workspace with a real native embedded Chromium session shared with Playwright. Users observe actual execution, answer structured agent questions, and may interact directly with the same browser only through explicit safe exclusive control handoff. A finding earns verification through reproducible Agent execution and a traceable expected-versus-observed mismatch; manual interaction or model reasoning alone cannot verify it.
+
+## Who It's For
+
+Designers and developers checking a web application running on their own machine, who want actionable findings with reproducible steps and suggested fixes. They supply the target, goal, and any requirements needed to establish expected behavior.
+
+## The Core Loop
+
+1. Open FlowProof AI, configure an AI provider, API key, and model, and create or select a locally saved project. No FlowProof AI account is required.
+2. Start an audit with an explicitly authorized localhost URL, a user-defined goal, relevant context, and execution limits.
+3. The agent autonomously forms a plan, creates TODOs, and uses Playwright to inspect and interact with the application. When clarification, a decision, or required information is needed, it calls `ask_user`, pauses safely in Awaiting Input, and resumes after the user answers.
+4. Observe actual activity, TODOs, findings, and native continuously rendered embedded Chromium. Respond through `ask_user` and, when needed, explicitly hand browser ownership from Agent to User without simultaneous control. Suspend Agent browser operations while the User owns control; on return, inspect actual state before continuing. Distinguish manual actions in history and do not count them automatically as verified Agent execution. There is no persistent composer, general messaging, or generic Pause/Resume/Stop/audit-goal redirection control.
+5. The agent collects actual browser evidence, attempts independent reproduction, checks alternative explanations, and classifies findings according to the verification contract below.
+6. Review a structured report and reopen the saved project, audit session, report, and linked evidence locally. Return with another goal or target, or to check an application revision.
+
+## Inspiration &amp; Identity
+
+The execution interface is inspired by [Codex](https://openai.com/codex/), [Claude Code](https://code.claude.com/docs/en/overview), and [OpenCode](https://opencode.ai/): autonomous Agent execution by default, a native shared browser, structured questions, explicit exclusive browser handoff, and inspectable evidence. The learner wants a focused, reliable, polished desktop product. Visual design specifics belong in the PRD.
+
+## Mandatory PRD Requirements
+
+The PRD must carry these requirements forward and define their detailed experience and behavior:
+
+- **Premium Desktop UX:** A polished startup experience, a first-launch New Audit empty state, an animated New Audit overlay, an off-white workspace, a project sidebar with distinctive letter-based icons, and a professional agent workspace inspired by modern coding agents.
+- **Real Live Browser Preview:** Require a real interactive Chromium browser embedded in the workspace with native continuous rendering, including animations, scrolling, navigation, typing, and dynamic updates. Playwright must control that exact displayed session, with explicit exclusive Agent/User handoff, isolation from privileged Electron functionality, and authorized localhost navigation for both owners. Screenshot streaming or a duplicate hidden browser does not meet this requirement. During 4-spec, investigate Electron WebContents embedding and BrowserView alternatives, Chromium DevTools Protocol integration, and Playwright CDP connectivity. Document compatibility, security, session fidelity, and recovery tradeoffs; feasibility is not yet established. Report any limitation preventing a truly shared interactive session before proposing a change to the approved UX.
+- **Agent Reliability:** Explicitly define internal cancellation and cleanup for application shutdown, critical failures, execution-budget exhaustion, and other safety conditions, alongside provider disconnection, browser failures, and structured `ask_user` interactions. Question-driven pausing and resumption are automatic. Internal cancellation preserves trustworthy partial evidence and clearly labels incomplete results; it is not a user-facing execution control.
+
+## Why This Matters to the Learner
+
+Build "a reliable, fully functional end-to-end AI agent workflow that combines intelligent reasoning, browser automation, and evidence-based UX auditing." The practical focus is tool orchestration, error handling, and validating AI-generated findings, using an experienced developer's concise, spec-driven workflow.
+
+## What "Working" Looks Like
+
+The finished proof of concept demonstrates the complete FlowProof AI experience, including:
+
+- Real BYOK execution using a selected model, with working integrations for OpenAI, Anthropic, Google Gemini, and OpenRouter, and OS-backed API-key storage.
+- A user-provided localhost URL and goal driving a real Playwright audit without application-specific execution logic.
+- Live actions and observations, evolving TODOs, actual Playwright browser state, tool details, and findings staying synchronized to the current audit session.
+- Structured `ask_user` interactions supporting single-choice, multiple-choice, and free-text responses, with a safe Awaiting Input pause and resumption after the user answers; no persistent composer or general-purpose messaging during execution.
+- A native embedded browser shared with Playwright, mutually exclusive Agent/User ownership, suspended Agent browser operations during User control, fresh inspection on return, and manual actions clearly separated from verified Agent execution evidence.
+- Working internal cancellation and cleanup for shutdown, critical failures, exhausted budgets, or safety conditions, preserving trustworthy partial evidence and clearly labeling interrupted audit results as incomplete.
+- An evidence-backed Verified Finding on a reproducible seeded defect, and conservative classification when an expectation or reproduction cannot be established.
+- Enforced navigation and execution boundaries, with incomplete or failed execution reported honestly and no fabricated actions or evidence.
+- Multiple projects and saved sessions available locally, with reports and evidence reopening after an application restart and only one audit executing at a time.
+
+The memorable moment: a user watches the autonomous agent encounter a problem, gather evidence, independently reproduce it in the browser, and produce a finding whose evidence the user can inspect.
+
+### Acceptance Fixture and Implementation Order
+
+Build FlowProof AI first. Introduce or reuse a minimal local test application later when needed for end-to-end validation. The initial acceptance fixture is a small React application at `http://localhost:3000` with a deliberately introduced sign-in usability or functional issue, such as missing feedback after incorrect credentials.
+
+The initial goal is: "Test the complete sign-in flow, identify functional and UX problems, and provide evidence-backed findings with reproducible steps and suggested fixes."
+
+Provide a traceable expectation for the seeded defect so verification can be tested. This fixture exercises the general URL-and-goal-driven product; changing the authorized URL, port, path, or user goal must not require sign-in-specific product logic.
+
+Hackathon delivery includes a short demo video and a public GitHub repository; deployment is optional. The curriculum targets 2–4 hours of active work. This requested scope remains ambitious for that timebox even with the execution boundaries below.
+
+## The POC Boundary
+
+### Execution and Product Breadth
+
+- **Platform:** Windows 11 x64.
+- **Automation:** Playwright with native embedded Chromium; one isolated shared browser session/context and single shared tab per active audit. Playwright attaches to the exact displayed session; no duplicate hidden automation browser.
+- **Targets:** Localhost web applications with configurable ports and paths. Browser automation is restricted to explicitly authorized targets and enforced navigation boundaries.
+- **Concurrency:** One active audit at a time. Multiple projects and audit sessions can be saved locally.
+- **AI:** OpenAI, Anthropic, Google Gemini, and OpenRouter through BYOK, with user-selectable models. The runtime and persisted product data are local; model requests use the selected provider.
+- **Budgets:** Configurable agent-step and timeout limits, plus token/cost usage limits where provider information is available. Missing usage information must remain explicit.
+- **Preflight and setup drafts:** On entering Review &amp; Start, automatically check provider/model connectivity, localhost availability, explicit authorization, and valid budgets; show the exact target, project name, goal, and individual Checking/Passed/Failed states. Disable Start Audit until all required checks pass, provide actionable Retry Checks without data loss, invalidate/rerun affected checks on changes, and revalidate critical conditions immediately before activation. Dismissal preserves only non-sensitive draft fields/progress for continuation or Start Fresh, clears consent, and invalidates prior preflight authority. Keep secrets out of ordinary draft storage; securely saved provider configuration can be reused without revealing its key. Keep setup responsive and distinct from execution; opening/dismissal creates no empty project/session or accidental audit, and activation gates precede all browser automation.
+- **Workspace:** An autonomous-by-default activity feed, dynamic TODOs, native embedded browser, findings, and expandable actual tool details. Execution-affecting user interaction is through structured `ask_user` and explicit exclusive browser handoff/direct input. Normal UI navigation/resizing does not transfer ownership or interrupt the agent. No persistent composer, general messaging, or generic Pause/Resume/Stop/audit-goal redirection controls.
+- **Structured response validation and Skip:** Validate ask_user responses against the declared schema in both UI and trusted Agent runtime: exactly one valid single-choice option, configured multiple-choice counts, required non-blank text, reasonable length limits, and declared formats. Inline errors preserve entered data under existing sensitive-input protections; invalid/incomplete responses never resume execution. Only explicitly supported Skip resolves a question without an answer and is recorded as a distinct outcome, never denial or authorization. Evaluate safe goal-relevant alternatives and record skipped work/coverage impact, or end as Blocked if missing required information prevents the goal and no safe continuation remains. Skip history retains only non-sensitive question metadata and its outcome, without fabricated answers, actions, findings, or verification. Dismissal leaves Awaiting Input; required questions without Skip support cannot be bypassed.
+- **Browser ownership:** Agent owns control by default. Explicit safe handoff grants direct User interaction while Agent browser operations are suspended; never allow simultaneous control. On return to Agent ownership, inspect actual browser state before continuing. Handoff preserves authorized navigation/security policy, internal cancellation/budgets, and one active audit/session.
+- **Handoff lifecycle:** Show Agent in Control with Take Control. A request enters Handoff Pending, immediately blocks new Agent browser operations, and waits for bounded safe completion of in-flight work before enabling User input. Show You are in Control with Return Control to Agent; suspend browser-dependent Agent execution. Returning disables manual input before URL/page/DOM/session inspection and plan/TODO reconciliation. Record uncertain outcomes honestly and use safe recovery without blind replay. Keep handoff distinct from ask_user; crash-time ownership restoration follows the explicit User Control and Handoff Pending recovery decisions in `prd.md &gt; Browser Control Ownership and Handoff`.
+- **Crash-time control and safe resumption:** Attempt bounded browser recovery up to twice within execution budgets. A User-Control crash keeps autonomous Agent execution suspended and restores User Control after successful recovery; explicit Return Control to Agent is required before Agent continuation. A Handoff-Pending crash cancels the incomplete handoff and recovers into Awaiting Control Decision, requiring explicit Take Control or Return Control to Agent. Never silently transfer ownership to the Agent. Agent resumption requires explicit authorization, recovered-session and authorized-localhost validation, current-page inspection, and reconciliation of TODOs and execution history; never blindly replay non-idempotent operations. Exhausted recovery ends as Interrupted with trustworthy partial results preserved and unfinished work clearly incomplete.
+- **Internal cancellation:** For application shutdown, critical failures, exhausted budgets, or other terminal runtime conditions, show Terminating when possible and immediately prevent new Agent/AI/browser/verification work. Signal supported request cancellation and allow only bounded safe completion of in-flight browser operations under a short configurable cleanup deadline, without budget bypass or blind interruption/replay of potentially non-idempotent work. Record actual observed outcomes or Unknown/Interrupted, then clean up browser/Agent resources and temporary secrets without indefinite waiting; retain securely stored provider credentials. Save trustworthy partial Interrupted results with the recorded termination reason and clearly incomplete verification. Incrementally persist audit events and recover incomplete persisted sessions on next launch for read-only inspection without automatic execution, uncertain-operation replay, or invented evidence/cleanup success. Internal cancellation adds no user-facing execution controls.
+- **Session integrity:** Progress, structured questions/answers, TODOs, browser events, evidence, and findings stay synchronized to the current audit. Distinguish User/manual actions from Agent/Playwright execution; manual interaction is not automatically verified Agent evidence. Action claims remain grounded in actual execution.
+- **Persistence:** Local projects, audit sessions, reports, and linked evidence.
+- **Saved-session lists:** Each project shows a compact list with a concise goal-derived title, final status, local start date/time, available recorded duration, separate Verified/Suspected counts, UX Observation count when space allows, and a safe short blocking/interruption reason when applicable. Sort by start time newest first with stable session ID tie-breaking; viewing or report updates never reorder entries. Clicking opens the saved read-only Audit Overview without execution restart or disruption of another audit. Show an elegant empty state when no sessions exist; preserve finding classifications and exclude sensitive inputs/raw credentials from every preview field.
+
+### Finding Verification Contract
+
+| Category | Meaning |
+| --- | --- |
+| **Verified Finding** | A reproducible issue supported by real browser execution, sufficient evidence, and a clear mismatch between traceable expected behavior and observed behavior. |
+| **Suspected Finding** | A potential issue supported by observations but lacking sufficient evidence, a reliable expectation, or successful independent reproduction. |
+| **UX Observation** | A usability concern or improvement suggestion that is not necessarily a functional defect. |
+
+A Verified Finding requires all of the following:
+
+- Actual Playwright execution demonstrating the issue.
+- Documented expected and observed behavior, with a traceable source for the expectation: user-provided requirements, an explicit acceptance criterion, or a deterministic application contract.
+- Linked screenshots, executed steps, and browser state sufficient to support the conclusion; DOM snapshots, console errors, or network failures when relevant.
+- At least one successful independent reproduction attempt, performed when safe and feasible. If reproduction cannot be safely attempted or does not succeed, the finding remains unverified.
+- Checks for timing issues, navigation delays, test-environment failures, and incorrect test inputs as potential false positives.
+- An explanation of why the actual evidence supports the conclusion, including remaining limitations.
+
+Every finding includes a title and description, category/verification status, severity, evidence-grounded confidence, expected versus actual behavior, reproduction steps, linked evidence artifacts, suggested fix, and relevant limitations or uncertainty. Expected behavior that cannot be established is explicitly identified as such. Confidence is separate from verification status; no complex scoring system is needed.
+
+Incomplete evidence, failed reproduction, or unreliable expectations require downgrading to Suspected Finding or UX Observation as appropriate. All evidence comes from actual tool execution; an LLM may analyze evidence but cannot fabricate it or substitute reasoning for verification. The pipeline remains application- and workflow-independent.
+
+### Preserved Architecture and Stack
+
+Local-first desktop architecture with no FlowProof AI authentication or user accounts, hosted backend, or cloud database. API keys use secure OS-backed storage. Audits can run without creating a FlowProof AI account.
+
+The approved stack remains: Electron; React 19 + TypeScript + Vite; Tailwind CSS 4 + shadcn/ui; Zustand + TanStack Query; Node.js agent runtime; Playwright; Vercel AI SDK; SQLite + Drizzle ORM; Pino; electron-builder; Vitest.
+
+## Later
+
+- Cross-platform distribution beyond Windows 11 x64.
+- Additional browser engines and broader browser-session/tab support.
+- Concurrent audits and multi-agent execution.
+- Target environments beyond localhost, with appropriate authorization boundaries.
+
+Keep the architecture extensible for broader targets and user-defined flows while delivering the bounded workflow above first.
+
+## Explicitly Cut
+
+- **Hosted backend, cloud database, and cloud infrastructure:** the product's runtime and persistence are local-first.
+- **FlowProof AI authentication and user accounts:** account-free BYOK is a fixed product decision.
+- **Sign-in-specific execution logic and a fixture-first implementation:** the application is built first, and the later fixture validates the reusable audit loop.
+- **Complex scoring systems and unnecessary verification infrastructure:** prioritize a small, genuinely working evidence-and-reproduction pipeline.
+- **Two-way free-form chat, a persistent composer, and unsolicited audit-goal instructions:** structured `ask_user` and the explicit browser-control handoff are the permitted execution-affecting interactions.
+- **Generic Pause/Resume/Stop, audit-goal redirection, and uncoordinated or simultaneous browser control:** autonomous Agent ownership is the default; direct User browser input requires explicit exclusive handoff and never bypasses security policy.
+- **Screenshot-streaming substitutes and duplicate hidden automation browsers:** the live experience must use the exact native embedded session controlled by Playwright. Screenshots remain valid evidence artifacts, not the live rendering mechanism. Mandatory 4-spec feasibility validation must establish a safe compatible approach before implementation.
+- **Simulated execution, fabricated evidence, and unsupported verification claims:** the core promise depends on traceable real actions and conservative classification.
+</pre></details>
+      </section>
+
+      <footer class="review-footer" aria-labelledby="review-title"><h2 id="review-title">Scope and PRD approved. Next: the technical spec.</h2><p>The approved PRD defines the desktop UX, real shared-browser experience, and agent-reliability behavior within these established boundaries. The official 4-spec workflow now evaluates technical feasibility before selecting the final implementation mechanism.</p><div class="footer-links"><a href="scope.md">Open canonical Markdown ↗</a><a href="prd.html">Read the approved PRD ↗</a><a href="spec.html">Technical feasibility checkpoint ↗</a><a href="#prd-requirements">Read mandatory PRD requirements ↑</a><a href="#overview">Back to overview ↑</a></div></footer>
+    </div>
+  </main>
+  <script>
+    (() => {
+      'use strict';
+      document.documentElement.classList.add('enhanced');
+
+      const stepButtons = [...document.querySelectorAll('[data-step]')];
+      const flowPanels = [...document.querySelectorAll('[data-flow-panel]')];
+      const flowNodes = [...document.querySelectorAll('[data-flow-node]')];
+      function selectStep(step) {
+        stepButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.step === step)));
+        flowPanels.forEach(panel => { panel.hidden = panel.dataset.flowPanel !== step; });
+        flowNodes.forEach(node => node.setAttribute('data-active', String(node.dataset.flowNode === step)));
+      }
+      stepButtons.forEach(button => button.addEventListener('click', () => selectStep(button.dataset.step)));
+      selectStep('1');
+
+      const categoryButtons = [...document.querySelectorAll('[data-category]')];
+      const categoryPanels = [...document.querySelectorAll('.category-panel')];
+      function selectCategory(category, focus = false) {
+        categoryButtons.forEach(button => {
+          const selected = button.dataset.category === category;
+          button.setAttribute('aria-selected', String(selected));
+          button.tabIndex = selected ? 0 : -1;
+          if (selected && focus) button.focus();
+        });
+        categoryPanels.forEach(panel => { panel.hidden = panel.dataset.kind !== category; });
+      }
+      categoryButtons.forEach((button, index) => {
+        button.addEventListener('click', () => selectCategory(button.dataset.category));
+        button.addEventListener('keydown', event => {
+          let next = index;
+          if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (index + 1) % categoryButtons.length;
+          else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (index + categoryButtons.length - 1) % categoryButtons.length;
+          else if (event.key === 'Home') next = 0;
+          else if (event.key === 'End') next = categoryButtons.length - 1;
+          else return;
+          event.preventDefault();
+          selectCategory(categoryButtons[next].dataset.category, true);
+        });
+      });
+      selectCategory('verified');
+
+      const boundaries = [...document.querySelectorAll('#boundary-sections > details')];
+      document.getElementById('expand-boundaries').addEventListener('click', () => boundaries.forEach(section => { section.open = true; }));
+      document.getElementById('collapse-boundaries').addEventListener('click', () => boundaries.forEach(section => { section.open = false; }));
+
+      const navLinks = [...document.querySelectorAll('.rail nav a')];
+      function markCurrent(id) {
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === '#' + id) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+      }
+      navLinks.forEach(link => link.addEventListener('click', () => markCurrent(link.hash.slice(1))));
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+          const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+          if (visible.length) markCurrent(visible[0].target.id);
+        }, { rootMargin: '-5% 0px -60% 0px', threshold: 0 });
+        navLinks.forEach(link => {
+          const target = document.getElementById(link.hash.slice(1));
+          if (target) observer.observe(target);
+        });
+      }
+
+      let printState;
+      window.addEventListener('beforeprint', () => {
+        printState = [...document.querySelectorAll('details')].map(detail => [detail, detail.open]);
+        printState.forEach(([detail]) => { detail.open = true; });
+      });
+      window.addEventListener('afterprint', () => {
+        if (printState) printState.forEach(([detail, wasOpen]) => { detail.open = wasOpen; });
+      });
+    })();
+  </script>
+</body>
+</html>
