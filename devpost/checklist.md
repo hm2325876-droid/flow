@@ -1,17 +1,17 @@
 ---
 doc: checklist
-status: draft
+status: approved
 ---
 
 # FlowProof AI — Build Checklist
 
 The simplified technical specification is approved and official `4-spec` is complete. This checklist translates its unchanged six-slice implementation sequence into verifiable working increments for official `5-build`.
 
-The approved architecture discussion is now recorded: npm Workspaces, one desktop application and five shared code packages. The sequence is unchanged; no slice is implemented or completed. This is a documentation-only update; wait for explicit authorization before creating application directories/manifests, installing dependencies or starting Slice 1.
+The approved architecture and sequence are unchanged. The learner's Slice 1 implementation directive explicitly authorizes Slice 1 only, including installation, real desktop/browser implementation, verification and one local checkpoint commit. Stop after Slice 1; later slices and 6-ship remain unauthorized.
 
-Build mode: Not yet selected. No build-mode choice or implementation authorization is inferred from this architecture record; official hands-on checkpoints and final review remain required.
+Build mode: Fast for Slice 1, as explicitly directed: autonomous routine implementation, concise evidence-based progress, mechanical acceptance before the local commit, and a hands-on desktop review at handoff. No later slice or final review is implied complete.
 
-Git: Local repository initialized at `D:\FlowProof-AI`; initial planning/configuration commit `96273ac`. Current permission covers architecture documentation and one local documentation-only commit. Application implementation remains paused. Preserve unrelated local files and exclude learner-profile/credentials; do not push to a remote.
+Git: Existing local history includes `96273ac` and architecture checkpoint `62ddd82`. The Slice 1 directive authorizes one descriptive local commit after essential acceptance passes. Preserve unrelated untracked files and exclude learner-profile/credentials; do not push.
 
 The commands below are implementation targets supplied by their slices, not commands claimed to exist already. Smoke checks exercise the actual FlowProof application and record real observations; deterministic test pages and unit doubles must never be presented as autonomous Agent execution or acceptance results. Real provider configuration is entered in the application, not pasted into chat or committed.
 
@@ -25,7 +25,7 @@ The commands below are implementation targets supplied by their slices, not comm
 
 ## Slices
 
-- [ ] **1. Launch the real Electron workspace and control its native browser**
+- [x] **1. Launch the real Electron workspace and control its native browser**
   Becomes usable: The Windows application opens into its premium off-white workspace and honest New Audit empty state. Its actual product browser host supports a native shared Chromium view controlled through Playwright, with no duplicate or screenshot substitute.
   Why now: Includes bootstrapping while proving the browser kernel and desktop presentation immediately. Package the real shell/worker early so launch and distribution failures are discovered before building the rest.
   PRD ref: `prd.md > The Core Journey` (launch/workspace), `Workspace Layout and Observation UI`, `Real Live Browser Preview`, `Browser Control Ownership and Handoff`.
@@ -91,6 +91,14 @@ The commands below are implementation targets supplied by their slices, not comm
 - [ ] Integrated Agent behavior explored — after slice 3, use a real configured model and inspect activity, TODOs, questions and ownership; this supplies distinct runtime feedback before report finalization.
 - [ ] Final kick-the-tires exploration and feedback completed — after slice 6's real acceptance run, explore the packaged core journey and agree on remaining small revisions.
 
+## Slice 1 Verification and Handoff
+
+Slice 1 is mechanically verified under the learner's directive: reproducible root `npm ci`, typecheck, 15 focused Vitest tests, workspace build and actual Windows packaging passed. Selected final development, root dev-server and packaged runs each recorded 12 PASS / 0 FAIL / 0 UNVERIFIED. Real Main/Utility target identity, concurrent connection exclusion, actual DOM/screenshot effects, native mouse/keyboard/guarded SendInput exclusion, navigation/popup guards, resize and cleanup were observed. See `devpost/slice-1-results.json` and the root README for exact report paths/hashes, commands and limitations.
+
+Verified current-code package: `apps/desktop/dist/slice1-final/win-unpacked/FlowProof AI.exe`. A manually opened default-output copy was preserved rather than terminated; the final candidate was packaged side-by-side. Owned final smoke processes exited. Hands-on feedback remains pending and is not inferred from the manually opened window.
+
+Only desktop, Contracts and Browser Runtime workspace code was needed. No empty Agent Core/AI Providers/Persistence implementations, provider calls, LLM activity, SQLite history, questions/findings orchestration or WebMCP integration were added. These remain later slices. Stop here: Slice 2 and 6-ship are not authorized by Slice 1 completion.
+
 ## Final Review
 
 - [ ] Real end-to-end acceptance passed with a configured provider, actual native browser execution, sufficient evidence/reproduction and local restart/reopen; results recorded without secrets.
@@ -113,3 +121,9 @@ Activity mode: Not yet performed; use a focused experienced-developer investigat
 ## Revisions
 
 - Approved npm Workspaces organization recorded before implementation — move the target source layout into apps/desktop and exactly five shared packages; run Agent Core/Browser Runtime/AI Providers in Utility while Main retains native/security/credential/Persistence ownership. Preserve the approved six-slice sequence and product requirements; implementation remains unstarted and requires explicit authorization.
+- Slice 1 explicitly authorized by the implementation directive — execute only the desktop/browser foundation in fast mode and make one verified local checkpoint; preserve the later slice sequence and stop before Slice 2.
+- Bundle workspace contracts/runtime code but externalize packaged Playwright Core/WS — trying to bundle Playwright pulled optional Kerberos resolution into the desktop build; retaining its runtime package preserves the proven CDP approach.
+- Use a restricted trusted app protocol for compiled Renderer assets — packaged file-URL loading failed with the retained file-protocol fuse restrictions; app-protocol loading passed without weakening guest/Renderer isolation.
+- Reserve connection/disconnection ownership before the first await and keep candidate cleanup local — read-only review and an actual RED concurrent-IPC run exposed two entering lifecycles; the corrected actual-app regression passes.
+- Make cleanup safe against late native/Utility publication and bind the owned validation fixture on both loopback families — actual smoke runs exposed those lifecycle/network issues; final development and packaged checks pass.
+- Use a side-by-side final package output when a manually opened copy locks the default folder — preserve the user's running app while verifying the current-code executable; this changes no application architecture or slice scope.

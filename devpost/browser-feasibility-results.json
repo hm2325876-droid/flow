@@ -25,9 +25,11 @@
       "package_rule": "Shared code boundaries, not separate processes; Contracts/public exports and injected ports avoid cycles; Utility storage requests go through Main"
     },
     "implementation_authorized": false,
-    "next": "Documentation checkpoint only; await explicit authorization before 5-build implementation. Preserve the approved six-slice order; 6-ship waits for real acceptance/final review."
+    "last_authorized_scope": "Slice 1 only; now mechanically verified. No further implementation is authorized by completion.",
+    "slice_1_report": "slice-1-results.json",
+    "next": "Stop after the Slice 1 local checkpoint; await hands-on feedback and explicit Slice 2 authorization. 6-ship still waits for real end-to-end audit acceptance/final review."
   },
-  "approval": { "scope": "approved_unchanged", "prd": "approved_unchanged", "spec": "approved", "4_spec": "complete", "workspace_architecture": "approved", "5_build": "implementation_paused" },
+  "approval": { "scope": "approved_unchanged", "prd": "approved_unchanged", "spec": "approved", "4_spec": "complete", "workspace_architecture": "approved", "5_build": "slice_1_mechanically_verified_hands_on_pending" },
   "candidate": "One native WebContentsView, partition-scoped Electron session adapter, authenticated guest-scoped CDP bridge backed by that displayed WebContents' native debugger, and a trusted native input shield",
   "attachment_note": "Checkpoint 2 tests a scoped CDP attachment variant, not the original unrestricted browser-wide debugging listener. This is not final architectural approval.",
   "runtime": { "platform": "win32", "arch": "x64", "windows_kernel": "10.0.22631", "host_node": "24.13.0", "electron": "45.0.0", "chromium": "156.0.8078.48", "embedded_node": "24.22.0", "playwright_core": "1.64.1", "ws": "8.22.0", "electron_builder": "26.15.3", "electron_fuses": "2.1.3", "observed_input_dpi": 144 },

@@ -1,0 +1,13 @@
+appId: ai.flowproof.desktop
+productName: FlowProof AI
+directories:
+  output: dist
+files:
+  - out/**/*
+  - package.json
+asar: true
+npmRebuild: false
+afterPack: resources/fuses.cjs
+win:
+  target: dir
+  signAndEditExecutable: false

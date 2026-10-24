@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "slice": 1,
+  "status": "MECHANICALLY_VERIFIED",
+  "product_scope": "Launchable Windows desktop and real shared-browser foundation; no autonomous AI audit or findings implementation",
+  "environment": {"platform": "win32", "architecture": "x64", "electron": "45.0.0", "chromium": "156.0.8078.48", "controller_node": "24.13.0", "npm": "11.21.1", "playwright_core": "1.64.1"},
+  "checks": {
+    "npm_ci_from_root_lockfile": "PASS",
+    "npm_workspace_resolution": "PASS: desktop, contracts, browser-runtime; regular 0.1.0 workspace references",
+    "typecheck": "PASS",
+    "vitest": {"pass": 15, "fail": 0, "command": "npm test"},
+    "build": "PASS",
+    "windows_x64_packaging": "PASS: current-code side-by-side output preserves the manually opened default copy",
+    "source_and_artifact_hash_validation": "PASS: recorded source hashes and executable/ASAR hashes match current files",
+    "owned_smoke_processes_remaining": 0,
+    "human_hands_on_review": "UNVERIFIED; not inferred from an Explorer-launched app"
+  },
+  "latest_runs": {
+    "development": {"path": "test-results/slice1/2026-10-24T20-28-05-256Z-development/report.json", "sha256": "ca9ecb08d2efece99fa38fd4d2d34fb7fd4743ae619d9a779f7da3b96ecc8f6a", "pass": 12, "fail": 0, "unverified": 0},
+    "root_development_server": {"path": "test-results/slice1/2026-10-24T20-38-37-447Z-dev-server/report.json", "sha256": "688f2c904cd3f7c475a3d4717b44a2af2349cc0f625b6f309f7d51a50fe92b39", "pass": 12, "fail": 0, "unverified": 0},
+    "packaged": {"path": "test-results/slice1/2026-10-24T20-36-41-585Z-packaged/report.json", "sha256": "3c8a863b91a1b18bd9574739386ed18519ef00a982c3e073a765cb495927c0c4", "pass": 12, "fail": 0, "unverified": 0, "app_isPackaged": true}
+  },
+  "tested_behaviors": [
+    "Main/React/Preload and separate Utility startup",
+    "Strict exposed preload API and runtime contract rejection",
+    "Main native target identity matches the Utility Playwright target",
+    "Concurrent actual UI connection requests admit exactly one lifecycle",
+    "Scoped endpoint rejects missing/browser-origin/malformed auth and a second client",
+    "Real button click, fill, navigation, independent native DOM observation and PNG capture",
+    "Native view/shield bounds track window resizing and sidebar changes",
+    "Win32 owned-window mouse/keyboard input reaches shield without guest mutation while CDP succeeds",
+    "Guarded foreground Win32 SendInput is excluded in the selected final runs",
+    "Direct/indirect outside navigation, reachable redirect and popup attempts are blocked",
+    "Configured port/initial path passes through the actual Renderer/Preload/Main connection API",
+    "Owned Main and Utility exit cleanly; no final smoke processes remain"
+  ],
+  "packaged_artifact": {
+    "path": "apps/desktop/dist/slice1-final/win-unpacked/FlowProof AI.exe",
+    "executable_sha256": "b833a39db5b4aea85ae5bec00ea366949a1f18ee45ed3bcad15423861020146f",
+    "asar_sha256": "88b70c0497fb98d54ae3b0ef916fde2e5e4b376b2a7094bcb2bd83be5df2cd00",
+    "distribution": "Unsigned unpacked Windows folder; keep sibling files; not a signed installer"
+  },
+  "regressions_and_corrections": [
+    {"issue": "Two concurrent connections could cross native/Utility target ownership", "red_report": "test-results/slice1/2026-10-24T20-23-30-336Z-development/report.json", "correction": "Reserve lifecycle synchronously before any await; separate internal release from public guarded disconnect and clean up only the local candidate", "final_result": "PASS in all selected final smoke modes"},
+    {"issue": "Packaged file URL asset loading failed with retained file-protocol restrictions", "correction": "Serve compiled assets through a restricted trusted app protocol; keep sandbox and fuse protections", "final_result": "PASS packaged Renderer/preload/native/Utility runtime"},
+    {"issue": "Shutdown could publish against destroyed native content", "correction": "Suppress late publication, clear closed host ownership, explicitly clean native views and destroy the window before quit", "final_result": "PASS actual Main/Utility cleanup"},
+    {"issue": "Owned localhost fixture could bind only one address family", "correction": "Loopback-only IPv4 and IPv6 listeners on the same fixture port", "final_result": "PASS actual Chromium target connection"}
+  ],
+  "review": {"independent_read_only_review": "Completed; connection race found, reproduced RED and corrected. Follow-up found no remaining Critical/Important code blocker; current-code package rerun subsequently passed.", "historical_run_policy": "Earlier failures, transient native-helper failures, safe input aborts and an interrupted command remain local historical observations, never relabeled as passing."},
+  "unverified_or_deferred": ["Human hands-on desktop feedback", "Full Take Control / Return Control UI and recovery lifecycle", "Physical hardware/IME/touch/accessibility and broad DPI/focus matrix", "Full CDP/OOPIF/worker compatibility", "BYOK/provider calls, autonomous Agent Core, TODOs/questions/findings/history and WebMCP implementation", "Signed installer, updater and advanced integrity enforcement"],
+  "next": "Stop after Slice 1 local checkpoint. Await hands-on feedback and explicit Slice 2 authorization. Do not start 6-ship."
+}

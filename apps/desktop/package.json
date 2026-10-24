@@ -1,0 +1,8 @@
+{
+  "name":"@flowproof/desktop","version":"0.1.0","private":true,"type":"module",
+  "description":"FlowProof AI Windows desktop application", "author":"FlowProof AI",
+  "main":"out/main/index.js",
+  "scripts":{"dev":"electron-vite dev","build":"electron-vite build","package:win":"electron-builder --win --x64 --dir --publish never"},
+  "dependencies":{"@flowproof/contracts":"0.1.0","@flowproof/browser-runtime":"0.1.0","ws":"8.22.0","zod":"4.3.6","react":"19.2.0","react-dom":"19.2.0","lucide-react":"0.468.0","@radix-ui/react-slot":"1.2.3","class-variance-authority":"0.7.1","clsx":"2.1.1","tailwind-merge":"3.4.0"},
+  "devDependencies":{"electron":"45.0.0","electron-vite":"6.0.0","electron-builder":"26.15.3","@electron/fuses":"2.1.3","vite":"7.3.1","@vitejs/plugin-react":"5.1.2","tailwindcss":"4.1.18","@tailwindcss/vite":"4.1.18"}
+}

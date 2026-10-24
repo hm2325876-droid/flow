@@ -1,0 +1,1 @@
+{"extends":"./tsconfig.base.json","include":["apps/desktop/src/**/*.ts","apps/desktop/src/**/*.tsx","apps/desktop/electron.vite.config.ts","apps/desktop/test/**/*.ts","packages/*/src/**/*.ts","packages/*/test/**/*.ts","vitest.config.ts"]}
