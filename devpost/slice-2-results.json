@@ -1,0 +1,324 @@
+{
+  "schema_version": 1,
+  "slice": 2,
+  "status": "MECHANICALLY_VERIFIED_WITH_DISCLOSED_LIVE_KEY_LIMITATION",
+  "recorded_at": "2026-10-25T10:29:09.976797+00:00",
+  "architecture_base_commit": "c7b0b42",
+  "slice_1_commit": "78e3d09",
+  "scope": "Models.dev catalog, registered AI SDK adapters, Main-owned Windows BYOK, local non-sensitive settings/drafts, complete audit setup and a typed memory-only future Agent Core handoff; no autonomous execution or synthetic audits.",
+  "checks": {
+    "typecheck": "PASS",
+    "focused_tests": {
+      "status": "PASS",
+      "pass": 46,
+      "fail": 0,
+      "files": 9,
+      "command": "npm test"
+    },
+    "production_build": "PASS",
+    "windows_x64_packaging": "PASS",
+    "production_dependency_audit": {
+      "status": "PASS",
+      "vulnerabilities": 0
+    },
+    "source_and_artifact_hashes": "PASS: final packaged setup source hashes and both packaged reports match the current files/EXE/ASAR",
+    "original_slice_1_evidence": "UNCHANGED"
+  },
+  "registered_providers": [
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "adapter": "@ai-sdk/openai"
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic",
+      "adapter": "@ai-sdk/anthropic"
+    },
+    {
+      "id": "google",
+      "name": "Google Gemini",
+      "adapter": "@ai-sdk/google"
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "adapter": "@ai-sdk/openai-compatible"
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "adapter": "@ai-sdk/deepseek"
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "adapter": "@ai-sdk/groq"
+    }
+  ],
+  "catalog": {
+    "count": 8929,
+    "providerCount": 232,
+    "supportedCount": 514,
+    "toolCount": 7849,
+    "unknownTools": 0,
+    "source": "network",
+    "stale": false,
+    "fetchedAt": "2026-10-25T10:26:55.827Z",
+    "warning": null,
+    "idsValid": true
+  },
+  "credentials": {
+    "actual_windows_encryption": "PASS: save/replace/remove, no stored-key return or plaintext diagnostics/storage, restart persistence",
+    "unavailable_protection": "PASS: isolated failure-path test; no plaintext fallback",
+    "ownership": "Main owns ciphertext and SQLite; only the selected trusted Utility adapter receives a transient stored key; newly typed input temporarily traverses Renderer/Preload/Main"
+  },
+  "connectivity": {
+    "invalid_key_authentication": "PASS: actual packaged AI SDK request rejected the invalid placeholder and never became Ready",
+    "successful_authenticated_tool_roundtrip": "UNVERIFIED: no authorized valid test key supplied",
+    "sdk_tool_protocol_isolated": "PASS: actual SDK request serialization, schema-valid challenge, locally generated receipt, follow-up consumption, two-request ceiling and zero automatic retries",
+    "unavailable_model_and_other_errors": "PASS: isolated SDK/error-path tests for 404, rate limiting, quota, network, timeout and inconclusive tool interactions; no live unavailable-model claim"
+  },
+  "audit_setup": {
+    "wizard": "PASS: actual model search/filters, Configure/Review, eight readiness checks, fresh consent and reopening with consent cleared",
+    "live_blocked_handoff": "PASS: missing/unverified credentials never produce Ready or create a native audit/session",
+    "ready_handoff_isolated": "PASS: strict typed localhost-only handoff after all checks with a provider test double; not a live product run",
+    "draft_restart": "PASS",
+    "full_agent_execution": "NOT IMPLEMENTED: Slice 3 only"
+  },
+  "runs": {
+    "setup_development": {
+      "report": "test-results/slice2/2026-10-25T10-02-10-465Z-development/report.json",
+      "summary": {
+        "pass": 13,
+        "fail": 0,
+        "unverified": 1
+      },
+      "unverified": [
+        {
+          "name": "authenticated-live-tool-roundtrip-and-ready-handoff",
+          "observed": {
+            "status": "UNVERIFIED",
+            "reason": "No valid authorized provider test key is configured; no authenticated model success or Ready handoff is claimed."
+          }
+        }
+      ]
+    },
+    "setup_dev_server": {
+      "report": "test-results/slice2/2026-10-25T10-09-35-257Z-dev-server/report.json",
+      "summary": {
+        "pass": 12,
+        "fail": 0,
+        "unverified": 2
+      },
+      "unverified": [
+        {
+          "name": "real-ai-sdk-invalid-key-request-is-never-ready",
+          "observed": {
+            "status": "UNVERIFIED",
+            "reason": "The real SDK request could not establish an authentication response in this environment.",
+            "verification": {
+              "providerId": "openai",
+              "modelId": "gpt-daybreak-blue-latest",
+              "status": "network",
+              "message": "The provider could not be reached. Check the network connection and retry.",
+              "connectivity": false,
+              "toolCalling": false,
+              "checkedAt": "2026-10-25T10:10:00.734Z",
+              "expiresAt": null
+            }
+          }
+        },
+        {
+          "name": "authenticated-live-tool-roundtrip-and-ready-handoff",
+          "observed": {
+            "status": "UNVERIFIED",
+            "reason": "No valid authorized provider test key is configured; no authenticated model success or Ready handoff is claimed."
+          }
+        }
+      ]
+    },
+    "setup_packaged": {
+      "report": "test-results/slice2/2026-10-25T10-26-51-396Z-packaged/report.json",
+      "summary": {
+        "pass": 13,
+        "fail": 0,
+        "unverified": 1
+      },
+      "unverified": [
+        {
+          "name": "authenticated-live-tool-roundtrip-and-ready-handoff",
+          "observed": {
+            "status": "UNVERIFIED",
+            "reason": "No valid authorized provider test key is configured; no authenticated model success or Ready handoff is claimed."
+          }
+        }
+      ]
+    },
+    "browser_development": {
+      "report": "test-results/slice1/2026-10-25T09-50-35-940Z-development/report.json",
+      "summary": {
+        "pass": 11,
+        "fail": 0,
+        "unverified": 1
+      },
+      "unverified": [
+        {
+          "name": "native-os-input-excluded-during-real-playwright-operation",
+          "observed": {
+            "status": "UNVERIFIED",
+            "reason": "Owned activation point obscured",
+            "nativeInput": {
+              "foreground": 1903492,
+              "reason": "Owned activation point obscured",
+              "status": "UNVERIFIED",
+              "expectedWindow": "2164462",
+              "expectedRoot": 2164462,
+              "hitWindow": 1903492,
+              "activation": {
+                "x": 827,
+                "y": 30
+              }
+            },
+            "point": {
+              "x": 1158,
+              "y": 537,
+              "activateX": 827,
+              "activateY": 30,
+              "hwnd": "2164462"
+            },
+            "cdpWorkedWithShield": true
+          }
+        }
+      ]
+    },
+    "browser_packaged": {
+      "report": "test-results/slice1/2026-10-25T10-26-31-068Z-packaged/report.json",
+      "summary": {
+        "pass": 11,
+        "fail": 0,
+        "unverified": 1
+      },
+      "unverified": [
+        {
+          "name": "native-os-input-excluded-during-real-playwright-operation",
+          "observed": {
+            "status": "UNVERIFIED",
+            "reason": "Owned activation point obscured",
+            "nativeInput": {
+              "hitWindow": 2952110,
+              "status": "UNVERIFIED",
+              "activation": {
+                "y": 30,
+                "x": 827
+              },
+              "foreground": 2952110,
+              "expectedWindow": "4000530",
+              "expectedRoot": 4000530,
+              "reason": "Owned activation point obscured"
+            },
+            "point": {
+              "x": 1158,
+              "y": 537,
+              "activateX": 827,
+              "activateY": 30,
+              "hwnd": "4000530",
+              "focus": {
+                "window": true,
+                "shield": true,
+                "renderer": false,
+                "guest": false
+              }
+            },
+            "cdpWorkedWithShield": true
+          }
+        }
+      ]
+    }
+  },
+  "runtime": [
+    {
+      "electron": "45.0.0",
+      "chromium": "156.0.8078.48",
+      "isPackaged": true,
+      "pid": 15956,
+      "utilityPid": 7104
+    },
+    {
+      "electron": "45.0.0",
+      "chromium": "156.0.8078.48",
+      "isPackaged": true,
+      "pid": 14096,
+      "utilityPid": 2724
+    }
+  ],
+  "artifacts": {
+    "executable": "apps\\desktop\\dist\\slice2-final\\win-unpacked\\FlowProof AI.exe",
+    "executableSha256": "39e704fc5c04e4e61d29c37e9eaf7b2517bef7066a304684048fedb5275d341b",
+    "asarSha256": "d8adb6591a51ae67a8b786cf1d9aed64ba3c605e9f4ef6537a8e89919403d78d"
+  },
+  "source_sha256": {
+    "package.json": "eea515367611413e530f923ca6d4112130b893cac9b86734ac8692e4e423c56f",
+    "package-lock.json": "073b5114ee787b3cee0abd9d45f522fb58cdec70a13c77724bc5dd9e1a7f830f",
+    "apps/desktop/package.json": "db8c1e2a1035b77c2b6df387105da5e707eff3b975eff381512731824de9e0bc",
+    "apps/desktop/electron.vite.config.ts": "7fdb268dadb7f1ae2bbe13b75fb6abb248d894b01e831d40ad3f2d1067af15ec",
+    "apps/desktop/electron-builder.yml": "06e1cbd69e84f7d466c0a722d63a105b95e864e02aa5d6037a117356efd226bf",
+    "apps/desktop/src/main/index.ts": "2bf14bed8e47b82d9f799e4f194568925f0e4c17e6caed0c0383c7559362c611",
+    "apps/desktop/src/main/setup.ts": "29bf79ef9636bb5426a8c3fa0e8e5eef914ca86ba94bfe76832b6a1dc3c444be",
+    "apps/desktop/src/main/credentials.ts": "3a4ae004358bd5112f5c62f8bfb6338e18e9e8e4e2701a29d96bce38042f1c55",
+    "apps/desktop/src/main/agent-supervisor.ts": "626fab6f8e6ca4337dc3d19f2a02ea9bc69f461a95b9de125a9fd8c88c6ed413",
+    "apps/desktop/src/main/smoke-control.ts": "7d200ce4b9bd70d34b5e8de9e830c189a6503e8679237014809cea08f50db851",
+    "apps/desktop/test/setup-smoke.mjs": "bfcc3a6692de3339fe233e4abc9c6fa7167cc9f0fb5eb3b0502ceac193741196",
+    "apps/desktop/src/preload/index.ts": "2545d93109049332b879808ba73f1af134ce3f76be902f665903de1408211ecb",
+    "apps/desktop/src/utility/index.ts": "4939020436bb8ea5793e9dd893d301fb3821461586d13027d088e7c8c7d5911f",
+    "apps/desktop/src/renderer/App.tsx": "52d58cfea94e5cc102ed7b27f5ca120ccce2fba160b2fc9b7bdfec79ba5f45eb",
+    "apps/desktop/src/renderer/SetupDialog.tsx": "15b7c2a7583277d377aa0275e6fe0f614b5d7d39da43bbc50b6d32db60ddff62",
+    "apps/desktop/src/renderer/styles.css": "792c65fc302c08038f46f7be74f11831179044507eb045f0a4821e1c701ec7ed",
+    "apps/desktop/src/renderer/setup.css": "ff53c44424511de90d0d78b99ec55d79e569e70ccb170b91e98b12d8b68d34f8",
+    "packages/contracts/src/setup.ts": "2992c67e40d45eac380e0b7a941da2fa969e8cbd60d018bd53799dd6540ba2cd",
+    "packages/ai-providers/package.json": "9d66504217f065bc370f73614d62c44ab414a7f1b9dd48ef9e745780fe8abd01",
+    "packages/ai-providers/src/index.ts": "c7fe3c17507a4eb450b4a78a034f56f3f9815d9d48d047ba3508e6340dbb1e08",
+    "packages/ai-providers/src/catalog.ts": "db94310e7442999bd956ed426a44f96a8936e3e8abd521396b05b0c1fa85f016",
+    "packages/ai-providers/src/registry.ts": "3e30caf155827f43a9b333cfd1a335c19bd6fe3d1bd35d06931952d38aa2cabf",
+    "packages/ai-providers/src/preflight.ts": "f52f41d3d6e35420e610c3e23a0317e2b53b9bc110e6a1e471e04b5342991e6c",
+    "packages/persistence/package.json": "b94d8d4a655782a097abbf67a2c97b250016e65dfbf15321a0d7022538a1ba5f",
+    "packages/persistence/src/index.ts": "bfbb960969e0fc9ef7605c91afe7c3587b02e7341df78e730778224c097cf901"
+  },
+  "ui_captures": [
+    {
+      "bytes": 88331,
+      "artifactId": "desktop-1792924021785.png",
+      "nativeComposite": false,
+      "folder": "test-results\\slice2\\2026-10-25T10-26-51-396Z-packaged\\profile\\browser-checks"
+    },
+    {
+      "bytes": 69463,
+      "artifactId": "desktop-1792924022874.png",
+      "nativeComposite": false,
+      "folder": "test-results\\slice2\\2026-10-25T10-26-51-396Z-packaged\\profile\\browser-checks"
+    }
+  ],
+  "limitations": [
+    "No valid authorized provider test key was supplied. Authenticated successful tool calling and a live Ready handoff are UNVERIFIED; successful SDK protocol/handoff coverage uses isolated test responses, never an injected product success.",
+    "The guarded OS-level SendInput replay could not establish owned window/shield focus. It aborted before injection and remains UNVERIFIED; actual Win32 window-routed mouse and keyboard shield delivery and unchanged guest values passed.",
+    "Development-server invalid-key connectivity was network-limited in its final run; the real built and packaged app invalid-key authentication paths passed.",
+    "Offline fetch fallback and secure-storage-unavailable behavior are verified by isolated tests. Actual network retrieval, persistent-cache reuse and Windows encryption/restart behavior passed in the app.",
+    "The bundled node:sqlite API emits an experimental-feature warning. Persistence currently contains only a settings table, not audit history.",
+    "One low-severity esbuild development-tool advisory remains; production npm audit reports zero vulnerabilities. Compatible Zod, Vite and Vitest patches resolved the reported production/high/critical issues.",
+    "Windows x64 unsigned folder distribution only; broad hardware/IME/accessibility coverage and human hands-on sign-off remain unverified. Slice 3, full history, product WebMCP and 6-ship are not implemented."
+  ],
+  "verification_corrections": [
+    "Fixed responsive dialog sizing to account for the reserved native titlebar.",
+    "Pinned every provider API URL explicitly so SDK environment defaults cannot alter endpoints.",
+    "Fixed only the private native-smoke focus arrangement: restore/observe shield focus after window activation; missing event delivery still fails and unavailable focus aborts honestly.",
+    "Earlier failed/inconclusive reports remain under ignored test-results; only the explicit final replay results above are accepted."
+  ],
+  "official_references": [
+    "https://github.com/anomalyco/models.dev#api",
+    "https://ai-sdk.dev/docs/foundations/providers-and-models",
+    "https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling",
+    "https://www.electronjs.org/docs/latest/api/safe-storage",
+    "https://orm.drizzle.team/docs/connect-drizzle-proxy"
+  ],
+  "stop_condition": "STOP after this local Slice 2 checkpoint. No push; explicit authorization required before Slice 3."
+}

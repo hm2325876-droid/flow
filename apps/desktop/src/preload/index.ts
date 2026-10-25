@@ -1,6 +1,7 @@
 import {contextBridge,ipcRenderer} from 'electron';
-import {channels,targetSchema,slotSchema,desktopStateSchema,type DesktopAPI} from '@flowproof/contracts';
+import {channels,targetSchema,slotSchema,desktopStateSchema,setupCommandSchema,setupStateSchema,type DesktopAPI} from '@flowproof/contracts';
 const api:DesktopAPI=Object.freeze({
+  setup:async value=>setupStateSchema.parse(await ipcRenderer.invoke(channels.setup,setupCommandSchema.parse(value))),
   state:async()=>desktopStateSchema.parse(await ipcRenderer.invoke(channels.state)),
   connect:async value=>desktopStateSchema.parse(await ipcRenderer.invoke(channels.connect,targetSchema.parse(value))),
   validation:async()=>desktopStateSchema.parse(await ipcRenderer.invoke(channels.validation)),

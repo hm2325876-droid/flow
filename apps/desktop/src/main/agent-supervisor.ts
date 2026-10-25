@@ -6,7 +6,7 @@ export class AgentSupervisor {
   pid=0;ready=false;failed=false;
   constructor(private entry:string,private changed:()=>void){}
   async start(){
-    this.child=utilityProcess.fork(this.entry,[],{serviceName:'FlowProof Browser Runtime',stdio:'pipe'});
+    this.child=utilityProcess.fork(this.entry,[],{serviceName:'FlowProof Runtime',stdio:'pipe'});
     this.child.on('message',(raw:unknown)=>{
       const parsed=utilityReplySchema.safeParse(raw);if(!parsed.success)return;
       const m=parsed.data;
@@ -19,7 +19,7 @@ export class AgentSupervisor {
   request(input:Record<string,unknown>):Promise<unknown>{
     const message=utilityCommandSchema.parse({...input,id:++this.seq});
     if(!this.ready||!this.child)return Promise.reject(new Error('Browser runtime unavailable'));
-    return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(message.id);reject(new Error('Browser runtime deadline exceeded'))},20000);this.pending.set(message.id,{resolve,reject,timer});this.child!.postMessage(message);});
+    return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(message.id);reject(new Error(message.type==='provider'?'Provider operation deadline exceeded':'Browser runtime deadline exceeded'))},message.type==='provider'?55000:20000);this.pending.set(message.id,{resolve,reject,timer});this.child!.postMessage(message);});
   }
   async stop(){if(this.ready)await Promise.race([this.request({type:'close'}).catch(()=>{}),new Promise(r=>setTimeout(r,1500))]);this.child?.kill();}
 }

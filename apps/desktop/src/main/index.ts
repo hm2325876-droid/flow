@@ -1,9 +1,10 @@
-import {app,BrowserWindow,ipcMain,protocol} from 'electron';
+import {app,BrowserWindow,ipcMain,protocol,safeStorage} from 'electron';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
-import {channels,targetSchema,slotSchema,checkResultSchema,type DesktopState,type Target,type Slot} from '@flowproof/contracts';
+import {channels,targetSchema,slotSchema,checkResultSchema,setupCommandSchema,setupStateSchema,supportedProviderDescriptors,type DesktopState,type Target,type Slot} from '@flowproof/contracts';
+import {SetupService} from './setup';
 import {AgentSupervisor} from './agent-supervisor';
 import {BrowserHost} from './browser/host';
 import {ValidationPage} from './browser/validation-page';
@@ -17,6 +18,7 @@ protocol.registerSchemesAsPrivileged([{scheme:'flowproof-shield',privileges:{sta
 if(process.env.FLOWPROOF_SMOKE_PROFILE)app.setPath('userData',process.env.FLOWPROOF_SMOKE_PROFILE);
 let win:BrowserWindow,worker:AgentSupervisor,host:BrowserHost|undefined,gate=new RunGate(),busy=false,connected=false,closing=false,exitAllowed=false;
 let status='Desktop ready',error:string|null=null,check:DesktopState['check']=null;
+let setup:SetupService;
 let currentSlot:Slot={x:0,y:0,width:0,height:0,visible:false};
 const fixture=new ValidationPage();let diagnostic=false;
 function state():DesktopState{return {version:app.getVersion(),utility:worker?.ready?'ready':worker?.failed?'unavailable':'starting',connected,busy,url:host&&!host.guest.webContents.isDestroyed()?host.guest.webContents.getURL():'',diagnostic,status,error,check};}
@@ -70,11 +72,17 @@ function trusted(event:Electron.IpcMainInvokeEvent){const expected=new URL(rende
 function bind(){
   const handle=(name:string,fn:(data:unknown)=>unknown)=>ipcMain.handle(name,async(event,data)=>{trusted(event);return fn(data)});
   handle(channels.state,()=>state());handle(channels.connect,v=>connect(targetSchema.parse(v)));handle(channels.validation,()=>validation());handle(channels.check,()=>runCheck());handle(channels.disconnect,()=>disconnect());handle(channels.slot,v=>{currentSlot=slotSchema.parse(v);host?.position(currentSlot);});
+  handle(channels.setup,async value=>{
+    const parsed=setupCommandSchema.safeParse(value);
+    if(!parsed.success)throw new Error('Invalid setup request');
+    return setupStateSchema.parse(await setup.handle(parsed.data));
+  });
 }
 async function shutdown(){
   if(closing)return;closing=true;busy=true;
   if(process.env.FLOWPROOF_SMOKE_PIPE)console.log('SHUTDOWN:worker');
   await worker?.stop();
+  await setup?.close();
   if(process.env.FLOWPROOF_SMOKE_PIPE)console.log('SHUTDOWN:views');
   host?.close();host=undefined;fixture.close();exitAllowed=true;
   if(!win.isDestroyed())win.destroy();
@@ -95,7 +103,9 @@ app.whenReady().then(async()=>{
   win.removeMenu();win.webContents.setWindowOpenHandler(()=>({action:'deny'}));win.webContents.on('will-navigate',event=>event.preventDefault());
   win.on('close',event=>{if(!exitAllowed){event.preventDefault();void shutdown()}});
   win.on('resize',()=>{if(host)host.position(host.slot)});
-  worker=new AgentSupervisor(path.join(directory,'utility.js'),publish);bind();
+  worker=new AgentSupervisor(path.join(directory,'utility.js'),publish);
+  setup=new SetupService({folder:app.getPath('userData'),secureStorage:safeStorage,requestProvider:command=>worker.request({type:'provider',command}),providers:supportedProviderDescriptors,hasActiveAudit:()=>busy});
+  bind();
   if(rendererUrl)await win.loadURL(rendererUrl);else await win.loadURL('flowproof-app://workspace/');
   win.show();await worker.start();publish();
   // Opt-in, nonce-authenticated smoke transport. No generic evaluation or public UI API.

@@ -19,6 +19,7 @@ secrets.*.json
 api-keys.json
 api_keys.json
 apikeys.json
+provider-vault.json
 *.key
 *.pem
 *.p12

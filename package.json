@@ -1,7 +1,15 @@
 {
-  "name": "flowproof-ai", "version": "0.1.0", "private": true,
-  "workspaces": ["apps/*", "packages/*"],
-  "engines": {"node": ">=24.0.0", "npm": ">=11.0.0"},
+  "name": "flowproof-ai",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=11.0.0"
+  },
   "scripts": {
     "dev": "npm run dev --workspace @flowproof/desktop",
     "build": "npm run build --workspace @flowproof/desktop",
@@ -10,10 +18,17 @@
     "package:win": "npm run build && npm run package:win --workspace @flowproof/desktop",
     "smoke:desktop": "node apps/desktop/test/smoke.mjs development",
     "smoke:dev-server": "node apps/desktop/test/smoke.mjs dev-server",
-    "smoke:packaged": "node apps/desktop/test/smoke.mjs packaged"
+    "smoke:packaged": "node apps/desktop/test/smoke.mjs packaged",
+    "smoke:setup": "node apps/desktop/test/setup-smoke.mjs development",
+    "smoke:setup:dev-server": "node apps/desktop/test/setup-smoke.mjs dev-server",
+    "smoke:setup:packaged": "node apps/desktop/test/setup-smoke.mjs packaged"
   },
   "devDependencies": {
-    "typescript": "5.9.3", "vitest": "4.0.18", "@types/node": "24.0.0",
-    "@types/react": "19.2.0", "@types/react-dom": "19.2.0", "@types/ws": "8.18.1"
+    "@types/node": "24.0.0",
+    "@types/react": "19.2.0",
+    "@types/react-dom": "19.2.0",
+    "@types/ws": "8.18.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.12"
   }
 }

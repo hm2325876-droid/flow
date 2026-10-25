@@ -1,12 +1,24 @@
 import {utilityCommandSchema} from '@flowproof/contracts';
 import {BrowserRuntime} from '@flowproof/browser-runtime';
+import {getCatalog,verifyModel} from '@flowproof/ai-providers';
 type Parent={on(event:'message',listener:(event:{data:unknown})=>void):void;postMessage(message:unknown):void};
 const parent=(process as NodeJS.Process&{parentPort:Parent}).parentPort;
-const runtime=new BrowserRuntime();let busy=false;
+const runtime=new BrowserRuntime();let busy=false,providerBusy=false;
 parent.on('message',async event=>{
   const parsed=utilityCommandSchema.safeParse(event.data);
   if(!parsed.success)return;
   const message=parsed.data;
+  if(message.type==='provider'){
+    if(providerBusy){parent.postMessage({type:'reply',id:message.id,ok:false,error:'Another provider operation is active'});return;}
+    providerBusy=true;
+    try{
+      const command=message.command;
+      const result=command.type==='catalog'?await getCatalog(command.cache,command.refresh):await verifyModel(command.selection,command.key);
+      parent.postMessage({type:'reply',id:message.id,ok:true,result});
+    }catch{parent.postMessage({type:'reply',id:message.id,ok:false,error:'Model discovery is unavailable. Retry with an internet connection or use a saved supported model.'});}
+    finally{if(message.command.type==='verify')message.command.key='';providerBusy=false;}
+    return;
+  }
   if(busy){parent.postMessage({type:'reply',id:message.id,ok:false,error:'Another browser operation is active'});return;}
   busy=true;
   try {

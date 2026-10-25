@@ -1,8 +1,8 @@
 # FlowProof AI
 
-A local-first Windows desktop workspace for evidence-based browser audits. **Slice 1 is implemented:** a real Electron application, premium off-white React shell, isolated native Chromium view, and Utility-process Playwright control of that exact visible session.
+A local-first Windows desktop workspace for evidence-based browser audits. **Slice 2 is implemented:** real Models.dev discovery, six registered AI SDK adapters, Windows-protected BYOK, and an authorized localhost audit setup wizard. The native Chromium/Utility-process Playwright foundation from Slice 1 is preserved.
 
-This version is the desktop/browser foundation, not an autonomous AI auditor yet. It contains no simulated agent activity, completed TODOs, sample projects, fabricated findings, provider calls or audit-history database.
+This version prepares a verified configuration for future Agent Core execution. Autonomous audits arrive in Slice 3. It creates no fake sessions, synthetic activity, sample projects or findings; SQLite currently stores only non-sensitive settings/drafts/catalog metadata.
 
 ## Run
 
@@ -19,7 +19,11 @@ In the app:
 3. Alternatively, select **Open validation page**. It serves a small owned loopback-only mechanics page and displays it in the actual application browser.
 4. **Run check** performs real Playwright navigation, button click, input fill, DOM observation and PNG capture inside the Utility process. Main independently reads the native DOM and verifies target identity before reporting success.
 
-**New audit** and **Settings** honestly describe the later BYOK/audit capabilities. `Ctrl+N` opens the New Audit introduction. Sidebar collapse, workspace/findings navigation, panel resizing, browser enlargement and native Windows titlebar controls work.
+**New audit** (`Ctrl+N`) opens the complete setup wizard; **Settings** opens AI connections. Search providers and models, filter advertised tools/reasoning/image input, inspect adapter availability, and select an executable model. Add a provider key privately in the app, save it, and select **Test connection & tools**. Configure the project, testing goal, optional context, localhost port/path and limits. Review runs real readiness checks and requires fresh explicit target authorization. **Prepare ready-to-run configuration** rechecks the gates and produces a typed handoff; it does not run an audit. A returning configured user can continue a saved draft, with fresh consent and checks.
+
+Catalog discovery is broad; only installed/registered adapters execute. Missing/stale metadata remains explicit. With no network and no saved catalog, the UI shows an actionable error rather than invented models; an exact native model ID may still be entered for a registered provider. Search/filtering never sends model requests. Non-sensitive drafts save locally; closing setup invalidates preflight and clears consent. Stored keys are never displayed or returned to Renderer.
+
+Sidebar collapse, workspace/findings navigation, panel resizing, browser enlargement and native Windows titlebar controls remain available.
 
 ## Verify
 
@@ -29,13 +33,15 @@ npm test
 npm run build
 npm run smoke:desktop
 npm run smoke:dev-server
+npm run smoke:setup
+npm run smoke:setup:dev-server
 ```
 
 The development smoke launches the built, unpackaged application. The dev-server smoke executes the actual root `npm run dev` path. Both use a private, nonce-authenticated opt-in test transport with a fixed command allowlist—no generic evaluation API is exposed to Renderer or website content.
 
 The smoke checks actual React rendering and preload keys, a separate Utility PID, target-ID/native-WebContents identity, concurrent connection exclusion, scoped transport authorization, real DOM/screenshot effects, native bounds after resizing, native mouse/keyboard exclusion, localhost/redirect/popup blocking, configurable initial path, and Main/Utility cleanup. Native messages target only the verified owned process/window. Guarded `SendInput` aborts rather than touching another application or releasing a user's modifiers; an aborted test is UNVERIFIED, never PASS.
 
-Reports, app test profiles and PNGs are generated under `test-results/slice1/` and ignored by Git. The portable checkpoint summary is [`devpost/slice-1-results.json`](devpost/slice-1-results.json). Earlier failed/inconclusive runs remain local historical records rather than being rewritten as successful.
+Reports, app test profiles and PNGs are generated under `test-results/slice1/` and ignored by Git. The portable checkpoint summary is [`devpost/slice-1-results.json`](devpost/slice-1-results.json). Earlier failed/inconclusive runs remain local historical records rather than being rewritten as successful. Slice 2 reports and UI captures are under `test-results/slice2/`; the portable result summary is [`devpost/slice-2-results.json`](devpost/slice-2-results.json). Setup smoke uses clearly invalid synthetic key placeholders to test actual OS encryption and invalid authentication. Successful authenticated connectivity/tool calling remains UNVERIFIED without a valid authorized test key. Isolated SDK responses test the successful protocol and handoff without claiming live success.
 
 ## Package Windows x64
 
@@ -46,24 +52,25 @@ npm run smoke:packaged
 
 Default output: `apps/desktop/dist/win-unpacked/FlowProof AI.exe`. Keep **the entire sibling folder**, including DLLs and `resources/app.asar`; copying the EXE alone is not a distribution.
 
-The checkpoint's verified **current-code** copy is:
+The Slice 2 checkpoint's **current-code** side-by-side output is:
 
 ```text
-apps/desktop/dist/slice1-final/win-unpacked/FlowProof AI.exe
+apps/desktop/dist/slice2-final/win-unpacked/FlowProof AI.exe
 ```
 
 A manually opened older copy was locking the default output during the final rebuild. It was left running; the current candidate was built side-by-side with the same configuration:
 
 ```powershell
 npm run build
-npm run package:win --workspace @flowproof/desktop -- --config.directories.output=dist/slice1-final
-$env:FLOWPROOF_PACKAGED_EXE = "$PWD/apps/desktop/dist/slice1-final/win-unpacked/FlowProof AI.exe"
+npm run package:win --workspace @flowproof/desktop -- --config.directories.output=dist/slice2-final
+$env:FLOWPROOF_PACKAGED_EXE = "$PWD/apps/desktop/dist/slice2-final/win-unpacked/FlowProof AI.exe"
 npm run smoke:packaged
+npm run smoke:setup:packaged
 ```
 
 Close a running output copy before rebuilding into its folder on Windows. `FLOWPROOF_PACKAGED_EXE` only selects the smoke-test executable; it does not affect normal application behavior.
 
-Packaged Main, Preload, Renderer and Utility resources run from ASAR with no development server or separately installed Node. A restricted `flowproof-app://workspace/` handler serves compiled Renderer assets. The sandboxed CommonJS preload is self-contained. Workspace code is bundled, while Playwright Core/WS remain explicit packaged runtime dependencies. ASAR-only loading is enabled; RunAsNode, NodeOptions, Node CLI inspection and extra file-protocol privileges are disabled. Signing, installers, update lifecycle and advanced integrity enforcement are deferred. No native SQLite dependency exists in this slice; native rebuild configuration must be enabled when Persistence is implemented.
+Packaged Main, Preload, Renderer and Utility resources run from ASAR with no development server or separately installed Node. A restricted `flowproof-app://workspace/` handler serves compiled Renderer assets. The sandboxed CommonJS preload is self-contained. Workspace code is bundled, while Playwright Core/WS remain explicit packaged runtime dependencies. ASAR-only loading is enabled; RunAsNode, NodeOptions, Node CLI inspection and extra file-protocol privileges are disabled. Signing, installers, update lifecycle and advanced integrity enforcement are deferred. Main uses Node’s bundled `node:sqlite` through the documented Drizzle SQLite proxy for the settings-only database; no third-party native SQLite addon or ABI rebuild is needed.
 
 ## Actual source organization
 
@@ -77,15 +84,16 @@ apps/desktop/
     main/
       index.ts                    # lifecycle, IPC, trusted app assets, browser orchestration
       agent-supervisor.ts         # supervises the real Utility process
+      setup.ts / credentials.ts   # readiness gates and Main-only OS-protected keys
       smoke-control.ts            # opt-in authenticated mechanical-test commands only
       browser/
         host.ts                   # native guest/session/input shield
         cdp-bridge.ts             # authenticated guest-scoped native-debugger transport
         policy.ts                 # origin, bounds and exclusive-operation gate
         validation-page.ts        # owned loopback mechanics page, not an AI audit fixture
-    preload/index.ts              # seven narrow typed APIs
+    preload/index.ts              # narrow typed browser/setup APIs
     renderer/                     # actual React desktop shell, styles and shadcn-style button
-    utility/index.ts              # validated browser-runtime request entry
+    utility/index.ts              # validated browser/provider request entry
   test/
     desktop.test.ts
     smoke.mjs
@@ -93,22 +101,24 @@ apps/desktop/
 packages/
   contracts/                      # Zod schemas, serializable messages, typed preload API
   browser-runtime/                # Playwright connection/checks inside Utility
+  ai-providers/                   # Models.dev catalog, fixed adapter registry and tool preflight
+  persistence/                    # settings-only SQLite/Drizzle under Main
 package.json / package-lock.json  # npm Workspaces, regular local version references
 tsconfig.base.json / tsconfig.json / vitest.config.ts
 devpost/                          # approved plans, checklist, checkpoint summary
 ```
 
-Agent Core, AI Providers and Persistence remain approved future package boundaries; no empty source boilerplate was generated for them. Their implementations belong to later slices.
+Agent Core remains a planned package boundary; no empty implementation was created. Full audit history, evidence/reports and autonomous orchestration remain later work.
 
-### Approved Slice 2 provider amendment (documentation only)
+### Implemented Slice 2 provider path
 
-Models.dev supplies catalog-driven provider/model discovery and advisory metadata: identifiers, display names, tool calling, structured output, reasoning, and input/output modalities where available, plus limits/pricing. Vercel AI SDK supplies provider integration and execution through adapters actually installed and registered in trusted application code. This replaces the restriction to four hardcoded providers; the Slice 1 Settings labels remain historical placeholders, not a working execution registry. No application source is changed by this amendment.
+Models.dev supplies catalog-driven provider/model discovery and advisory metadata: identifiers, display names, tool calling, structured output, reasoning, and input/output modalities where available, plus limits/pricing. Vercel AI SDK supplies provider integration and execution through adapters actually installed and registered in trusted application code. This replaces the restriction to four hardcoded providers; the real registry contains OpenAI, Anthropic, Google Gemini, OpenRouter (official OpenAI-compatible adapter at a fixed reviewed URL), DeepSeek and Groq. Provider/model IDs remain separate, including native aggregator namespaces.
 
-When Slice 2 is explicitly authorized, the planned `packages/ai-providers` boundary will own discovery/search/filter/cache/offline fallback, supported versus unverified status, adapter resolution and one lightweight real tool-round-trip preflight. Main retains encrypted keys and cache persistence; Utility executes SDK requests; Renderer never receives stored key values. No metadata-triggered package installs, arbitrary catalog endpoints/code or universal-compatibility promise. Full autonomous execution remains Slice 3. See [`spec.md > Providers and Credentials`](devpost/spec.md#providers-and-credentials) and the amended checklist. **Slice 2 is not started or authorized by this documentation amendment.**
+`packages/ai-providers` owns discovery/search/filter/cache/offline fallback, supported versus unverified status, adapter resolution and a real two-request tool-round-trip preflight, with automatic retries disabled and a 40-second deadline. Main retains encrypted keys and cache persistence; Utility executes SDK requests; Renderer never receives stored key values. No metadata-triggered package installs, arbitrary catalog endpoints/code or universal-compatibility promise. Full autonomous execution remains Slice 3. See [`spec.md > Providers and Credentials`](devpost/spec.md#providers-and-credentials) and the amended checklist. Fresh successful readiness is reused for five minutes within an uninterrupted setup and invalidated by dismissal/restart/configuration changes. Catalog refresh failures do not invalidate otherwise valid readiness. Provider errors are fixed safe messages; telemetry/raw SDK warnings are disabled. Main stores only OS-encrypted ciphertext in `provider-vault.json` and non-sensitive settings in `flowproof.sqlite`. Neither authorization nor prepared handoffs are persisted. Secure-storage failure blocks key save/use with no plaintext fallback.
 
 ## Pinned implementation dependencies
 
-Electron 45.0.0 · Playwright Core 1.64.1 · React/React DOM 19.2.0 · TypeScript 5.9.3 · Tailwind CSS 4.1.18 · electron-vite 6.0.0 · electron-builder 26.15.3 · Zod 4.3.6 · Vitest 4.0.18 · WS 8.22.0. The desktop declares Vite 7.3.1; electron-vite's compatible resolved build engine is 7.3.7. The single root lockfile records the complete reproducible dependency graph.
+Electron 45.0.0 · Playwright Core 1.64.1 · React/React DOM 19.2.0 · TypeScript 5.9.3 · Tailwind CSS 4.1.18 · electron-vite 6.0.0 · electron-builder 26.15.3 · Zod 4.6.7 · Vitest 4.1.12 · WS 8.22.0. Vite is 7.3.7. Slice 2 uses AI SDK 7.0.153 and Drizzle 0.45.4; exact adapter versions are in `packages/ai-providers/package.json`. Compatible Zod/Vite/Vitest security patches were applied; the final production audit reports zero advisories. The single root lockfile records the complete reproducible dependency graph.
 
 ## Security and scope
 
@@ -116,6 +126,6 @@ Electron 45.0.0 · Playwright Core 1.64.1 · React/React DOM 19.2.0 · TypeScrip
 - Workspace and guest both use context isolation and sandboxing with Node integration disabled. Guest has no privileged preload. Requests/navigation are confined to the exact authorized `http://localhost:<port>` origin; popups, downloads/device permissions and non-GET/HEAD guest requests are denied in this foundation.
 - One visible audit guest/session exists per connection. Connect/disconnect lifecycle reservations occur before the first await; overlapping requests are rejected. Connection replacement closes the prior client/views and issues fresh scoped capabilities.
 - A separate transparent trusted native shield reserves input while CDP still targets the guest. Tested native mouse/keyboard events do not mutate guest values during actual Playwright work. This is bounded Windows evidence, not universal hardware/IME/accessibility validation.
-- Screenshots are generated only by the explicitly owned mechanics check in this slice. No API keys are requested or stored. Diagnostic captures are not findings or audit reports.
+- Provider keys entered by the user temporarily traverse Renderer → validated Preload/Main input, then are OS-encrypted. Main releases stored keys only for the selected trusted Utility adapter; no stored-key read API exists. Provider origins are pinned in code and redirects are rejected. Catalog data cannot select endpoints, environment variables, executable packages or permissions. Diagnostic/UI captures are not findings or audit reports.
 
-Full BYOK, autonomous planning, dynamic TODOs, structured questions, evidence-based findings, SQLite history, full Take/Return handoff and WebMCP integration are deliberately unimplemented. Broader CDP/worker/IME/touch/accessibility coverage and human hands-on sign-off remain unverified. **Slice 2 and 6-ship have not started.**
+Autonomous planning, dynamic TODOs, structured questions, evidence-based findings, full audit history, Take/Return handoff and WebMCP integration remain unimplemented. Broader CDP/worker/IME/touch/accessibility coverage and human hands-on sign-off remain unverified. Guarded OS-input smoke may report UNVERIFIED if another window obscures the owned activation point; it does not interact with that window. **Stop after Slice 2; Slice 3 and 6-ship require separate authorization.**
