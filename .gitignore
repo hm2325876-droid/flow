@@ -20,6 +20,8 @@ api-keys.json
 api_keys.json
 apikeys.json
 provider-vault.json
+audit-checkpoint.json
+audit-artifacts/
 *.key
 *.pem
 *.p12

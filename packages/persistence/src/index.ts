@@ -1,4 +1,5 @@
 import {mkdir} from 'node:fs/promises';
+export {AuditCheckpoint} from './audit-checkpoint';
 import path from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
 import {eq} from 'drizzle-orm';

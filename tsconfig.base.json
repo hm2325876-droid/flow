@@ -30,6 +30,9 @@
       ],
       "@flowproof/persistence": [
         "packages/persistence/src/index.ts"
+      ],
+      "@flowproof/agent-core": [
+        "packages/agent-core/src/index.ts"
       ]
     }
   }

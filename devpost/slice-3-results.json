@@ -1,0 +1,765 @@
+{
+  "slice": 3,
+  "baseCommit": "8f515c407a880e6ad9d84cedd6c0bd5b448e7ec6",
+  "recordedAt": "2026-10-25T18:42:21.195071+00:00",
+  "status": "IMPLEMENTED_AND_MECHANICALLY_VERIFIED; AUTHENTICATED_LIVE_ACCEPTANCE_UNVERIFIED",
+  "authorization": "Slice 3 only. No Slice 4/5/6, WebMCP, shipping or push.",
+  "architecture": {
+    "main": "Native views, exact-origin policy, per-operation leases and document-bound one-use approvals, brokered secrets, secure provider keys, checkpoints and Utility supervision.",
+    "utility": "Actual AI SDK ToolLoopAgent orchestration and Playwright on the same authorized displayed target.",
+    "renderer": "Real Start Audit, streamed activity/TODOs, schema-driven questions, exclusive Take/Return Control and truthful terminal states.",
+    "packages": [
+      "contracts",
+      "agent-core",
+      "browser-runtime",
+      "ai-providers",
+      "persistence"
+    ],
+    "sourceSeparationIsNotRuntimeIsolation": true
+  },
+  "modelExecution": {
+    "sdk": "ai 7.0.153 ToolLoopAgent",
+    "adapters": [
+      "openai",
+      "anthropic",
+      "google",
+      "openrouter",
+      "deepseek",
+      "groq"
+    ],
+    "identity": "Original separate providerId/modelId retained through setup/Main key callback/registered adapter/AgentRuntime. No Gateway or silent substitution.",
+    "liveAuthenticatedAudit": "UNVERIFIED",
+    "reason": "No authorized valid provider key was supplied or used for this task. Test runs use an explicitly injected deterministic SDK model and test-only preflight inside separate test entries; no test provider is registered in production.",
+    "productionNetworkEvidence": {
+      "connection": {
+        "providerId": "openai",
+        "modelId": "gpt-daybreak-blue-latest",
+        "status": "authentication",
+        "message": "The provider rejected the API key or account access. Replace the key or check access to this model.",
+        "connectivity": false,
+        "toolCalling": false,
+        "checkedAt": "2026-10-25T18:37:18.010Z",
+        "expiresAt": null,
+        "authenticated": false,
+        "phase": "connection",
+        "diagnostic": {
+          "stage": "connection",
+          "category": "authentication",
+          "httpStatus": 401,
+          "sdkError": "AI_APICallError"
+        }
+      },
+      "uiFeedback": "The provider rejected the API key or account access. Replace the key or check access to this model.connection / connection · authentication · HTTP 401 · AI_APICallError",
+      "busyCleared": true,
+      "agentToolsDisabled": true,
+      "capture": {
+        "bytes": 79878,
+        "artifactId": "desktop-1792953439131.png",
+        "nativeComposite": false
+      }
+    }
+  },
+  "features": [
+    "Start reserves exclusivity synchronously and revalidates the eight existing readiness checks, fresh explicit per-audit consent, exact target/model, current key revision and capability attestation before native session/Utility activation.",
+    "A serialized ToolLoopAgent observes actual page state, updates an evidence-linked plan, invokes general semantic browser tools, asks structured questions and finishes only through validated terminal tools/conditions. No hidden reasoning is streamed.",
+    "Ordered UUID/sequence/timestamp events with immutable prefixes and full-state replay; safe operational details only. Stable TODOs use pending/in-progress/completed/blocked/skipped and require successful browser references for completion.",
+    "Single/multiple-choice, free text and masked sensitive input; trusted answer validation, stale/duplicate rejection, declared Skip only, minimize/persistent Answer Pending action and no generic composer.",
+    "Sensitive answers become Main-owned one-use references bound to audit, native generation and exact leased fill target. Raw answers do not enter model input, events, TODOs, checkpoints or reports. Stored provider keys never return to Renderer.",
+    "Take Control excludes new actions and waits for a safe checkpoint. Return disables manual input and reinspects before waking planning. Stale crash-time continuations cannot silently reclaim ownership; User intent/control decisions survive bounded recovery.",
+    "Main enforces origin/generation/ownership/action leases and consumes exact one-operation approvals. Known destructive/financial URLs/actions and credential-bearing GET URLs are denied. Unknown writes are blocked; a declared local form can receive one exact method/endpoint allowance.",
+    "If the native guard blocks a request during an action, the result reports policy-blocked rather than successful intended effects. Unknown action outcomes are not automatically replayed.",
+    "One bounded Main-owned checkpoint retains current/last real progress. Incomplete restart becomes inert Interrupted with no pending question or automatic execution. Full history and independently verified findings remain Slice 4."
+  ],
+  "browserTools": [
+    "inspect_page (URL/title/bounded visible text and semantic elements)",
+    "navigate (exact authorized localhost origin)",
+    "click",
+    "fill (public test input or broker reference)",
+    "select",
+    "press (bounded key list)",
+    "scroll",
+    "wait_for",
+    "capture_evidence (real masked PNG)"
+  ],
+  "privacy": {
+    "observationBounds": "6000 visible-text characters / 60 elements; current editable-input values remembered privately for redaction, never model properties.",
+    "capture": "Inputs and known echoed values masked; 2MB PNG cap; raw image routed to Main artifact storage rather than model text.",
+    "failClosed": "Observations/captures with unsafe manual-input collection bounds are withheld. URL query/fragment omitted.",
+    "memory": "Temporary JavaScript values are released best effort; no guaranteed secure erasure claim."
+  },
+  "limits": {
+    "modelCalls": "Configured maxSteps (default40)",
+    "browserActions": 160,
+    "wallClockMinutes": "Configured timeoutMinutes (default10), includes questions and User control",
+    "modelRequestSeconds": 45,
+    "browserActionSeconds": 15,
+    "cleanupSeconds": 5,
+    "measuredTokenCap": 100000,
+    "contextCharacters": 200000,
+    "modelOutputTokensPerCall": 2048,
+    "providerRetries": 3,
+    "providerBackoff": "1/2/4 seconds plus bounded jitter; honors bounded Retry-After without repeating completed tools",
+    "browserRecoveryAttempts": 2,
+    "usage": "Recorded provider token usage where available; unknown cost/usage not invented"
+  },
+  "automated": {
+    "typecheck": {
+      "command": "npm run typecheck",
+      "status": "PASS"
+    },
+    "unitAndContract": {
+      "command": "npm test",
+      "status": "PASS",
+      "files": 22,
+      "testsPassed": 131,
+      "testsFailed": 0
+    },
+    "build": {
+      "command": "npm run build",
+      "status": "PASS"
+    },
+    "productionPackage": {
+      "command": "npm run package:win --workspace @flowproof/desktop -- --config.directories.output=dist/slice3-agent",
+      "status": "PASS"
+    },
+    "coverage": [
+      "state transitions and terminal semantics",
+      "model/browser/token/context/time budgets",
+      "strict tool and IPC arguments",
+      "TODO evidence and candidate references",
+      "question validation, stale/duplicate answers and Skip",
+      "secret one-use/generation/leased-target binding and non-disclosure",
+      "exclusive ownership and concurrent return answers",
+      "crash-time Take/Return continuation races",
+      "provider retry limits/Retry-After/no replay/User intent",
+      "browser recovery limit and preserved ownership",
+      "atomic checkpoint lock retry/permanent failure/last record preservation",
+      "inert restart recovery and cleanup start reservation"
+    ]
+  },
+  "desktop": {
+    "developmentBrowser": {
+      "report": "test-results/slice1/2026-10-25T18-36-43-712Z-development/report.json",
+      "summary": {
+        "pass": 12,
+        "fail": 0,
+        "unverified": 0
+      },
+      "checks": [
+        {
+          "name": "desktop-and-utility-launch",
+          "status": "PASS"
+        },
+        {
+          "name": "real-react-shell-and-limited-preload",
+          "status": "PASS"
+        },
+        {
+          "name": "main-owned-native-guest-and-utility-cdp",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent-connects-preserve-one-authorized-target",
+          "status": "PASS"
+        },
+        {
+          "name": "scoped-transport-authorization",
+          "status": "PASS"
+        },
+        {
+          "name": "real-playwright-click-fill-navigation-and-screenshot",
+          "status": "PASS"
+        },
+        {
+          "name": "native-view-follows-resize-and-sidebar",
+          "status": "PASS"
+        },
+        {
+          "name": "window-routed-native-input-excluded-during-playwright",
+          "status": "PASS"
+        },
+        {
+          "name": "native-os-input-excluded-during-real-playwright-operation",
+          "status": "PASS"
+        },
+        {
+          "name": "native-origin-popup-and-reachable-redirect-boundaries",
+          "status": "PASS"
+        },
+        {
+          "name": "configured-port-and-initial-path-through-real-ui-bridge",
+          "status": "PASS"
+        },
+        {
+          "name": "graceful-process-cleanup",
+          "status": "PASS"
+        }
+      ],
+      "artifacts": null
+    },
+    "productionPackagedSetup": {
+      "report": "test-results/slice2/2026-10-25T18-37-03-413Z-packaged/report.json",
+      "summary": {
+        "pass": 15,
+        "fail": 0,
+        "unverified": 1
+      },
+      "checks": [
+        {
+          "name": "desktop-and-provider-utility-launch",
+          "status": "PASS"
+        },
+        {
+          "name": "real-models-dev-catalog-through-utility",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-provider-search-and-original-model-id-selection",
+          "status": "PASS"
+        },
+        {
+          "name": "stable-selection-and-missing-key-blocker",
+          "status": "PASS"
+        },
+        {
+          "name": "real-os-backed-save-replace-status",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-ui-basic-connection-failure-keeps-agent-tools-disabled",
+          "status": "PASS"
+        },
+        {
+          "name": "remove-invalid-key-before-local-wizard-checks",
+          "status": "PASS"
+        },
+        {
+          "name": "blank-fields-and-public-target-path-rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "localhost-checks-and-explicit-authorization-gate",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-provider-scoped-model-search-filter-and-back-navigation",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-configure-review-consent-and-dismissal-ui",
+          "status": "PASS"
+        },
+        {
+          "name": "restart-restores-selection-draft-encrypted-key-and-cache",
+          "status": "PASS"
+        },
+        {
+          "name": "credential-removal-and-future-handoff-remain-blocked",
+          "status": "PASS"
+        },
+        {
+          "name": "slice3-start-consent-and-secret-ipc-boundary",
+          "status": "PASS"
+        },
+        {
+          "name": "authenticated-live-tool-roundtrip-and-ready-handoff",
+          "status": "UNVERIFIED"
+        },
+        {
+          "name": "owned-main-and-utility-cleanup",
+          "status": "PASS"
+        }
+      ],
+      "artifacts": {
+        "executable": "apps\\desktop\\dist\\slice3-agent\\win-unpacked\\FlowProof AI.exe",
+        "executableSha256": "7a87a4d1c17de88bc3731d73655851b824a084368e3a5d96dd07a267f74b4556",
+        "asarSha256": "f86658e00a4f307954be4064a8516e466701efffc322418788c7dd788e9bb96f"
+      }
+    },
+    "productionPackagedBrowser": {
+      "report": "test-results/slice1/2026-10-25T18-37-39-859Z-packaged/report.json",
+      "summary": {
+        "pass": 12,
+        "fail": 0,
+        "unverified": 0
+      },
+      "checks": [
+        {
+          "name": "desktop-and-utility-launch",
+          "status": "PASS"
+        },
+        {
+          "name": "real-react-shell-and-limited-preload",
+          "status": "PASS"
+        },
+        {
+          "name": "main-owned-native-guest-and-utility-cdp",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent-connects-preserve-one-authorized-target",
+          "status": "PASS"
+        },
+        {
+          "name": "scoped-transport-authorization",
+          "status": "PASS"
+        },
+        {
+          "name": "real-playwright-click-fill-navigation-and-screenshot",
+          "status": "PASS"
+        },
+        {
+          "name": "native-view-follows-resize-and-sidebar",
+          "status": "PASS"
+        },
+        {
+          "name": "window-routed-native-input-excluded-during-playwright",
+          "status": "PASS"
+        },
+        {
+          "name": "native-os-input-excluded-during-real-playwright-operation",
+          "status": "PASS"
+        },
+        {
+          "name": "native-origin-popup-and-reachable-redirect-boundaries",
+          "status": "PASS"
+        },
+        {
+          "name": "configured-port-and-initial-path-through-real-ui-bridge",
+          "status": "PASS"
+        },
+        {
+          "name": "graceful-process-cleanup",
+          "status": "PASS"
+        }
+      ],
+      "artifacts": {
+        "executable": "apps\\desktop\\dist\\slice3-agent\\win-unpacked\\FlowProof AI.exe",
+        "executableSha256": "7a87a4d1c17de88bc3731d73655851b824a084368e3a5d96dd07a267f74b4556",
+        "asarSha256": "f86658e00a4f307954be4064a8516e466701efffc322418788c7dd788e9bb96f"
+      }
+    },
+    "deterministicNativeReactAgent": {
+      "report": "test-results/slice3/2026-10-25T18-31-36-812Z-native-agent/report.json",
+      "summary": {
+        "pass": 5,
+        "fail": 0,
+        "unverified": 0
+      },
+      "checks": [
+        {
+          "name": "native-main-utility-and-trusted-activation",
+          "status": "PASS"
+        },
+        {
+          "name": "structured-question-validation-and-secret-broker",
+          "status": "PASS"
+        },
+        {
+          "name": "exclusive-native-user-handoff-and-return-reinspection",
+          "status": "PASS"
+        },
+        {
+          "name": "masked-capture-terminal-integrity-and-distinct-nonlogin-goal",
+          "status": "PASS"
+        },
+        {
+          "name": "owned-process-cleanup-and-secret-free-diagnostics",
+          "status": "PASS"
+        }
+      ],
+      "artifacts": null
+    },
+    "deterministicPackagedReactAgent": {
+      "report": "test-results/slice3/2026-10-25T18-33-00-045Z-packaged-native-agent/report.json",
+      "summary": {
+        "pass": 5,
+        "fail": 0,
+        "unverified": 0
+      },
+      "checks": [
+        {
+          "name": "native-main-utility-and-trusted-activation",
+          "status": "PASS"
+        },
+        {
+          "name": "structured-question-validation-and-secret-broker",
+          "status": "PASS"
+        },
+        {
+          "name": "exclusive-native-user-handoff-and-return-reinspection",
+          "status": "PASS"
+        },
+        {
+          "name": "masked-capture-terminal-integrity-and-distinct-nonlogin-goal",
+          "status": "PASS"
+        },
+        {
+          "name": "owned-process-cleanup-and-secret-free-diagnostics",
+          "status": "PASS"
+        }
+      ],
+      "artifacts": {
+        "executable": "test-results\\slice3\\2026-10-25T18-33-00-045Z-packaged-native-agent\\native-test-package\\win-unpacked\\FlowProof Native Agent Test.exe",
+        "executableSha256": "031d7f47524fba7c119846b48b6521fea65f5ec9ec20de7a9be6b4f49766675c",
+        "asarSha256": "b1313f09ed30c3dc7bfabaa75368684d23b57bc8a534e738e86cb16a3d7c63b3"
+      }
+    }
+  },
+  "nativeAgentAcceptance": {
+    "testModelOnly": true,
+    "actualProductionReactAndPreload": true,
+    "actualMainAndUtilityAndNativeChromium": true,
+    "rendererArtifacts": {
+      "preloadSha256": "602988a169b70c8ab088dc194b091cba740950262804a2108da6a685279a00f5",
+      "assets": {
+        "index-CBQ8tUNR.js": "77c78e00b465834ac4769f24eb9b5a8bc73e9317297a1d35669e3dc63b0e8172",
+        "index-DrNzdNmN.css": "9d59f3cd65495a421cd8da215ff36cc06aea4327f9b33f2f29125179e641e8d9"
+      }
+    },
+    "checks": [
+      {
+        "type": "test",
+        "name": "native-main-utility-and-trusted-activation",
+        "status": "PASS",
+        "observed": {
+          "mainPid": 12764,
+          "utilityPid": 10336,
+          "isPackaged": true,
+          "electron": "45.0.0",
+          "nativeIdentity": {
+            "targetId": "607149BA56170746E4340F46912FD75B",
+            "nativeId": 2,
+            "mappedId": 2
+          },
+          "auditId": "c688edc3-2d6b-437b-b4b4-005795a63d3a",
+          "originalSelection": {
+            "providerId": "openai",
+            "modelId": "test-only-native-counter"
+          },
+          "duplicateStartRejected": true,
+          "actualProductionRenderer": true,
+          "preloadAPI": [
+            "audit",
+            "onAudit",
+            "setup",
+            "state",
+            "connect",
+            "validation",
+            "check",
+            "disconnect",
+            "slot",
+            "onState"
+          ],
+          "renderedEventRows": 11,
+          "viewSwitchKeptPendingQuestion": true,
+          "hiddenNativeBounds": {
+            "x": 713,
+            "y": 301,
+            "width": 346,
+            "height": 178
+          },
+          "ownerUnchangedAcrossViews": true,
+          "testPreflight": "Deterministic test-only preparation; not live provider verification"
+        }
+      },
+      {
+        "type": "test",
+        "name": "structured-question-validation-and-secret-broker",
+        "status": "PASS",
+        "observed": {
+          "counterAfterModelAction": 1,
+          "questionSuspendedModelCalls": true,
+          "invalidAnswerRejected": true,
+          "sensitiveReferenceOnly": true,
+          "checkpointSecretAbsent": true,
+          "actualActionEvents": 3
+        }
+      },
+      {
+        "type": "test",
+        "name": "exclusive-native-user-handoff-and-return-reinspection",
+        "status": "PASS",
+        "observed": {
+          "status": "PASS",
+          "nativeInput": {
+            "actualPoint": {
+              "x": 1463,
+              "y": 711
+            },
+            "method": "Win32 SendInput",
+            "status": "SENT",
+            "actualHumanHardware": false
+          },
+          "syntheticNativeGuestInputAlsoObserved": true,
+          "independentNativeCounter": 3,
+          "exclusiveOwnership": true,
+          "freshReinspectionBeforeResume": true,
+          "finalStatus": "completed",
+          "todo": {
+            "id": "exercise",
+            "description": "Exercise and inspect the counter",
+            "status": "completed",
+            "createdAt": "2026-10-25T18:33:26.336Z",
+            "updatedAt": "2026-10-25T18:33:30.431Z",
+            "evidence": [
+              "8adfa3b6-ee08-4e4e-8c77-54d56a8a8945"
+            ]
+          },
+          "orderedEvents": 51,
+          "actualReactEventRows": 47,
+          "actualReactTodos": [
+            {
+              "id": "exercise",
+              "status": "completed"
+            }
+          ],
+          "actualReactQuestionAndControlButtons": true,
+          "modelChosenClicks": 1,
+          "manualActionsNotClaimedAsAgentActions": true
+        }
+      },
+      {
+        "type": "test",
+        "name": "masked-capture-terminal-integrity-and-distinct-nonlogin-goal",
+        "status": "PASS",
+        "observed": {
+          "firstFinalStatus": "completed",
+          "firstArtifactFiles": [
+            "8bc070e6-690d-4af1-a295-5031e3161a4e.png"
+          ],
+          "secondGoal": "Expand the product details and inspect the visible result.",
+          "secondFinalStatus": "completed",
+          "secondSelection": {
+            "providerId": "openai",
+            "modelId": "test-only-native-panel"
+          },
+          "actualDetailsVisible": true,
+          "sameSessionIdentity": {
+            "targetId": "6AFF3250D501E22A603B1E4E22ADD800",
+            "nativeId": 4,
+            "mappedId": 4
+          },
+          "captureBytes": 134521,
+          "nativeComposite": true
+        }
+      },
+      {
+        "name": "owned-process-cleanup-and-secret-free-diagnostics",
+        "status": "PASS",
+        "observed": {
+          "mainExited": true,
+          "utilityExited": true,
+          "secretMarkerAbsentFromLogs": true
+        }
+      }
+    ],
+    "finalAuditSummaries": [
+      {
+        "auditId": "c688edc3-2d6b-437b-b4b4-005795a63d3a",
+        "status": "completed",
+        "selection": {
+          "providerId": "openai",
+          "modelId": "test-only-native-counter"
+        },
+        "goal": "Test the accessible counter and inspect its real state.",
+        "todos": [
+          {
+            "id": "exercise",
+            "description": "Exercise and inspect the counter",
+            "status": "completed",
+            "createdAt": "2026-10-25T18:33:26.336Z",
+            "updatedAt": "2026-10-25T18:33:30.431Z",
+            "evidence": [
+              "8adfa3b6-ee08-4e4e-8c77-54d56a8a8945"
+            ]
+          }
+        ],
+        "eventCount": 51,
+        "usage": {
+          "modelCalls": 10,
+          "browserActions": 6,
+          "inputTokens": 80,
+          "outputTokens": 20,
+          "retries": 0,
+          "browserRecoveries": 0,
+          "cost": null
+        }
+      },
+      {
+        "auditId": "bfcd9696-27d5-41bb-9c67-bc4e1f655cda",
+        "status": "completed",
+        "selection": {
+          "providerId": "openai",
+          "modelId": "test-only-native-panel"
+        },
+        "goal": "Expand the product details and inspect the visible result.",
+        "todos": [
+          {
+            "id": "exercise",
+            "description": "Expand the product details",
+            "status": "completed",
+            "createdAt": "2026-10-25T18:33:31.219Z",
+            "updatedAt": "2026-10-25T18:33:31.436Z",
+            "evidence": [
+              "def1fc60-2d92-42dc-8545-a0f44c806a5c"
+            ]
+          }
+        ],
+        "eventCount": 22,
+        "usage": {
+          "modelCalls": 5,
+          "browserActions": 3,
+          "inputTokens": 40,
+          "outputTokens": 10,
+          "retries": 0,
+          "browserRecoveries": 0,
+          "cost": null
+        }
+      }
+    ],
+    "separateTestArtifact": {
+      "executable": "test-results\\slice3\\2026-10-25T18-33-00-045Z-packaged-native-agent\\native-test-package\\win-unpacked\\FlowProof Native Agent Test.exe",
+      "executableSha256": "031d7f47524fba7c119846b48b6521fea65f5ec9ec20de7a9be6b4f49766675c",
+      "asarSha256": "b1313f09ed30c3dc7bfabaa75368684d23b57bc8a534e738e86cb16a3d7c63b3"
+    }
+  },
+  "checkpointLockBug": {
+    "observedFailureReport": "test-results/slice3/2026-10-25T18-11-29-349Z-native-agent/report.json",
+    "observedCode": "EPERM",
+    "subsequentExactStageEvidence": "test-results/slice3/2026-10-25T18-17-26-488Z-native-agent/report.json",
+    "observedRecoveredRetry": {
+      "stage": "replace",
+      "code": "EPERM",
+      "attempt": 1
+    },
+    "fix": "Unique temporary files; serialized fallback writes; atomic replacement alone retries transient EPERM/EBUSY/EACCES within300ms. Stage/errno diagnostics contain no paths/data. Permanent failure interrupts and preserves the last valid record. No browser action is retried.",
+    "rootCauseLimit": "The OS reported replacement permission/file locking; the particular external reader/scanner responsible was not identified."
+  },
+  "failedRunsPreserved": [
+    {
+      "report": "test-results/slice3/2026-10-25T17-57-39-979Z-packaged-native-agent/report.json",
+      "summary": {
+        "pass": 3,
+        "fail": 1,
+        "unverified": 0
+      },
+      "safeDiagnostics": [],
+      "failure": "Audit command was stale, invalid or unavailable.",
+      "note": "Historical failing integration attempt; retained rather than relabeled PASS. Checkpoint failures fixed; test harness scheduling/geometry was aligned with production before final ASAR rerun."
+    },
+    {
+      "report": "test-results/slice3/2026-10-25T18-11-29-349Z-native-agent/report.json",
+      "summary": {
+        "pass": 3,
+        "fail": 1,
+        "unverified": 0
+      },
+      "safeDiagnostics": [
+        {
+          "stage": "checkpoint-save",
+          "code": "EPERM"
+        },
+        {
+          "stage": "checkpoint-save",
+          "code": "EPERM"
+        },
+        {
+          "stage": "checkpoint-save",
+          "code": "EPERM"
+        },
+        {
+          "stage": "checkpoint-save",
+          "code": "EPERM"
+        }
+      ],
+      "failure": "Expected values to be strictly equal:\n\n'agent' !== 'user'\n",
+      "note": "Historical failing integration attempt; retained rather than relabeled PASS. Checkpoint failures fixed; test harness scheduling/geometry was aligned with production before final ASAR rerun."
+    },
+    {
+      "report": "test-results/slice3/2026-10-25T18-18-29-623Z-packaged-native-agent/report.json",
+      "summary": {
+        "pass": 2,
+        "fail": 1,
+        "unverified": 0
+      },
+      "safeDiagnostics": [],
+      "failure": "Native integration observation deadline exceeded",
+      "note": "Historical failing integration attempt; retained rather than relabeled PASS. Checkpoint failures fixed; test harness scheduling/geometry was aligned with production before final ASAR rerun."
+    },
+    {
+      "report": "test-results/slice1/2026-10-25T18-35-56-080Z-development/report.json",
+      "summary": {
+        "pass": 1,
+        "fail": 1,
+        "unverified": 0
+      },
+      "note": "Old strict preload whitelist expected only Slice2 methods; updated explicitly for audit/onAudit, preserving the narrow API. Initial edit did not match the literal; corrected before successful final regression."
+    },
+    {
+      "report": "test-results/slice1/2026-10-25T18-36-20-863Z-development/report.json",
+      "summary": {
+        "pass": 1,
+        "fail": 1,
+        "unverified": 0
+      },
+      "note": "Old strict preload whitelist expected only Slice2 methods; updated explicitly for audit/onAudit, preserving the narrow API. Initial edit did not match the literal; corrected before successful final regression."
+    }
+  ],
+  "limitations": [
+    "A live authenticated selected-provider autonomous audit is UNVERIFIED. The deterministic native/ASAR successes are orchestration/browser/UI evidence, not live AI execution or production readiness.",
+    "The ASAR agent harness uses actual compiled React/Preload and shared production Main/Utility/core/browser modules, with an injected test-only model and test preflight in a separate artifact. The normal production executable was separately verified for launch, real catalog/provider invalid-key path, secure key lifecycle, readiness gates and native browser regression.",
+    "Recovery/risk/budget failure policies have focused deterministic coverage; not every provider, website, hardware input path or crash timing is demonstrated by desktop smoke.",
+    "Unknown JavaScript write destinations and User-control POST remain blocked. Only eligible declared local form writes get one-use exact allowances. This can block modern forms and is a coverage limitation; risk recognition is conservative, not a universal backend-effects classifier.",
+    "Only current/last execution checkpoints and masked artifacts are present. Project/report history, independent finding reproduction/Verified Findings, reporting/export and later slices remain deferred."
+  ],
+  "liveUserProcedure": [
+    "Launch apps/desktop/dist/slice3-agent/win-unpacked/FlowProof AI.exe with all sibling files. Configure a legitimate supported model/key privately in Settings; Test connection then Verify agent tools.",
+    "Run an owned localhost application. New Audit: enter project, a concrete testing goal and exact port/path; review and explicitly authorize; Start audit.",
+    "Check real action events and evidence-linked TODOs against the native page. Answer questions, test Take/Return Control, and confirm a truthful terminal outcome. Record providerId/modelId, safe status and event IDs; never share keys or raw sensitive input.",
+    "A valid-key run is required to close the remaining live acceptance item. Do not treat the separate deterministic test artifact as that run."
+  ],
+  "implementationSha256": {
+    "apps/desktop/src/main/agent-supervisor.ts": "8acacadd5217b74dc2417f8e06e06bfd9136b6b4ebe57d23ca1bc7ac5f2016d4",
+    "apps/desktop/src/main/audit.ts": "5779cdb01d1945c71ab0f0eee001824f2a46aeb91a7aa98f3ba306ae8ce62298",
+    "apps/desktop/src/main/browser/action-policy.ts": "854dec24780543410aa9b9f45312db075a5fbe34d58b65fc4b2157a6c73e75ef",
+    "apps/desktop/src/main/browser/host.ts": "b1857a47c2d37fa9c1fd0801b68a6faa5b2cdd33dde2f5ff9ba9d174f5183572",
+    "apps/desktop/src/main/index.ts": "da39df129fe0663df0b88173a88888dfcaddb9781e1d4b536f4db53687b2b70d",
+    "apps/desktop/src/main/setup.ts": "89fbabd93f33a9b2d54392c0cdb1c6734033b0a6b503bd165528d8db50456cc9",
+    "apps/desktop/src/main/smoke-control.ts": "23b62f23b7026eec3d0fa7fc875aabeb0e8281c7c980c8c7f94e53729c68ada0",
+    "apps/desktop/src/preload/audit-request.ts": "ed0f090b24e5b14a3f9b01cc54a6d62e356560e2c594d90174706ac32dbf2f9b",
+    "apps/desktop/src/preload/index.ts": "8d7b9436794a120c9635afc50fe0af7eaa001e6869536147aecb41ade5f0c401",
+    "apps/desktop/src/renderer/App.tsx": "7e08c89b85631ad7ab04b7520ffdc5c9bb086e0386ab96a812280fe77ebc98c5",
+    "apps/desktop/src/renderer/AuditWorkspace.tsx": "dc8c8d6ccfcb536eef6805be9db8f479efa3d4c611e1a552e3509d8291915b45",
+    "apps/desktop/src/renderer/SetupDialog.tsx": "3cdb904485547f3d731058c26ab159da34f4fbd0d7bd476963f000f0a4dbe2a0",
+    "apps/desktop/src/renderer/audit-view.ts": "003b3b08fca2ba00ff40d670a7963c6ed7586e286926afa953e90ba4ec49e998",
+    "apps/desktop/src/renderer/audit.css": "2a65aba1ee67901129bfc3d80d3312c7c6dfca95c8c5a12226894965e4f1d237",
+    "apps/desktop/src/utility/index.ts": "775043410e78b391141c7cb0ddf778ecea8f30e71b8c4b358c65f3d9d05746c4",
+    "apps/desktop/src/utility/runtime.ts": "0b0d545dd42d728f3bfcbd81ccd375cf7802c9f9f9e19481cbec85e42f7c81e4",
+    "apps/desktop/test/action-policy.test.ts": "74b0e66389d351a6efa188e2cf1d24cbbb242a79be0ebd07b57bcf7d02bcfeba",
+    "apps/desktop/test/agent-native-main.ts": "f2e85e9afb764f599c9526b0953203b4388f484a511729a1d74f3dcf19c2e133",
+    "apps/desktop/test/agent-native-utility.ts": "49ba7f5b7fdce96e37fc54b16207136eb9fee171228b5df8047d8661f5165e6d",
+    "apps/desktop/test/agent-native.mjs": "6becf9886b78ae4de65b159dcd996bcda60b65e72cbec5cb086beb761ccbfdfe",
+    "apps/desktop/test/agent-test-model.ts": "0d7611eed6cc9c1a44ff82e4900c204f980b1ec007d5e1a2134a98d55cbf9701",
+    "apps/desktop/test/audit-main.test.ts": "b35587030bbef3613bed53bd569cf028f842d7ace6abff6ca3904795602a54ea",
+    "apps/desktop/test/audit-request.test.ts": "bbdfcfd8cc888e2ee25337d019b6652fbf876502bf8c07aca972fd7922a79459",
+    "apps/desktop/test/audit-ui.test.ts": "5d2394177497e20a339807c6175b57f51f69e6ed3f0d46b061f40ab3171d3873",
+    "apps/desktop/test/browser-ownership.test.ts": "7ee2d956670d9f8b204841e951edccd0f8d7d759fa30d3fdaafed0d0d88ebcff",
+    "apps/desktop/test/risk-url.test.ts": "05e32483c350b52a61f65156bc33bd3aaa56072896bf1c4f14a498db0cbf704c",
+    "apps/desktop/test/setup-smoke.mjs": "a696a482b903f6739350042080f0e8fe13652fbd9405c38102f7367dcec4b622",
+    "apps/desktop/test/smoke.mjs": "0d7cb2cfec4bc97bd4593029c0f226755ab84f945cb099f32f86333bf4a1e167",
+    "packages/agent-core/package.json": "d237d8467eaf6d2a73953ee7133bc5398ddf0d814374eae9e33ce03f42aad575",
+    "packages/agent-core/src/index.ts": "5d753ca9941e878cafbc6fc193b8595593c1cb4e3a0ee3a5805d3c67460b61c7",
+    "packages/agent-core/test/runtime.test.ts": "176e4b174b2752398b79cf0321c913c97a2fd6c06b71a1638acc900a36133760",
+    "packages/browser-runtime/src/index.ts": "60d65de87ca59235425342445ee8aaa8f848b67760830947f4108a28d2d28d5c",
+    "packages/browser-runtime/src/tools.ts": "cbc1f1737d52daf7647e34a157e0568c9d1da1b3edbc3e7c7e6cd26fb253ebe8",
+    "packages/browser-runtime/test/tools.test.ts": "3e0715ef0a30ac9c67372d11bc5d2394a98bd360ed45ab49e2af509d060ed085",
+    "packages/contracts/src/audit.ts": "bc1166d9485c84bc2d96df3d6e7e0dbdabaa4df9f001684c3ccf534a2843e1d9",
+    "packages/contracts/src/index.ts": "861854ab2ebb23283d483c25f98d0da00c43b94f95c1f576ca98616d1ddefeb2",
+    "packages/contracts/test/audit.test.ts": "749a5d2b2aba39a803eb85a98b7114259af3ab080e5ec9be096f1ef2028c72d8",
+    "packages/persistence/src/audit-checkpoint.ts": "56538e89aa4272d3653376cc8506bf55713335d03bebb9989dcdc2a53e1ff9e8",
+    "packages/persistence/src/index.ts": "8920cc0fee698cd09bead64e7443bea1831389b1c476f75603b27720bba1a1db",
+    "packages/persistence/test/audit-checkpoint.test.ts": "08a6586b4c1e03d2024d49888f28b7a1d3e484a8c8600092c5788280e5ca9c0f",
+    "packages/persistence/test/checkpoint-retry.test.ts": "b6f29b6086fbe2bb885d847af5a56f097effe492e1ffd94a2522dff4bc87493c"
+  }
+}

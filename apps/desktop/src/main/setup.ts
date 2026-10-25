@@ -234,5 +234,9 @@ export class SetupService {
     const handoff=ready&&prepare?auditHandoffSchema.parse({schemaVersion:1,selection:this.selection,projectName:this.draft.projectName.trim(),goal:this.draft.goal.trim(),context:this.draft.context,targetUrl:target,maxSteps:this.draft.maxSteps,timeoutMinutes:this.draft.timeoutMinutes,authorizedAt:timestamp,checkedAt:timestamp,providerValidatedAt:this.verification!.checkedAt,expiresAt:this.verification!.expiresAt}):null;
     this.review={ready,checks,handoff};
   }
+  async withExecutionKey<T>(selection:ModelRef,execute:(key:string)=>Promise<T>):Promise<T>{
+    if(!this.fresh()||selection.providerId!==this.selection?.providerId||selection.modelId!==this.selection.modelId)throw new Error('Fresh model and tool verification required');
+    return this.vault.withKey(selection.providerId,execute);
+  }
   async close(){await this.queue.catch(()=>{});await this.initialized;this.invalidate();this.store?.close();}
 }

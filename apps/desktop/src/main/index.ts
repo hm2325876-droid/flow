@@ -4,6 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
 import {channels,targetSchema,slotSchema,checkResultSchema,setupCommandSchema,setupStateSchema,supportedProviderDescriptors,type DesktopState,type Target,type Slot} from '@flowproof/contracts';
+import {AuditController} from './audit';
 import {SetupService} from './setup';
 import {AgentSupervisor} from './agent-supervisor';
 import {BrowserHost} from './browser/host';
@@ -18,12 +19,13 @@ protocol.registerSchemesAsPrivileged([{scheme:'flowproof-shield',privileges:{sta
 if(process.env.FLOWPROOF_SMOKE_PROFILE)app.setPath('userData',process.env.FLOWPROOF_SMOKE_PROFILE);
 let win:BrowserWindow,worker:AgentSupervisor,host:BrowserHost|undefined,gate=new RunGate(),busy=false,connected=false,closing=false,exitAllowed=false;
 let status='Desktop ready',error:string|null=null,check:DesktopState['check']=null;
-let setup:SetupService;
+let setup:SetupService;let audit:AuditController;
 let currentSlot:Slot={x:0,y:0,width:0,height:0,visible:false};
 const fixture=new ValidationPage();let diagnostic=false;
-function state():DesktopState{return {version:app.getVersion(),utility:worker?.ready?'ready':worker?.failed?'unavailable':'starting',connected,busy,url:host&&!host.guest.webContents.isDestroyed()?host.guest.webContents.getURL():'',diagnostic,status,error,check};}
-function publish(){if(!closing&&win&&!win.isDestroyed())win.webContents.send(channels.changed,state());}
-function assertIdle(){if(busy)throw new Error('Wait for the current browser operation');}
+function state():DesktopState{return {version:app.getVersion(),utility:worker?.ready?'ready':worker?.failed?'unavailable':'starting',connected,busy,url:host&&!host.guest.webContents.isDestroyed()?safeDisplayUrl(host.guest.webContents.getURL()):'',diagnostic,status,error,check};}
+function safeDisplayUrl(value:string){try{const url=new URL(value);return url.origin+url.pathname;}catch{return '';}}
+function publish(){if(worker?.failed&&audit?.running)void audit.interrupt('The supervised Utility process exited; execution was interrupted.');audit?.nativeChanged();if(!closing&&win&&!win.isDestroyed())win.webContents.send(channels.changed,state());}
+function assertIdle(){if(busy||audit?.active)throw new Error('Wait for the current browser operation');}
 async function releaseBrowser(){
   await worker.request({type:'close'}).catch(()=>{});
   const previous=host;host=undefined;previous?.close();
@@ -35,8 +37,8 @@ async function disconnect(){
   finally{busy=false;publish();}
   return state();
 }
-async function connect(input:Target){
-  assertIdle();const target=targetSchema.parse(input);
+async function connect(input:Target,forAudit=false){
+  if(!forAudit)assertIdle();const target=targetSchema.parse(input);
   // Reserve the entire native lifecycle synchronously, before any IPC await.
   busy=true;status='Connecting native browser';error=null;publish();
   let candidate:BrowserHost|undefined;
@@ -69,18 +71,23 @@ async function runCheck(holdMs=0){
   return state();
 }
 function trusted(event:Electron.IpcMainInvokeEvent){const expected=new URL(rendererUrl||'flowproof-app://workspace/').href;if(event.sender!==win.webContents||event.senderFrame!==win.webContents.mainFrame||event.senderFrame.url!==expected)throw new Error('Untrusted IPC sender');}
+async function attachAudit(config:import('@flowproof/contracts').AuditHandoff){const url=new URL(config.targetUrl);await connect({port:Number(url.port||80),path:url.pathname+url.search,consent:true},true);if(!host||!connected)throw new Error('Audit browser connection unavailable');const until=Date.now()+2000;while(Date.now()<until&&(currentSlot.width<1||currentSlot.height<1))await new Promise(resolve=>setTimeout(resolve,20));if(currentSlot.width<1||currentSlot.height<1)throw new Error('Native browser viewport is unavailable');host.position(currentSlot);return host.bridge.connection();}
+async function recoverAudit(config:import('@flowproof/contracts').AuditHandoff){const previous=host;host=undefined;previous?.close();connected=false;const candidate=new BrowserHost(win,new URL(config.targetUrl).origin,publish);host=candidate;const connection=await candidate.open(config.targetUrl);candidate.beginAudit();candidate.bridge.active=true;candidate.position(currentSlot);connected=true;publish();return connection;}
 function bind(){
   const handle=(name:string,fn:(data:unknown)=>unknown)=>ipcMain.handle(name,async(event,data)=>{trusted(event);return fn(data)});
+  handle(channels.audit,async value=>audit.handle(value as import('@flowproof/contracts').AuditCommand));
   handle(channels.state,()=>state());handle(channels.connect,v=>connect(targetSchema.parse(v)));handle(channels.validation,()=>validation());handle(channels.check,()=>runCheck());handle(channels.disconnect,()=>disconnect());handle(channels.slot,v=>{currentSlot=slotSchema.parse(v);host?.position(currentSlot);});
   handle(channels.setup,async value=>{
     const parsed=setupCommandSchema.safeParse(value);
     if(!parsed.success)throw new Error('Invalid setup request');
+    if(audit?.active&&!['load'].includes(parsed.data.type))throw new Error('Setup changes are unavailable during an active audit.');
     return setupStateSchema.parse(await setup.handle(parsed.data));
   });
 }
 async function shutdown(){
   if(closing)return;closing=true;busy=true;
   if(process.env.FLOWPROOF_SMOKE_PIPE)console.log('SHUTDOWN:worker');
+  await Promise.race([audit?.close(),new Promise(resolve=>setTimeout(resolve,3000))]);
   await worker?.stop();
   await setup?.close();
   if(process.env.FLOWPROOF_SMOKE_PIPE)console.log('SHUTDOWN:views');
@@ -104,7 +111,9 @@ app.whenReady().then(async()=>{
   win.on('close',event=>{if(!exitAllowed){event.preventDefault();void shutdown()}});
   win.on('resize',()=>{if(host)host.position(host.slot)});
   worker=new AgentSupervisor(path.join(directory,'utility.js'),publish);
-  setup=new SetupService({folder:app.getPath('userData'),secureStorage:safeStorage,requestProvider:command=>worker.request({type:'provider',command}),providers:supportedProviderDescriptors,hasActiveAudit:()=>busy});
+  setup=new SetupService({folder:app.getPath('userData'),secureStorage:safeStorage,requestProvider:command=>worker.request({type:'provider',command}),providers:supportedProviderDescriptors,hasActiveAudit:()=>busy||audit?.running});
+  audit=new AuditController({folder:app.getPath('userData'),setup,worker,attach:attachAudit,getHost:()=>host,recover:recoverAudit,finish:async()=>{host?.endAudit();await releaseBrowser();publish();},publish:snapshot=>{if(!closing&&!win.isDestroyed())win.webContents.send(channels.auditChanged,snapshot);}});
+  await audit.init();worker.onAuditState=snapshot=>audit.accept(snapshot);worker.onAuditService=(id,request)=>audit.service(id,request);
   bind();
   if(rendererUrl)await win.loadURL(rendererUrl);else await win.loadURL('flowproof-app://workspace/');
   win.show();await worker.start();publish();

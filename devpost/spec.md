@@ -132,6 +132,14 @@ Tools: `inspect_page`, `navigate`, `click`, `fill`, `select`, `press`, `scroll`,
 
 `ask_user` carries `{id, kind, prompt, options?, required, min?, max?, format?, inputType, allowSkip}` through Contracts. Agent Core owns question lifecycle/answer acceptance; UI and Main validate response schemas and privileged authorization before forwarding. Dismissal leaves the question pending; supported Skip is a distinct outcome with safe-alternative/Blocked handling. Approve/Deny bind to an exact eligible operation. Main's secret broker returns an ephemeral opaque reference to authorized execution, never a raw model-visible value; consume/discard it and persist safe metadata only. Keep the established five TODO states and separate audit/ownership/action-outcome states.
 
+#### Slice 3 Runtime Implementation
+
+The Utility composition uses the installed AI SDK ToolLoopAgent with serialized tool calls, a bounded model-context transcript kept only in memory, per-request cancellation and Main-mediated browser leases. Core owns the single audit lifecycle, questions, TODO evidence references and candidate observations. Main validates correlated snapshots, persists one bounded current/last checkpoint and relays ordered state to Renderer. Historical checkpoint timestamps are inert metadata: recovered incomplete execution is Interrupted and cannot resume or authorize another audit. Full project/report/history repositories remain Slice 4.
+
+Sensitive answers become Main-owned one-use opaque references bound to the leased fill target; only Browser Runtime receives the temporary value. Model transcripts, events and checkpoints never contain it. Inputs and known echoes are masked/redacted for observations/screenshots. Native address presentation and model observations omit URL query/fragment data. JavaScript memory cleanup is best effort, never guaranteed erasure.
+
+The retained native request gate permits GET/HEAD within the exact origin. An authorized declared local form can receive one exact endpoint/method allowance; arbitrary JavaScript writes and User-control POST requests remain blocked. Conservative recognized risky actions are denied and uncertain eligible actions require exact one-use approval; this is not a universal classifier for arbitrary website/backend effects. A blocked unsupported write is a disclosed coverage limit, never a successful action. Tests inject deterministic SDK models only in test entries; normal production Utility always resolves the selected registered adapter.
+
 ### Shared Authorization and Action Policy
 
 Implements `prd.md > Target Authorization and Browser Boundaries`, `Risk-based Action Permissions`, and `Sensitive Input Lifecycle`.

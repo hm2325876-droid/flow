@@ -1,7 +1,13 @@
 import {chromium,type Browser,type Page} from 'playwright-core';
 import {connectionSchema,type Connection,type CheckResult} from '@flowproof/contracts';
+import {BrowserTools} from './tools';
+export {allowedBrowserUrl,semanticLocator,ACTION_TIMEOUT} from './tools';
 export class BrowserRuntime {
   private browser?:Browser; private page?:Page; private connection?:Connection;
+  private tools=new BrowserTools(()=>this.page,()=>this.connection?.origin);
+  perform:BrowserTools['perform']=(action,resolvedSecret)=>this.tools.perform(action,resolvedSecret);
+  registerSecret(value:string){this.tools.registerSecret(value);}
+  clearSecrets(){this.tools.clearSecrets();}
   async connect(input:Connection){
     const connection=connectionSchema.parse(input);
     await this.close();
@@ -30,5 +36,5 @@ export class BrowserRuntime {
     if(actual.counter!==1||actual.value!==marker)throw new Error('Browser effects were not observed');
     return {...actual,targetId:connection.targetId,screenshot:screenshot.toString('base64'),screenshotBytes:screenshot.length};
   }
-  async close(){await this.browser?.close().catch(()=>{});this.browser=undefined;this.page=undefined;this.connection=undefined;return {closed:true};}
+  async close(){this.clearSecrets();await this.browser?.close().catch(()=>{});this.browser=undefined;this.page=undefined;this.connection=undefined;return {closed:true};}
 }

@@ -21,7 +21,8 @@
     "smoke:packaged": "node apps/desktop/test/smoke.mjs packaged",
     "smoke:setup": "node apps/desktop/test/setup-smoke.mjs development",
     "smoke:setup:dev-server": "node apps/desktop/test/setup-smoke.mjs dev-server",
-    "smoke:setup:packaged": "node apps/desktop/test/setup-smoke.mjs packaged"
+    "smoke:setup:packaged": "node apps/desktop/test/setup-smoke.mjs packaged",
+    "smoke:agent": "node apps/desktop/test/agent-native.mjs"
   },
   "devDependencies": {
     "@types/node": "24.0.0",
