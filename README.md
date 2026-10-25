@@ -100,6 +100,12 @@ devpost/                          # approved plans, checklist, checkpoint summar
 
 Agent Core, AI Providers and Persistence remain approved future package boundaries; no empty source boilerplate was generated for them. Their implementations belong to later slices.
 
+### Approved Slice 2 provider amendment (documentation only)
+
+Models.dev supplies catalog-driven provider/model discovery and advisory metadata: identifiers, display names, tool calling, structured output, reasoning, and input/output modalities where available, plus limits/pricing. Vercel AI SDK supplies provider integration and execution through adapters actually installed and registered in trusted application code. This replaces the restriction to four hardcoded providers; the Slice 1 Settings labels remain historical placeholders, not a working execution registry. No application source is changed by this amendment.
+
+When Slice 2 is explicitly authorized, the planned `packages/ai-providers` boundary will own discovery/search/filter/cache/offline fallback, supported versus unverified status, adapter resolution and one lightweight real tool-round-trip preflight. Main retains encrypted keys and cache persistence; Utility executes SDK requests; Renderer never receives stored key values. No metadata-triggered package installs, arbitrary catalog endpoints/code or universal-compatibility promise. Full autonomous execution remains Slice 3. See [`spec.md > Providers and Credentials`](devpost/spec.md#providers-and-credentials) and the amended checklist. **Slice 2 is not started or authorized by this documentation amendment.**
+
 ## Pinned implementation dependencies
 
 Electron 45.0.0 · Playwright Core 1.64.1 · React/React DOM 19.2.0 · TypeScript 5.9.3 · Tailwind CSS 4.1.18 · electron-vite 6.0.0 · electron-builder 26.15.3 · Zod 4.3.6 · Vitest 4.0.18 · WS 8.22.0. The desktop declares Vite 7.3.1; electron-vite's compatible resolved build engine is 7.3.7. The single root lockfile records the complete reproducible dependency graph.

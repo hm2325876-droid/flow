@@ -7,7 +7,9 @@ status: approved
 
 **Approved technical specification · 2026-10-24.** The learner explicitly approved this simplified specification and authorized official `5-build`. `4-spec` is complete. Preserve the approved product and stack; implement a small complete workflow using the demonstrated WebContentsView + CDP + Playwright integration provisionally. Broad pre-build feasibility campaigns are replaced by focused development checks. Build progress is recorded in [checklist.md](checklist.md).
 
-**Approved architecture amendment:** Use the npm Workspaces monorepo and process/package ownership below. This amendment records the completed architecture discussion; it does not authorize implementation. Slice 1, source directories, manifests, dependency installation and `6-ship` remain paused until explicit authorization.
+**Approved architecture amendment:** Keep the npm Workspaces monorepo and process/package ownership below. Slice 1 is mechanically verified at `78e3d09`. This provider documentation amendment does not authorize Slice 2, dependency installation, source changes or `6-ship`.
+
+**Approved provider amendment · 2026-10-25 · after Slice 1 (`78e3d09`):** Models.dev supplies model discovery and capability metadata; Vercel AI SDK supplies provider integration and model execution through installed, registered adapters. This replaces the restriction to four hardcoded providers with broad provider/model compatibility through SDK integrations, without promising universal support or implementing each provider protocol from scratch. This task is documentation only: Slice 1 stays unchanged and Slice 2 is not authorized.
 
 ## How This Works, In Plain Language
 
@@ -20,7 +22,7 @@ Use the working native browser integration as the starting point. Build one usef
 Implements `prd.md > The Core Journey`, `New Audit Setup and Preflight`, and `Local Projects, Sessions, and Reports`.
 
 1. **Launch:** Electron opens the premium off-white workspace and reads local projects/settings. Incomplete prior audits become read-only Interrupted records; they never restart.
-2. **Connect AI:** The user selects OpenAI, Anthropic, Gemini, or OpenRouter and enters a model ID/key. Main supplies credentials privately to AI Providers in its supervised Utility process for the small tool-capability check; Main encrypts the saved key with Windows-backed safeStorage.
+2. **Connect AI:** The user searches the Models.dev-backed catalog, filters advisory capabilities and selects an adapter-supported provider/model. Main stores required keys securely and supplies them privately to AI Providers in Utility for a small real connectivity/tool-round-trip preflight; only a fresh validated configuration becomes Ready.
 3. **Configure:** New Audit collects project, fixed localhost host with port/path, goal, optional description, budgets and fresh unchecked authorization. Non-sensitive draft restoration clears consent and stale preflight results.
 4. **Start:** Revalidate provider, target, consent, budgets and the single-active-audit guard. Only then create the audit record/native guest and supply the authorized session descriptor to the Utility process; Agent Core starts autonomous execution there.
 5. **Execute:** Agent Core plans, manages TODOs/questions and requests browser operations. Browser Runtime in Utility serializes and executes Playwright/WebMCP actions against Main's guest through authorized leases. Main enforces native/privileged boundaries, persists validated outcomes and relays safe events to the UI.
@@ -37,11 +39,12 @@ Implements `prd.md > The Core Journey`, `New Audit Setup and Preflight`, and `Lo
 | UI | [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/docs/), [Vite](https://vite.dev/guide/) with [electron-vite](https://electron-vite.org/guide/) build tooling, [Tailwind CSS 4](https://tailwindcss.com/docs), [shadcn/ui](https://ui.shadcn.com/docs) |
 | UI state | [Zustand](https://zustand.docs.pmnd.rs/) for current view/layout; [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview) for main-process queries/mutations |
 | Workspace organization | [npm Workspaces](https://docs.npmjs.com/cli/using-npm/workspaces), one root `package.json` coordinating `apps/*` and `packages/*`, and one root `package-lock.json` |
+| Model discovery | [Models.dev public JSON catalog](https://github.com/anomalyco/models.dev#api) for advisory provider/model metadata; discovery/cache/compatibility interfaces stay in existing AI Providers |
 | Agent | Agent Core, Browser Runtime and AI Providers execute in one [Electron Utility Process](https://www.electronjs.org/docs/latest/api/utility-process); [AI SDK ToolLoopAgent](https://ai-sdk.dev/docs/agents/building-agents) supplies the bounded model/tool loop |
 | Local records | [SQLite](https://www.sqlite.org/docs.html), [Drizzle](https://orm.drizzle.team/docs/get-started-sqlite) with better-sqlite3 in `packages/persistence`; storage executes only under Main ownership |
 | Diagnostics/release | [Pino](https://getpino.io/) safe structured logs, [Vitest](https://vitest.dev/guide/) targeted tests, [electron-builder](https://www.electron.build/) Windows x64 folder/installer |
 
-Start from the tested browser pair. Initial AI SDK pins researched for this draft: `ai@7.0.152`, `@ai-sdk/openai@4.0.101`, `@ai-sdk/anthropic@4.0.87`, `@ai-sdk/google@4.0.104`, `@ai-sdk/openai-compatible@3.0.77`. Lock remaining compatible patch versions during the first build slice; check installed types before using SDK APIs. Zod validates shared contracts; [Ajv](https://ajv.js.org/) validates external WebMCP JSON inputs without remote schema loading. No library/version survey blocks development.
+Start from the tested browser pair. Previously researched AI SDK starting pins are `ai@7.0.152`, with example adapter pins `@ai-sdk/openai@4.0.101`, `@ai-sdk/anthropic@4.0.87`, `@ai-sdk/google@4.0.104`, `@ai-sdk/openai-compatible@3.0.77`; these examples are neither the product's provider limit nor proof that these packages are installed. During authorized Slice 2 use compatible official adapters actually installed and registered, checked against their installed types/docs. Models.dev metadata never triggers installation. Existing Slice 1 dependencies/lockfile remain untouched by this amendment. Zod validates contracts; [Ajv](https://ajv.js.org/) validates external WebMCP JSON inputs without remote schema loading.
 
 ```text
 React Renderer ↔ typed Preload IPC ↔ Electron Main
@@ -79,7 +82,7 @@ Workspace names below are the intended npm names. Dependencies mean imports of w
 | `@flowproof/contracts` | Shared TypeScript types, runtime schemas, plain IPC DTOs, ports and audit events; platform-neutral | None |
 | `@flowproof/agent-core` | Audit orchestration/planning, execution lifecycle/budgets, TODO management, structured `ask_user`, evidence verification and finding classification | Contracts; receive browser/model/persistence capabilities as injected ports, not concrete workspace imports |
 | `@flowproof/browser-runtime` | Playwright/CDP client connectivity, browser tools, evidence capture/sanitization and optional WebMCP; runs in Utility against Main's authorized guest only | Contracts |
-| `@flowproof/ai-providers` | Four BYOK providers, model selection, SDK model construction and bounded model-request handling; runs in Utility | Contracts |
+| `@flowproof/ai-providers` | Models.dev discovery/metadata/cache policy, selection, adapter registry, compatibility/preflight and normalized AI SDK execution; runs in Utility | Contracts; Main IPC ports for credential/cache persistence |
 | `@flowproof/persistence` | SQLite/Drizzle repositories/migrations and local report/evidence storage implementations; called only under Main ownership, not a process | Contracts |
 | Desktop Main | Native/security/supervision/credential composition and Persistence service endpoints | Contracts, Persistence |
 | Desktop Preload / Renderer | Typed UI bridge and UI; no privileged implementations in either bundle | Contracts |
@@ -160,7 +163,61 @@ The model proposes findings; trusted verification code in Agent Core assigns Ver
 
 Implements `prd.md > New Audit Setup and Preflight`, `Provider Connectivity and Automatic Recovery`, and `Sensitive Input Lifecycle`.
 
-`packages/ai-providers` runs the direct BYOK integrations, model selection and request handling in Utility using the approved AI SDK. Main owns encrypted credentials and supplies per-run/preflight capabilities privately; Renderer has no provider client or credential-store access. Use an editable model ID and tool-capability preflight; unsupported models fail setup with an actionable message. Keep all four provider integrations, but record live validation only for providers whose user-supplied keys are available. No automatic provider/model switching.
+All catalog discovery, capability normalization, selection, installed-adapter registration, compatibility checks and execution interfaces belong to **the approved `packages/ai-providers` boundary**, running in Utility when implemented. This package is planned, not present in Slice 1. Add only necessary serializable DTO/runtime schemas to existing `packages/contracts`; do not introduce an additional catalog package, new process or provider marketplace. Agent Core consumes the same normalized model/execution port. Main retains credential/cache persistence ownership; Renderer never owns SDK clients or stored keys. Autonomous audit orchestration remains Slice 3.
+
+#### Models.dev Catalog and Advisory Metadata
+
+Use documented **`GET https://models.dev/api.json`** (public, no provider key), which returns provider-scoped model data. The [official API reference](https://github.com/anomalyco/models.dev#api-reference) describes the published v1 JSON projection, distinct from its v2 contributor TOML schema. Keep provider/model lookup identifiers as stable opaque IDs, preserve their case, and never substitute display names. Retain a selected supported ID even when absent from a later catalog; allow explicit model-ID entry for a registered adapter when discovery is incomplete, still subject to strict validation/preflight.
+
+| Published catalog fields, where present | Application use; all advisory |
+| --- | --- |
+| Provider/model lookup IDs and `name` | Search/display and stable provider/model reference, not SDK factory names |
+| Provider `npm`, `env`, `api`, `doc` | SDK/auth/documentation hints only; never dynamic imports/installs, environment reads or endpoint authority |
+| Model `tool_call` | Advertised tool-calling support; Agent readiness still requires a real tool round trip |
+| Optional `structured_output` | Advertised native structured-output support; require it only for features that use it |
+| `reasoning` | Advertised reasoning capability; does not authorize exposing hidden reasoning in the activity feed |
+| `modalities.input`, `modalities.output` | Separate input/output capability hints; discovery does not add new multimodal product features |
+| `limit.context`, `limit.input`, `limit.output` | Informational token limits used conservatively; actual provider/runtime limits may differ |
+| `cost.input`, `cost.output`, optional cache/reasoning cost fields | Informational USD-per-million-token estimates, with unknown values explicit; no guaranteed real-time billing |
+| `last_updated`, `status` where supplied | Catalog facts such as alpha/beta/deprecated, not authenticated service-health observations |
+
+Preserve advertised true, false and Unknown as distinct capability states; absent metadata is neither unsupported nor validated support. Models.dev discovers/describes models; it never receives provider keys or runs inference. Vercel AI SDK and the selected adapter handle model requests and provider protocols, subject to local validation and the existing Agent policies.
+
+Fetch the fixed official HTTPS JSON endpoint from AI Providers in Utility, with a short bounded timeout/size/schema check. Display sanitized metadata as text; no remote scripts or catalog-defined permissions. Do not confuse `tool_call` from the published API with v2 source-file `capabilities.tools.supported`. No Models.dev package/distribution name is assumed; a bundled last-known-good JSON snapshot from the documented endpoint is sufficient offline fallback.
+
+#### Installed Adapters and Selection States
+
+The UI searches providers/models, filters relevant capabilities and displays useful limits/modalities/pricing with age/Unknown labels. Browsing is broad; execution is not. Intersect a selection with a **trusted application registry** of installed, registered official AI SDK adapters and supported authentication/model APIs. Catalog-listed providers with no available adapter/auth path remain visible as Unsupported with a reason and execution disabled. Adapter-supported but unchecked models are Unverified and may be configured/tested, not launched autonomously. A working registered path is the POC priority; do not install every adapter or promise every catalog entry.
+
+The registry maps provider IDs to code-imported SDK factories, allowed model-ID mapping/options, credential requirements and trusted endpoint configuration. Prefer official adapters and a reviewed OpenAI-compatible configuration where applicable; this is configuration around SDK adapters, not bespoke wire integrations per provider/model. **Never** import/install the catalog's `npm` value, read arbitrary local variables named by `env`, or use an arbitrary catalog `api` URL. New adapters are added only through normal reviewed application dependencies/registration during authorized implementation, never by metadata refresh.
+
+Validate provider ID against the trusted registry and model ID as a bounded non-blank opaque string without control characters or URL/module/path interpretation; apply adapter-specific restrictions/mapping where required. Keep `(providerId, modelId, adapterId)` separate from display labels and SDK lookup serialization. The [documented `createProviderRegistry` / `registry.languageModel`](https://ai-sdk.dev/docs/ai-sdk-core/provider-management) can compose installed providers; resolve an explicitly configured provider model instance rather than passing a bare catalog string to the SDK's default global provider/Gateway. No FlowProof/Gateway account or silent provider/model fallback is introduced.
+
+| Compatibility layer | Evidence / UI meaning |
+| --- | --- |
+| Catalog metadata | Advertised / Unknown; helpful discovery, never proof |
+| Installed/registered adapter | Locally available execution/auth path; absent means Unsupported |
+| Authenticated or registry-defined keyless connectivity | Actual bounded request accepted for the selected model/account |
+| Agent-required tool protocol | Actual schema-valid tool invocation, local result and successful follow-up consumption |
+| Runtime reliability | Only observed behavior for the tested configuration; never guaranteed by catalog flags or one probe |
+
+#### Focused Runtime Preflight
+
+Use one bounded SDK operation with **at most two small model requests** jointly checking connectivity and the minimum Agent tool protocol—no extra paid ping. Through [documented `generateText`, `tool({inputSchema, execute})` and bounded multi-step `stopWhen: isStepCount(2)`](https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling), offer one harmless in-memory `capability_probe`. Put an unpredictable challenge in the prompt and require it in locally validated tool arguments; the local tool returns a new receipt not present in the initial prompt. The second request must consume that tool result and acknowledge the receipt. Use adapter-supported tool choice for the first request, then allow a final text acknowledgement without forcing another tool call. Apply suitable small output/reasoning limits, not unsupported forcing/strict-output options as universal requirements. [Set `maxRetries: 0` and use a bounded `abortSignal`](https://ai-sdk.dev/docs/reference/ai-sdk-core/generate-text) for preflight; no outer automatic retries or extra diagnostic requests may exceed the two-request limit. No browser, filesystem, permissions, user-content or audit actions occur.
+
+Inspect normalized SDK tool calls/results and completion rather than text-generation success alone. Missing/invalid calls, unsupported tool schemas/protocol, failed receipt consumption, rejected model/auth/quota or network failure leave Ready false with actionable safe status and Retry Checks. Metadata `tool_call: true` alone never passes. Native structured output is validated only if a selected Agent feature requires it; otherwise label it advisory/unverified without extra probing. Do not create an expensive compatibility matrix, auto-repair loop, hidden model switching or nested retries. Live provider testing is not performed by this documentation task.
+
+Cache readiness for a short **five-minute** window keyed by provider/model, adapter/version/registry revision, credential revision (opaque version issued by Main, never the secret/hash) and probe-schema revision. Changing any key invalidates it. Dismissing setup invalidates its preflight authority even within that window; reopening requires fresh checks and consent as defined in the PRD. Retain non-sensitive previous-validation history across launches, but run a fresh check after restart/expiry when needed. Search/filter/catalog refresh makes no model request. Within one uninterrupted setup, Connect AI / Review & Start / immediate pre-start verification reuse a just-completed, fresh matching result instead of duplicate calls; Main always revalidates current consent, target, budgets and one-active-audit conditions. An actual later provider failure still follows approved request-level recovery and never replays browser actions.
+
+#### Catalog Cache, Offline Fallback and Credential Boundary
+
+Keep a last-known-good normalized JSON catalog with source/fetchedAt/schema revision; AI Providers owns refresh/cache policy and requests Main-owned persistence through its existing port. Refresh at most about once per day in the background or on an explicit retry, not per keystroke/audit step. Refresh failure uses cached data or an optional bundled JSON snapshot, marks age/staleness and preserves configured stable IDs. With no catalog at all, a saved supported selection or explicit registered-adapter/model-ID path may still be checked. Metadata fetch failure alone does not invalidate adapter availability or a still-fresh validated configuration; historical validation never proves present connectivity after expiry or outage. Catalog loss is not an application defect or provider/model failover trigger.
+
+Pricing is informational and may be stale, tier/account-specific or incomplete. Show its timestamp/Unknown; never treat it as a guaranteed invoice or hard real-time spend measurement. Continue step/time and available actual usage guards, and disclose uncertainty in cost estimates. Store no provider key in catalog/cache/selection/validation history. Main owns OS-backed key storage and releases keys only to the selected trusted Utility adapter path, bound to provider/adapter/credential revision; Renderer receives sanitized metadata/status, never saved key values. Never place credentials in prompts, logs, activity events, telemetry or plaintext persistence; sanitize SDK diagnostics/errors before publication. No catalog-defined permissions, remote dependency installation or arbitrary code/endpoints are allowed.
+
+#### Provider Request Examples, Not an Exhaustive Provider List
+
+The following are existing SDK adapter examples, not a product allowlist or a requirement to hand-build these wire protocols. Additional installed/registered official adapters can use the same normalized interface without adding per-model integrations.
 
 | Provider / adapter | HTTPS request and credentials | Response consumed |
 | --- | --- | --- |
@@ -191,6 +248,7 @@ Shared Zod/TypeScript contracts:
 - Commands: `{requestId, type, payload}` for provider save/test, setup draft save/read, preflight/start, question answer/skip, Take/Return Control, view rectangle/visibility and history/evidence queries. Current authorization is memory-only and revalidated on start. Replies are `{requestId, ok, data? , error?: {code, safeMessage}}`.
 - Utility ↔ Main: start/cancel/question-resolution, authorized-session descriptors, privileged action/ownership grants, persistence/evidence requests and safe outcomes/events. Browser Runtime executes browser tools in Utility after Main authorization; it does not ask Main to run Playwright. No arbitrary method names or raw CDP from model output. Match audit/generation/request IDs and reject stale work.
 - UI events: `{auditId, seq, at, type, safePayload}` defined by Contracts. Agent Core business events and Main native events pass through Main validation/persistence before publication. Subscribe once through Preload, deduplicate by seq and fetch missed events/snapshot on return. UI layout state never becomes audit authority.
+- Future provider DTOs in Contracts: provider/model reference, sanitized catalog metadata + freshness, installed-adapter availability, selection, credential revision/status and layered connectivity/tool-readiness result with checkedAt/expiry/safe reason. AI Providers exposes discovery/filter/resolve/preflight/execution interfaces; Renderer queries them only through Preload/Main/Utility. These are planned contracts, not new Slice 1 APIs. Generic Main persistence stores non-sensitive cache/settings; no sixth table, package or catalog-admin subsystem is required.
 
 ## Execution Limits and Important Failure Modes
 
@@ -245,8 +303,8 @@ flowproof-ai/
       test/                        # browser tools, sanitization, optional adapter behavior
     ai-providers/
       package.json
-      src/{index,openai,anthropic,google,openrouter,retry}.ts # Utility-only SDK adapters
-      test/                        # request handling and provider normalization
+      src/{index,catalog,registry,selection,preflight,requests}.ts # Utility discovery + registered SDK execution
+      test/                        # cache/fallback, registry safety, readiness and normalized requests
     persistence/
       package.json
       src/{index,schema,repositories,evidence-store,reports}.ts # Main-owned storage
@@ -276,7 +334,7 @@ After the app works, add the small React sign-in fixture under `apps/desktop/tes
 ## Focused Build Order and Done Criteria
 
 1. **Launchable shell:** npm Workspaces desktop/Main/Preload/Renderer/Utility entry, Contracts, Main-owned guest and Utility-hosted Browser Runtime with visible real Playwright interaction; package these early to catch distribution blockers.
-2. **Local setup:** Persistence under Main, Main secure credentials, AI Providers preflight in Utility, setup/draft/single-audit guard; a real configured provider completes tool-capability preflight.
+2. **Local setup:** Models.dev catalog/cache/search/capability filters and installed AI SDK adapter/model selection in AI Providers/Utility; Main OS-backed BYOK/Persistence; lightweight real connectivity/tool-round-trip readiness, New Audit/draft/consent, localhost validation, budgets and one-audit checks. Full autonomous execution remains Slice 3.
 3. **Autonomous run:** Agent Core in Utility supplies the bounded SDK loop, TODOs/questions and business lifecycle; Browser Runtime executes serialized tools after Main native/security authorization. Preserve real events, Take/Return and origin/policy enforcement.
 4. **Evidence and report:** Browser Runtime captures safe real artifacts, Agent Core verifies/classifies, Main persists through Persistence and Renderer presents read-only local history after restart.
 5. **Optional WebMCP:** Browser Runtime's thin adapter uses the same Agent Core/Main gates; no-tools/unsupported fallback, visible-UX preservation and honest attribution. Defer any adapter blocker without blocking Playwright.
@@ -289,7 +347,7 @@ Use small Vitest tests for policy, ownership, questions, budgets and verificatio
 - Adopt the demonstrated browser mechanism provisionally; keep [checkpoint 2](spec-checkpoint-2.md) and [raw evidence](browser-feasibility-results.json) as historical support rather than the active work queue. Historical INCONCLUSIVE results remain inconclusive.
 - One supervised Utility process, five shared code packages, one typed event stream, five local tables and direct BYOK calls. npm Workspaces supplies organization, not extra processes. No event bus service, plugin system, hosted backend, multi-agent orchestration or production policy-contract framework.
 - Basic approved recovery/budget/secret rules remain; defer exhaustive races, broad OOPIF/worker compatibility, hardware/IME/DPI campaigns, long-duration performance, signed release/updater and advanced ASAR hardening.
-- Keep four provider integrations and the complete essential user journey. Implement each minimally before visual edge-case polish. The actual browser, autonomous execution and evidence-based verification are real, never simulated.
+- Keep catalog-driven discovery, a registered working SDK provider/model path and the complete essential journey. No arbitrary provider-count cap, universal-compatibility claim, automatic adapter installer or provider marketplace. The browser, execution and evidence-based verification are real, never simulated.
 
 ## Decisions and Open Issues
 
@@ -299,4 +357,5 @@ Use small Vitest tests for policy, ownership, questions, budgets and verificatio
 - **Approved organization amendment:** npm Workspaces, `apps/desktop` with Main/Preload/Renderer/Utility, and exactly the five shared packages above. Agent Core owns business orchestration; Browser Runtime and AI Providers execute in Utility; Main owns the native browser, security, process supervision, secure credentials and Persistence execution. The approved six-slice order is unchanged.
 - **Known limitations:** Arbitrary backend effects cannot be universally inferred from page labels, methods or tool hints; prevent unbounded unsafe actions and disclose coverage. Full CDP/hardware/release-hardening coverage is deferred, not reported as passed. Tool/protocol problems get focused fixes only when they block the chosen core path.
 - **Approval and handoff:** The learner explicitly approved this specification and requested official `5-build`; `4-spec` is complete. Follow the approved implementation sequence with verified working slices. Begin `6-ship` only after the core application passes a real end-to-end acceptance test and the build's final hands-on review/wrap-up are complete. No product implementation is claimed by this approval record.
-- **Current authorization:** Architecture recording and a local documentation checkpoint only. Wait for explicit authorization before Slice 1, dependency installation, manifests, source directories or implementation; this documentation commit does not begin `5-build` execution or `6-ship`.
+- **Approved provider amendment:** Models.dev discovery/advisory metadata plus registered AI SDK execution replaces the former fixed provider list. Model readiness requires available trusted adapter, current credentials/connectivity and real Agent tool round trip. Existing npm workspaces/processes/security boundaries remain unchanged; no new package.
+- **Current authorization:** Provider documentation amendment only. Slice 1 is mechanically verified at `78e3d09`; its source/evidence remain unchanged. Wait for explicit authorization before any Slice 2 implementation or dependency installation; this amendment does not start Slice 2 or `6-ship`.
