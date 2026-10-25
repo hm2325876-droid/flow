@@ -1,6 +1,6 @@
 import {utilityCommandSchema} from '@flowproof/contracts';
 import {BrowserRuntime} from '@flowproof/browser-runtime';
-import {getCatalog,verifyModel} from '@flowproof/ai-providers';
+import {getCatalog,verifyConnection,verifyModel} from '@flowproof/ai-providers';
 type Parent={on(event:'message',listener:(event:{data:unknown})=>void):void;postMessage(message:unknown):void};
 const parent=(process as NodeJS.Process&{parentPort:Parent}).parentPort;
 const runtime=new BrowserRuntime();let busy=false,providerBusy=false;
@@ -13,9 +13,9 @@ parent.on('message',async event=>{
     providerBusy=true;
     try{
       const command=message.command;
-      const result=command.type==='catalog'?await getCatalog(command.cache,command.refresh):await verifyModel(command.selection,command.key);
+      const result=command.type==='catalog'?await getCatalog(command.cache,command.refresh):command.phase==='connection'?await verifyConnection(command.selection,command.key):await verifyModel(command.selection,command.key);
       parent.postMessage({type:'reply',id:message.id,ok:true,result});
-    }catch{parent.postMessage({type:'reply',id:message.id,ok:false,error:'Model discovery is unavailable. Retry with an internet connection or use a saved supported model.'});}
+    }catch{parent.postMessage({type:'reply',id:message.id,ok:false,error:message.command.type==='catalog'?'Model discovery is unavailable. Retry with an internet connection or use the saved catalog.':'Internal desktop provider communication failed. Retry the check or restart the application.'});}
     finally{if(message.command.type==='verify')message.command.key='';providerBusy=false;}
     return;
   }

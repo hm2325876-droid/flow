@@ -19,15 +19,21 @@ In the app:
 3. Alternatively, select **Open validation page**. It serves a small owned loopback-only mechanics page and displays it in the actual application browser.
 4. **Run check** performs real Playwright navigation, button click, input fill, DOM observation and PNG capture inside the Utility process. Main independently reads the native DOM and verifies target identity before reporting success.
 
-**New audit** (`Ctrl+N`) opens the complete setup wizard; **Settings** opens AI connections. Search providers and models, filter advertised tools/reasoning/image input, inspect adapter availability, and select an executable model. Add a provider key privately in the app, save it, and select **Test connection & tools**. Configure the project, testing goal, optional context, localhost port/path and limits. Review runs real readiness checks and requires fresh explicit target authorization. **Prepare ready-to-run configuration** rechecks the gates and produces a typed handoff; it does not run an audit. A returning configured user can continue a saved draft, with fresh consent and checks.
+**New audit** (`Ctrl+N`) opens the complete setup wizard; **Settings** opens AI connections. Opening AI connections refreshes the live Models.dev **Providers** page while retaining an explicitly cached snapshot. Search and select a provider, browse only its models, inspect original IDs and advertised tools/structured output/reasoning/modalities, then select an executable model. Add or reuse its protected key and select **Test connection**, then **Verify agent tools**. Basic connectivity alone does not grant audit readiness. Configure the project, testing goal, optional context, localhost port/path and limits. Review runs real readiness checks and requires fresh explicit target authorization. **Prepare ready-to-run configuration** rechecks the gates and produces a typed handoff; it does not run an audit. A returning configured user can continue a saved draft, with fresh consent and checks.
 
-Catalog discovery is broad; only installed/registered adapters execute. Missing/stale metadata remains explicit. With no network and no saved catalog, the UI shows an actionable error rather than invented models; an exact native model ID may still be entered for a registered provider. Search/filtering never sends model requests. Non-sensitive drafts save locally; closing setup invalidates preflight and clears consent. Stored keys are never displayed or returned to Renderer.
+Catalog discovery is broad; only installed/registered adapters execute. Missing/stale metadata remains explicit. With no network and no saved catalog, the UI shows an actionable retry error rather than invented models. New selections must match the normalized catalog; an existing saved selection remains reusable during a catalog outage. Search/filtering never sends model requests. Non-sensitive drafts save locally; closing setup invalidates preflight and clears consent. Stored keys are never displayed or returned to Renderer.
 
 Sidebar collapse, workspace/findings navigation, panel resizing, browser enlargement and native Windows titlebar controls remain available.
 
-## Slice 2 connection fix
+## Slice 2 provider revision
 
-Manual testing after `417ac44` exposed a catalog-row selection bug: full model metadata was sent to a strict identifier-only bridge contract, which rejected it before Main/Utility/provider execution. Selection now sends only `providerId` and `modelId`; strict validation remains enabled. Close any older FlowProof copy and launch the updated `apps/desktop/dist/slice2-connection-fix/win-unpacked/FlowProof AI.exe`, or rebuild/run development. Saved protected keys remain Main-owned and can be reused without displaying their values.
+AI connections now navigates Providers → that provider’s models → model details and protected key setup. Back navigation preserves provider/search context. Six reviewed Models.dev logos are bundled locally; other catalog providers use initials. Exact catalog IDs remain separate from labels and are validated by Main before persistence. Connection and tool checks have separate results and bounded deadlines (20 and 30 seconds); ordinary provider charges may apply. Provider errors expose only fixed categories, stages, observed HTTP status and whitelisted SDK error classes. Malformed provider responses and invalid/inconclusive tools never become Ready.
+
+If a check fails, copy the displayed **phase/stage/category/HTTP/SDK class** and exact provider/model IDs for diagnosis; do not copy keys, headers or raw responses. A valid authorized key was not used for revision verification, so authenticated live success remains UNVERIFIED. Revision outcomes and remaining verification limits are recorded in [`slice-2-provider-revision-results.json`](devpost/slice-2-provider-revision-results.json).
+
+### Earlier Slice 2 connection fix
+
+Manual testing after `417ac44` exposed a catalog-row selection bug: full model metadata was sent to a strict identifier-only bridge contract, which rejected it before Main/Utility/provider execution. Selection now sends only `providerId` and `modelId`; strict validation remains enabled. Close any older FlowProof copy and launch the updated `apps/desktop/dist/slice2-provider-first/win-unpacked/FlowProof AI.exe`, or rebuild/run development. Saved protected keys remain Main-owned and can be reused without displaying their values.
 
 The regression now clicks an actual catalog row and the actual Test connection button. Packaged selection persists and real invalid-key provider errors display safely without a stuck spinner. Internal bridge failures have distinct request/IPC/response codes; diagnostics contain only fixed stage/code metadata. Valid-key authenticated inference remains unverified. Exact red/green evidence: [`slice-2-connection-fix-results.json`](devpost/slice-2-connection-fix-results.json).
 
@@ -61,15 +67,15 @@ Default output: `apps/desktop/dist/win-unpacked/FlowProof AI.exe`. Keep **the en
 The Slice 2 checkpoint's **current-code** side-by-side output is:
 
 ```text
-apps/desktop/dist/slice2-connection-fix/win-unpacked/FlowProof AI.exe
+apps/desktop/dist/slice2-provider-first/win-unpacked/FlowProof AI.exe
 ```
 
-A manually opened older copy was locking the default output during the final rebuild. It was left running; the current candidate was built side-by-side with the same configuration:
+Build a separate candidate with the same packaging configuration:
 
 ```powershell
 npm run build
-npm run package:win --workspace @flowproof/desktop -- --config.directories.output=dist/slice2-connection-fix
-$env:FLOWPROOF_PACKAGED_EXE = "$PWD/apps/desktop/dist/slice2-connection-fix/win-unpacked/FlowProof AI.exe"
+npm run package:win --workspace @flowproof/desktop -- --config.directories.output=dist/slice2-provider-first
+$env:FLOWPROOF_PACKAGED_EXE = "$PWD/apps/desktop/dist/slice2-provider-first/win-unpacked/FlowProof AI.exe"
 npm run smoke:packaged
 npm run smoke:setup:packaged
 ```
@@ -120,7 +126,7 @@ Agent Core remains a planned package boundary; no empty implementation was creat
 
 Models.dev supplies catalog-driven provider/model discovery and advisory metadata: identifiers, display names, tool calling, structured output, reasoning, and input/output modalities where available, plus limits/pricing. Vercel AI SDK supplies provider integration and execution through adapters actually installed and registered in trusted application code. This replaces the restriction to four hardcoded providers; the real registry contains OpenAI, Anthropic, Google Gemini, OpenRouter (official OpenAI-compatible adapter at a fixed reviewed URL), DeepSeek and Groq. Provider/model IDs remain separate, including native aggregator namespaces.
 
-`packages/ai-providers` owns discovery/search/filter/cache/offline fallback, supported versus unverified status, adapter resolution and a real two-request tool-round-trip preflight, with automatic retries disabled and a 40-second deadline. Main retains encrypted keys and cache persistence; Utility executes SDK requests; Renderer never receives stored key values. No metadata-triggered package installs, arbitrary catalog endpoints/code or universal-compatibility promise. Full autonomous execution remains Slice 3. See [`spec.md > Providers and Credentials`](devpost/spec.md#providers-and-credentials) and the amended checklist. Fresh successful readiness is reused for five minutes within an uninterrupted setup and invalidated by dismissal/restart/configuration changes. Catalog refresh failures do not invalidate otherwise valid readiness. Provider errors are fixed safe messages; telemetry/raw SDK warnings are disabled. Main stores only OS-encrypted ciphertext in `provider-vault.json` and non-sensitive settings in `flowproof.sqlite`. Neither authorization nor prepared handoffs are persisted. Secure-storage failure blocks key save/use with no plaintext fallback.
+`packages/ai-providers` owns discovery/search/filter/cache/offline fallback, supported versus unverified status, adapter resolution and separate actual connectivity (one request, 20 seconds) and tool-round-trip checks (at most two requests, 30 seconds), with automatic retries disabled. Audit preflight reuses fresh matching results; at most three small model requests establish both stages. Main retains encrypted keys and cache persistence; Utility executes SDK requests; Renderer never receives stored key values. No metadata-triggered package installs, arbitrary catalog endpoints/code or universal-compatibility promise. Full autonomous execution remains Slice 3. See [`spec.md > Providers and Credentials`](devpost/spec.md#providers-and-credentials) and the amended checklist. Fresh successful readiness is reused for five minutes within an uninterrupted setup and invalidated by dismissal/restart/configuration changes. Catalog refresh failures do not invalidate otherwise valid readiness. Provider errors are fixed safe messages; telemetry/raw SDK warnings are disabled. Main stores only OS-encrypted ciphertext in `provider-vault.json` and non-sensitive settings in `flowproof.sqlite`. Neither authorization nor prepared handoffs are persisted. Secure-storage failure blocks key save/use with no plaintext fallback.
 
 ## Pinned implementation dependencies
 

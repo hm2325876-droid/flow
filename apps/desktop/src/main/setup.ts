@@ -63,6 +63,8 @@ export class SetupService {
   private catalogError:string|null=null;
   private verification:ModelVerification|null=null;
   private verificationRevision:string|null=null;
+  private connection:ModelVerification|null=null;
+  private connectionRevision:string|null=null;
   private invalidKeys=new Set<string>();
   private review:AuditReadiness|null=null;
   private error:string|null=null;
@@ -87,12 +89,14 @@ export class SetupService {
   }
   init(){return this.initialized;}
   private knownProvider(id:string){return this.providers.some(p=>p.id===id);}
-  private invalidate(){this.verification=null;this.verificationRevision=null;this.review=null;}
-  private fresh(){return Boolean(this.selection&&this.verification?.status==='ready'&&this.verification.toolCalling&&this.verification.connectivity&&this.verification.providerId===this.selection.providerId&&this.verification.modelId===this.selection.modelId&&this.verificationRevision===this.vault.revision(this.selection.providerId)&&this.verification.expiresAt&&Date.parse(this.verification.expiresAt)>this.clock());}
+  private invalidate(){this.connection=null;this.connectionRevision=null;this.verification=null;this.verificationRevision=null;this.review=null;}
+  private freshConnection(){return Boolean(this.selection&&this.connection?.status==='connected'&&this.connection.connectivity&&this.connection.authenticated!==false&&this.connection.providerId===this.selection.providerId&&this.connection.modelId===this.selection.modelId&&this.connectionRevision===this.vault.revision(this.selection.providerId)&&this.connection.expiresAt&&Date.parse(this.connection.expiresAt)>this.clock());}
+  private fresh(){return Boolean(this.freshConnection()&&this.selection&&this.verification?.status==='ready'&&this.verification.toolCalling&&this.verification.connectivity&&this.verification.providerId===this.selection.providerId&&this.verification.modelId===this.selection.modelId&&this.verificationRevision===this.vault.revision(this.selection.providerId)&&this.verification.expiresAt&&Date.parse(this.verification.expiresAt)>this.clock());}
   private async snapshot():Promise<SetupState>{
     const available=await this.vault.isAvailable();
+    if(this.connection?.status==='connected'&&(!available||!this.freshConnection()))this.invalidate();
     if(this.verification?.status==='ready'&&(!available||!this.fresh())){this.verification=null;this.verificationRevision=null;this.review=null;}
-    return setupStateSchema.parse({catalog:this.catalog,catalogError:this.catalogError,providers:this.providers,selection:this.selection,credentials:this.providers.map(p=>({providerId:p.id,status:!this.vault.has(p.id)?'missing':this.invalidKeys.has(p.id)?'invalid':!available?'verification-required':'configured'})),verification:this.verification,draft:this.draft,review:this.review,secureStorageAvailable:available,error:this.error});
+    return setupStateSchema.parse({catalog:this.catalog,catalogError:this.catalogError,providers:this.providers,selection:this.selection,credentials:this.providers.map(p=>({providerId:p.id,status:!this.vault.has(p.id)?'missing':this.invalidKeys.has(p.id)?'invalid':!available?'verification-required':'configured'})),connection:this.connection,verification:this.verification,draft:this.draft,review:this.review,secureStorageAvailable:available,error:this.error});
   }
   handle(input:SetupCommand):Promise<SetupState>{
     // Dismissal invalidates authority immediately, even while an earlier paid
@@ -109,7 +113,7 @@ export class SetupService {
       const parsed=setupCommandSchema.safeParse(input);
       if(!parsed.success){this.review=null;this.error='Setup request is invalid. Check the entered fields and retry.';return this.snapshot();}
       this.error=this.storageFailure?'Local storage is unavailable. Restart FlowProof after checking app data access.':null;
-      try{if(!this.storageFailure&&(!['verify','review','prepare'].includes(parsed.data.type)||generation===this.generation))await this.execute(parsed.data);}
+      try{if(!this.storageFailure&&(!['verify','verify-connection','verify-tools','review','prepare'].includes(parsed.data.type)||generation===this.generation))await this.execute(parsed.data);}
       catch{this.review=null;this.error='Setup could not be saved or checked safely. Check local storage and try again.';}
       return this.snapshot();
     });
@@ -122,11 +126,15 @@ export class SetupService {
         try{
           const result=catalogSnapshotSchema.parse(await this.options.requestProvider({type:'catalog',cache:this.catalog,refresh:command.refresh}));
           await this.store!.saveCatalog(result);this.catalog=result;this.catalogError=null;
-        }catch{this.catalogError=this.catalog?'Catalog refresh is unavailable. Your saved catalog and supported selection remain usable.':'Models.dev is unavailable and no catalog is cached. Connect to the internet and refresh, or enter an installed provider model ID.';if(this.catalog)this.catalog={...this.catalog,source:'cache',stale:true,warning:this.catalogError};}
+        }catch{this.catalogError=this.catalog?'Catalog refresh is unavailable. Your saved catalog and supported selection remain usable.':'Models.dev is unavailable and no catalog is cached. Connect to the internet and refresh to select a model.';if(this.catalog)this.catalog={...this.catalog,source:'cache',stale:true,warning:this.catalogError};}
         break;
       }
       case 'select':{
         if(!this.knownProvider(command.selection.providerId)){this.error='This provider has no installed, registered adapter. Select a supported provider.';break;}
+        const same=this.selection?.providerId===command.selection.providerId&&this.selection.modelId===command.selection.modelId;
+        const model=this.catalog?.models.find(m=>m.providerId===command.selection.providerId&&m.modelId===command.selection.modelId);
+        if((!same&&!model)||!/^[a-zA-Z0-9][a-zA-Z0-9._:/@+-]*$/.test(command.selection.modelId)){this.error='Select an exact model ID from the current Models.dev catalog. Refresh the catalog and retry.';break;}
+        if(model&&(!model.adapterAvailable||(model.inputModalities.length>0&&!model.inputModalities.includes('text'))||(model.outputModalities.length>0&&!model.outputModalities.includes('text')))){this.error='This catalog model does not support text execution through an installed adapter.';break;}
         if(this.selection?.providerId!==command.selection.providerId||this.selection.modelId!==command.selection.modelId)this.invalidate();
         await this.store!.saveSelection(command.selection);this.selection=command.selection;break;
       }
@@ -143,35 +151,59 @@ export class SetupService {
         this.invalidate();await this.vault.remove(command.providerId);this.invalidKeys.delete(command.providerId);break;
       }
       case 'verify':await this.verify();break;
+      case 'verify-connection':await this.verifyPhase('connection');break;
+      case 'verify-tools':if(this.freshConnection())await this.verifyPhase('tools');else this.error='Verify model connectivity before checking agent tool compatibility.';break;
       case 'save-draft':await this.store!.saveDraft(command.draft);this.draft=command.draft;this.review=null;break;
       case 'dismiss':this.invalidate();break;
       case 'review':
       case 'prepare':await this.store!.saveDraft(command.draft);this.draft=command.draft;await this.checkReadiness(command.authorized,command.type==='prepare');break;
     }
   }
-  private failure(status:ModelVerification['status'],message:string):ModelVerification {
-    return {...this.selection!,status,message,connectivity:false,toolCalling:false,checkedAt:new Date(this.clock()).toISOString(),expiresAt:null};
+  private failure(status:ModelVerification['status'],message:string,phase:'connection'|'tools'='connection',diagnostic?:ModelVerification['diagnostic']):ModelVerification {
+    return {...this.selection!,status,message,phase,connectivity:phase==='tools'&&this.freshConnection(),toolCalling:false,checkedAt:new Date(this.clock()).toISOString(),expiresAt:null,...(diagnostic?{diagnostic}:{})};
   }
   private async verify(){
+    await this.verifyPhase('connection');
+    if(this.freshConnection())await this.verifyPhase('tools');
+  }
+  private async verifyPhase(phase:'connection'|'tools'){
     const generation=this.generation;
     this.review=null;
     if(!this.selection){this.error='Select a supported provider and model first.';return;}
-    if(this.fresh())return;
-    if(!this.knownProvider(this.selection.providerId)){this.verification=this.failure('adapter-unavailable','The selected provider has no installed adapter.');return;}
-    if(!this.vault.has(this.selection.providerId)){this.verification=this.failure('missing-key','Add an API key for the selected provider.');return;}
-    if(!await this.vault.isAvailable()){this.verification=this.failure('missing-key','OS-backed secure storage is unavailable. Restore it before checking the connection.');return;}
+    if(phase==='connection'?this.freshConnection():this.fresh())return;
+    const fail=(status:ModelVerification['status'],message:string)=>{const result=this.failure(status,message,phase);if(phase==='connection'){this.connection=result;this.connectionRevision=null;this.verification=null;this.verificationRevision=null;}else{this.verification=result;this.verificationRevision=null;}};
+    if(!this.knownProvider(this.selection.providerId)){fail('adapter-unavailable','The selected provider has no installed adapter.');return;}
+    if(!this.vault.has(this.selection.providerId)){fail('missing-key','Add an API key for the selected provider.');return;}
+    if(!await this.vault.isAvailable()){fail('missing-key','OS-backed secure storage is unavailable. Restore it before checking the connection.');return;}
     try{
       const selected=this.selection;
-      const result=await this.vault.withKey(selected.providerId,key=>this.options.requestProvider({type:'verify',selection:selected,key}));
+      const result=await this.vault.withKey(selected.providerId,key=>this.options.requestProvider({type:'verify',selection:selected,key,phase}));
       if(generation!==this.generation)return;
-      const parsed=modelVerificationSchema.parse(result);
-      if(parsed.providerId!==selected.providerId||parsed.modelId!==selected.modelId)throw new Error('Mismatched verification identity');
-      if(parsed.status==='ready'&&(!parsed.connectivity||!parsed.toolCalling||!parsed.expiresAt))throw new Error('Incomplete verification');
+      const validation=modelVerificationSchema.safeParse(result);
+      if(!validation.success||validation.data.providerId!==selected.providerId||validation.data.modelId!==selected.modelId||validation.data.phase!==phase||
+        (validation.data.status==='connected'&&(phase!=='connection'||!validation.data.connectivity||validation.data.authenticated===false))||
+        (validation.data.status==='ready'&&(phase!=='tools'||!validation.data.connectivity||!validation.data.toolCalling||!this.freshConnection()))){
+        const failure=this.failure('response-invalid','The desktop provider returned an invalid verification response. Retry the check.',phase,{stage:'response-validation',category:'invalid-response'});
+        if(phase==='connection'){this.connection=failure;this.connectionRevision=null;}else{this.verification=failure;this.verificationRevision=null;}
+        return;
+      }
+      const parsed=validation.data;
       // Main owns the freshness lifetime; Utility cannot grant an unlimited attestation.
-      this.verification={...parsed,checkedAt:new Date(this.clock()).toISOString(),expiresAt:parsed.status==='ready'?new Date(this.clock()+5*60_000).toISOString():null};
-      this.verificationRevision=this.vault.revision(selected.providerId);
-      if(parsed.status==='authentication')this.invalidKeys.add(selected.providerId);else if(parsed.status==='ready')this.invalidKeys.delete(selected.providerId);
-    }catch{if(generation!==this.generation)return;this.verification=this.failure('capability-unverified','The model check could not establish tool compatibility. Check the key/network and retry.');this.verificationRevision=null;}
+      const success=parsed.status===(phase==='connection'?'connected':'ready');
+      const attestation={...parsed,checkedAt:new Date(this.clock()).toISOString(),expiresAt:success?new Date(this.clock()+5*60_000).toISOString():null};
+      if(phase==='connection'){this.connection=attestation;this.connectionRevision=success?this.vault.revision(selected.providerId):null;this.verification=null;this.verificationRevision=null;}
+      else{this.verification=attestation;this.verificationRevision=success?this.vault.revision(selected.providerId):null;}
+      if(parsed.status==='authentication'){this.invalidKeys.add(selected.providerId);this.connectionRevision=null;this.verificationRevision=null;if(phase==='tools')this.connection=null;}
+      else if(success)this.invalidKeys.delete(selected.providerId);
+    }catch(cause){
+      if(generation!==this.generation)return;
+      // Only recognize our supervisor's fixed codes; never forward error text.
+      const timedOut=cause instanceof Error&&cause.message==='Provider operation deadline exceeded';
+      const message=timedOut?'Desktop provider communication timed out. Retry; if it repeats, restart FlowProof.':'The desktop provider process is unavailable or interrupted. Retry; if it repeats, restart FlowProof.';
+      const failure=this.failure('desktop-communication',message,phase,{stage:'transport',category:'internal'});
+      if(phase==='connection'){this.connection=failure;this.connectionRevision=null;this.verification=null;this.verificationRevision=null;}
+      else{this.verification=failure;this.verificationRevision=null;}
+    }
   }
   private async checkReadiness(authorized:boolean,prepare:boolean){
     const generation=this.generation;
@@ -192,7 +224,7 @@ export class SetupService {
       {id:'target',status:targetResult.ok?'passed':'failed',message:targetResult.message},
       {id:'adapter',status:adapter?'passed':'failed',message:adapter?'A registered provider adapter is available.':'Select a model with an installed, registered adapter.'},
       {id:'credentials',status:credentials?'passed':'failed',message:credentials?'An OS-protected provider key is configured.':'Add a protected key and make sure secure storage is available.'},
-      {id:'model',status:model?'passed':'failed',message:model?'Connectivity and the actual tool round trip are verified.':this.verification?.message??'Verify the selected model and its tool capability.'},
+      {id:'model',status:model?'passed':'failed',message:model?'Connectivity and the actual tool round trip are verified.':this.verification?.message??this.connection?.message??'Verify the selected model and its tool capability.'},
       {id:'budgets',status:budgets?'passed':'failed',message:budgets?'Execution limits are valid.':'Enter valid step and time limits.'},
       {id:'availability',status:availability?'passed':'failed',message:availability?'No conflicting audit/browser operation is active.':'Wait for the current browser operation to finish.'},
       {id:'authorization',status:authorized?'passed':'failed',message:authorized?'You authorized this exact localhost target and goal.':'Explicitly confirm authorization for this audit.'}

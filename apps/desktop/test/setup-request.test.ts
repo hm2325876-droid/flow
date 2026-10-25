@@ -5,6 +5,9 @@ import {defaultAuditDraft,supportedProviderDescriptors,setupBridgeErrorCodes,typ
 
 const state:SetupState={catalog:null,catalogError:null,providers:supportedProviderDescriptors,selection:{providerId:'openai',modelId:'unit-model'},credentials:[],verification:null,draft:defaultAuditDraft,review:null,secureStorageAvailable:true,error:null};
 describe('validated setup bridge failures',()=>{
+ it('transmits staged checks without catalog metadata or credential retrieval',async()=>{
+  for(const type of ['verify-connection','verify-tools'] as const){const invoke=vi.fn(async()=>state);await requestSetup({type},invoke,vi.fn());expect(invoke).toHaveBeenCalledWith({type});}
+ });
  it('rejects a full catalog entry before IPC, retaining strict identifier-only selection',async()=>{
   const invoke=vi.fn(),report=vi.fn();
   const catalogEntry={providerId:'openai',modelId:'unit-model',name:'Unit metadata',providerName:'OpenAI',toolCall:true,adapterAvailable:true,api:'https://untrusted.invalid'};

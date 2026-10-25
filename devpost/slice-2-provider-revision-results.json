@@ -1,0 +1,591 @@
+{
+  "slice": 2,
+  "revision": "Provider-first model discovery and staged connection verification",
+  "baseCommit": "7ab7dac9ff8de4448e73cf9c8469764cfedab03e",
+  "recordedAt": "2026-10-25T13:11:45.684510+00:00",
+  "status": "IMPLEMENTED_WITH_EXPLICIT_UNVERIFIED_CHECKS",
+  "scope": "Only Slice 2; documentation updated before code; no autonomous execution, later slices or push.",
+  "documentChanges": [
+    "devpost/scope.md + scope.html",
+    "devpost/prd.md + prd.html",
+    "devpost/spec.md + spec.html",
+    "devpost/checklist.md",
+    "README.md"
+  ],
+  "features": [
+    "Providers entry explicitly refreshes the fixed Models.dev endpoint; cached snapshot remains usable and is labeled with its original timestamp. Duplicate in-flight refresh requests are coalesced.",
+    "Actual catalog provider records, including zero-model providers; provider search; only that provider models; original ID search and advisory Tools/Structured output/Reasoning/Image input filters; Back retains search/provider context.",
+    "Six reviewed official logos bundled as passive local assets; initials for others. Catalog never supplies executable packages, endpoints or image URLs.",
+    "Separate original providerId/modelId, identifier-only IPC, exact Main catalog membership and trusted adapter/text-modality/runtime-ID validation. Unsupported entries browse without execution.",
+    "Existing Main-owned Windows secure credential storage retained; real save/replace/remove/restart and no stored-key disclosure observed.",
+    "One basic authenticated invocation (20 seconds, 512 output token cap), then a separate real challenge/tool-result round trip (at most two calls, 30 seconds, 1024 output tokens per call); no automatic retries, telemetry or raw SDK warnings.",
+    "Both matching five-minute Main-owned attestations bind to credential revision. Metadata/basic success alone cannot produce Ready. Inconclusive tools remain unverified. Fresh results are reused and revoked on key/model/dismissal/restart changes.",
+    "Existing eight-check localhost wizard, explicit per-audit consent, draft persistence and typed future handoff preserved. No audit session/activity is fabricated."
+  ],
+  "adapters": [
+    {
+      "providerId": "openai",
+      "package": "@ai-sdk/openai"
+    },
+    {
+      "providerId": "anthropic",
+      "package": "@ai-sdk/anthropic"
+    },
+    {
+      "providerId": "google",
+      "package": "@ai-sdk/google"
+    },
+    {
+      "providerId": "openrouter",
+      "package": "@ai-sdk/openai-compatible"
+    },
+    {
+      "providerId": "deepseek",
+      "package": "@ai-sdk/deepseek"
+    },
+    {
+      "providerId": "groq",
+      "package": "@ai-sdk/groq"
+    }
+  ],
+  "catalogObservation": {
+    "count": 8929,
+    "providerCount": 232,
+    "supportedCount": 514,
+    "toolCount": 7849,
+    "unknownTools": 0,
+    "source": "network",
+    "stale": false,
+    "fetchedAt": "2026-10-25T13:07:01.870Z",
+    "warning": null,
+    "idsValid": true
+  },
+  "providerErrorInvestigation": {
+    "manualLiveRootCauseStatus": "UNVERIFIED",
+    "missingEvidence": "No authorized valid test key and no safe stage/category/HTTP/SDK diagnostic from the original manual failure were provided. The old generic sentence alone cannot identify that provider response.",
+    "controlledFindings": [
+      {
+        "component": "AI SDK response validation / classifier",
+        "reproduction": "Actual installed SDK with isolated HTTP 200 malformed JSON, incompatible response schema and empty choices. Prior classifier fell through to the reported generic message.",
+        "fix": "Bounded cause/retry traversal publishes response-invalid, response-validation, observed HTTP status and whitelisted SDK class; never raw provider text/body/headers."
+      },
+      {
+        "component": "Tool receipt verification",
+        "reproduction": "A valid schema-checked challenge call and local receipt followed by prose around its exact receipt was rejected by old whole-response equality.",
+        "fix": "Accept exactly one standalone expected unpredictable receipt token; preserve one valid tool call/result, two-step maximum and reject duplicate, invented, substring and invalid tool interactions."
+      }
+    ],
+    "actualPackagedInvalidKey": {
+      "connection": {
+        "providerId": "openai",
+        "modelId": "gpt-daybreak-blue-latest",
+        "status": "authentication",
+        "message": "The provider rejected the API key or account access. Replace the key or check access to this model.",
+        "connectivity": false,
+        "toolCalling": false,
+        "checkedAt": "2026-10-25T13:07:15.085Z",
+        "expiresAt": null,
+        "authenticated": false,
+        "phase": "connection",
+        "diagnostic": {
+          "stage": "connection",
+          "category": "authentication",
+          "httpStatus": 401,
+          "sdkError": "AI_APICallError"
+        }
+      },
+      "uiFeedback": "The provider rejected the API key or account access. Replace the key or check access to this model.connection / connection · authentication · HTTP 401 · AI_APICallError",
+      "busyCleared": true,
+      "agentToolsDisabled": true,
+      "capture": {
+        "bytes": 79881,
+        "artifactId": "desktop-1792933636613.png",
+        "nativeComposite": false
+      }
+    },
+    "disposition": "Controlled reproducible diagnostic and receipt defects fixed. The exact previous live-provider failure is not claimed solved without its safe evidence."
+  },
+  "automated": {
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run typecheck"
+    },
+    "tests": {
+      "status": "PASS",
+      "command": "npm test",
+      "testFiles": 11,
+      "passed": 73,
+      "failed": 0
+    },
+    "productionBuild": {
+      "status": "PASS",
+      "command": "npm run build"
+    },
+    "windowsPackage": {
+      "status": "PASS",
+      "command": "npm run package:win --workspace @flowproof/desktop -- --config.directories.output=dist/slice2-provider-first"
+    },
+    "coverage": [
+      "normalized catalog/original IDs/providers/cache/offline fallback",
+      "provider-only discovery/search/filter/selectability/identifier-only payloads",
+      "strict bridge/IPC and credential non-disclosure",
+      "secure storage unavailable/save/replace/remove/restart",
+      "separate connection/tools, error categories and bounded signals",
+      "invalid JSON/schema/tool/receipt and real SDK request paths with isolated responses",
+      "five-minute credential binding, races, drafts, authorization and localhost eight-check handoff"
+    ]
+  },
+  "desktop": {
+    "development": {
+      "report": "test-results/slice2/2026-10-25T12-55-03-362Z-development/report.json",
+      "summary": {
+        "pass": 14,
+        "fail": 0,
+        "unverified": 1
+      },
+      "checks": [
+        {
+          "name": "desktop-and-provider-utility-launch",
+          "status": "PASS"
+        },
+        {
+          "name": "real-models-dev-catalog-through-utility",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-provider-search-and-original-model-id-selection",
+          "status": "PASS"
+        },
+        {
+          "name": "stable-selection-and-missing-key-blocker",
+          "status": "PASS"
+        },
+        {
+          "name": "real-os-backed-save-replace-status",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-ui-basic-connection-failure-keeps-agent-tools-disabled",
+          "status": "PASS"
+        },
+        {
+          "name": "remove-invalid-key-before-local-wizard-checks",
+          "status": "PASS"
+        },
+        {
+          "name": "blank-fields-and-public-target-path-rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "localhost-checks-and-explicit-authorization-gate",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-provider-scoped-model-search-filter-and-back-navigation",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-configure-review-consent-and-dismissal-ui",
+          "status": "PASS"
+        },
+        {
+          "name": "restart-restores-selection-draft-encrypted-key-and-cache",
+          "status": "PASS"
+        },
+        {
+          "name": "credential-removal-and-future-handoff-remain-blocked",
+          "status": "PASS"
+        },
+        {
+          "name": "authenticated-live-tool-roundtrip-and-ready-handoff",
+          "status": "UNVERIFIED",
+          "observed": {
+            "status": "UNVERIFIED",
+            "reason": "No valid authorized provider test key is configured; no authenticated model success or Ready handoff is claimed."
+          }
+        },
+        {
+          "name": "owned-main-and-utility-cleanup",
+          "status": "PASS"
+        }
+      ]
+    },
+    "devServer": {
+      "report": "test-results/slice2/2026-10-25T13-01-48-887Z-dev-server/report.json",
+      "summary": {
+        "pass": 14,
+        "fail": 0,
+        "unverified": 1
+      },
+      "checks": [
+        {
+          "name": "desktop-and-provider-utility-launch",
+          "status": "PASS"
+        },
+        {
+          "name": "real-models-dev-catalog-through-utility",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-provider-search-and-original-model-id-selection",
+          "status": "PASS"
+        },
+        {
+          "name": "stable-selection-and-missing-key-blocker",
+          "status": "PASS"
+        },
+        {
+          "name": "real-os-backed-save-replace-status",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-ui-basic-connection-failure-keeps-agent-tools-disabled",
+          "status": "PASS"
+        },
+        {
+          "name": "remove-invalid-key-before-local-wizard-checks",
+          "status": "PASS"
+        },
+        {
+          "name": "blank-fields-and-public-target-path-rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "localhost-checks-and-explicit-authorization-gate",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-provider-scoped-model-search-filter-and-back-navigation",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-configure-review-consent-and-dismissal-ui",
+          "status": "PASS"
+        },
+        {
+          "name": "restart-restores-selection-draft-encrypted-key-and-cache",
+          "status": "PASS"
+        },
+        {
+          "name": "credential-removal-and-future-handoff-remain-blocked",
+          "status": "PASS"
+        },
+        {
+          "name": "authenticated-live-tool-roundtrip-and-ready-handoff",
+          "status": "UNVERIFIED",
+          "observed": {
+            "status": "UNVERIFIED",
+            "reason": "No valid authorized provider test key is configured; no authenticated model success or Ready handoff is claimed."
+          }
+        },
+        {
+          "name": "owned-main-and-utility-cleanup",
+          "status": "PASS"
+        }
+      ]
+    },
+    "packaged": {
+      "report": "test-results/slice2/2026-10-25T13-06-56-131Z-packaged/report.json",
+      "summary": {
+        "pass": 14,
+        "fail": 0,
+        "unverified": 1
+      },
+      "checks": [
+        {
+          "name": "desktop-and-provider-utility-launch",
+          "status": "PASS"
+        },
+        {
+          "name": "real-models-dev-catalog-through-utility",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-provider-search-and-original-model-id-selection",
+          "status": "PASS"
+        },
+        {
+          "name": "stable-selection-and-missing-key-blocker",
+          "status": "PASS"
+        },
+        {
+          "name": "real-os-backed-save-replace-status",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-ui-basic-connection-failure-keeps-agent-tools-disabled",
+          "status": "PASS"
+        },
+        {
+          "name": "remove-invalid-key-before-local-wizard-checks",
+          "status": "PASS"
+        },
+        {
+          "name": "blank-fields-and-public-target-path-rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "localhost-checks-and-explicit-authorization-gate",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-provider-scoped-model-search-filter-and-back-navigation",
+          "status": "PASS"
+        },
+        {
+          "name": "actual-configure-review-consent-and-dismissal-ui",
+          "status": "PASS"
+        },
+        {
+          "name": "restart-restores-selection-draft-encrypted-key-and-cache",
+          "status": "PASS"
+        },
+        {
+          "name": "credential-removal-and-future-handoff-remain-blocked",
+          "status": "PASS"
+        },
+        {
+          "name": "authenticated-live-tool-roundtrip-and-ready-handoff",
+          "status": "UNVERIFIED",
+          "observed": {
+            "status": "UNVERIFIED",
+            "reason": "No valid authorized provider test key is configured; no authenticated model success or Ready handoff is claimed."
+          }
+        },
+        {
+          "name": "owned-main-and-utility-cleanup",
+          "status": "PASS"
+        }
+      ]
+    },
+    "nativeDevelopment": {
+      "report": "test-results/slice1/2026-10-25T12-56-16-189Z-development/report.json",
+      "summary": {
+        "pass": 12,
+        "fail": 0,
+        "unverified": 0
+      },
+      "checks": [
+        {
+          "name": "desktop-and-utility-launch",
+          "status": "PASS"
+        },
+        {
+          "name": "real-react-shell-and-limited-preload",
+          "status": "PASS"
+        },
+        {
+          "name": "main-owned-native-guest-and-utility-cdp",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent-connects-preserve-one-authorized-target",
+          "status": "PASS"
+        },
+        {
+          "name": "scoped-transport-authorization",
+          "status": "PASS"
+        },
+        {
+          "name": "real-playwright-click-fill-navigation-and-screenshot",
+          "status": "PASS"
+        },
+        {
+          "name": "native-view-follows-resize-and-sidebar",
+          "status": "PASS"
+        },
+        {
+          "name": "window-routed-native-input-excluded-during-playwright",
+          "status": "PASS"
+        },
+        {
+          "name": "native-os-input-excluded-during-real-playwright-operation",
+          "status": "PASS"
+        },
+        {
+          "name": "native-origin-popup-and-reachable-redirect-boundaries",
+          "status": "PASS"
+        },
+        {
+          "name": "configured-port-and-initial-path-through-real-ui-bridge",
+          "status": "PASS"
+        },
+        {
+          "name": "graceful-process-cleanup",
+          "status": "PASS"
+        }
+      ]
+    },
+    "nativePackaged": {
+      "report": "test-results/slice1/2026-10-25T13-09-34-376Z-packaged/report.json",
+      "summary": {
+        "pass": 11,
+        "fail": 0,
+        "unverified": 1
+      },
+      "checks": [
+        {
+          "name": "desktop-and-utility-launch",
+          "status": "PASS"
+        },
+        {
+          "name": "real-react-shell-and-limited-preload",
+          "status": "PASS"
+        },
+        {
+          "name": "main-owned-native-guest-and-utility-cdp",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent-connects-preserve-one-authorized-target",
+          "status": "PASS"
+        },
+        {
+          "name": "scoped-transport-authorization",
+          "status": "PASS"
+        },
+        {
+          "name": "real-playwright-click-fill-navigation-and-screenshot",
+          "status": "PASS"
+        },
+        {
+          "name": "native-view-follows-resize-and-sidebar",
+          "status": "PASS"
+        },
+        {
+          "name": "window-routed-native-input-excluded-during-playwright",
+          "status": "PASS"
+        },
+        {
+          "name": "native-os-input-excluded-during-real-playwright-operation",
+          "status": "UNVERIFIED",
+          "observed": {
+            "status": "UNVERIFIED",
+            "reason": "Owned activation point obscured",
+            "nativeInput": {
+              "hitWindow": 1903492,
+              "activation": {
+                "x": 827,
+                "y": 30
+              },
+              "foreground": 1903492,
+              "status": "UNVERIFIED",
+              "expectedWindow": "3410164",
+              "expectedRoot": 3410164,
+              "reason": "Owned activation point obscured"
+            },
+            "point": {
+              "x": 1158,
+              "y": 537,
+              "activateX": 827,
+              "activateY": 30,
+              "hwnd": "3410164",
+              "focus": {
+                "window": true,
+                "shield": true,
+                "renderer": false,
+                "guest": false
+              }
+            },
+            "cdpWorkedWithShield": true
+          }
+        },
+        {
+          "name": "native-origin-popup-and-reachable-redirect-boundaries",
+          "status": "PASS"
+        },
+        {
+          "name": "configured-port-and-initial-path-through-real-ui-bridge",
+          "status": "PASS"
+        },
+        {
+          "name": "graceful-process-cleanup",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "earlierAttemptsPreserved": [
+    {
+      "report": "test-results/slice2/2026-10-25T12-58-06-645Z-packaged/report.json",
+      "summary": {
+        "pass": 14,
+        "fail": 0,
+        "unverified": 1
+      },
+      "note": "Earlier candidate before final UI refinements."
+    },
+    {
+      "report": "test-results/slice2/2026-10-25T12-59-47-263Z-dev-server/report.json",
+      "summary": {
+        "pass": 0,
+        "fail": 1,
+        "unverified": 0
+      },
+      "note": "30-second launch observation deadline while concurrent test/build load; repeated sequentially without raising timeouts and passed."
+    },
+    {
+      "command": "npm test concurrent with initial dev-server build",
+      "summary": {
+        "pass": 72,
+        "fail": 1
+      },
+      "note": "Persistence test exceeded unchanged 5000ms timeout during concurrent load. Sequential final run passed all73; no persistence source/test timeout changes."
+    },
+    {
+      "report": "test-results/slice1/2026-10-25T13-07-53-511Z-packaged/report.json",
+      "summary": {
+        "pass": 11,
+        "fail": 0,
+        "unverified": 1
+      },
+      "note": "Guarded native OS input abstained: owned activation point obscured. Retry retained guard and also abstained; never relabeled PASS."
+    }
+  ],
+  "artifacts": {
+    "executable": "apps\\desktop\\dist\\slice2-provider-first\\win-unpacked\\FlowProof AI.exe",
+    "executableSha256": "e7beef5b7da56efd80e7fb89d6d1d57c14308cafb61959154c29d6bce093de44",
+    "asarSha256": "e15f02ea2242a600f8bbaaf239cd02e210fbf9ced0029087bc03953002b4e4b4"
+  },
+  "limitations": [
+    "Live authenticated basic connection, actual successful provider tool round trip and live Ready handoff are UNVERIFIED. Isolated SDK success and Main handoff tests are not live-provider success.",
+    "Final packaged guarded OS-input check is UNVERIFIED because another window obscured its owned activation point. Window-routed native exclusion, same-session Playwright and remaining eleven packaged checks PASS; earlier development OS-input check PASS. No focus guard/security bypass was made.",
+    "Offline fallback and unavailable secure storage use isolated automated tests; live desktop checks observed real network retrieval and persisted-cache restart.",
+    "Only the six registered adapters execute. Other catalog providers use discovery-only states. Six bundled logos do not imply support for other catalog entries.",
+    "Autonomous execution, history/reporting and later slices remain outside this revision."
+  ],
+  "safeDiagnosticProcedure": [
+    "Launch apps/desktop/dist/slice2-provider-first/win-unpacked/FlowProof AI.exe, open Settings, choose the actual catalog provider and exact original model ID.",
+    "Enter an authorized key privately through the password input or reuse the protected key; Test connection. Record only providerId/modelId, displayed phase/stage/category, HTTP status and SDK class.",
+    "Only after authenticated connection succeeds, Verify agent tools and record the same safe fields. Plain text or inconclusive tools must remain Unverified.",
+    "For the unresolved original failure supply these safe fields plus application commit/build path. Never supply keys, Authorization headers, raw responses or private prompts."
+  ],
+  "implementationSha256": {
+    "apps/desktop/src/main/setup.ts": "ea99458dd1e09e612c6a9ca76e59f20f58d09a0757ae3c63ada4f6449f92e921",
+    "apps/desktop/src/main/smoke-control.ts": "da3476160751e258ae8c6207fb715c6f53d9af24530d42e75b9626baf33493b0",
+    "apps/desktop/src/renderer/ProviderPicker.tsx": "43ad41e5f777223956ae35ad27024d62b098422dfa5bc49c1eb5b11838935445",
+    "apps/desktop/src/renderer/SetupDialog.tsx": "f5327fb667662ba73e6a9bf33f710189692d6f75891a10f8a40d0bc141cb4ac4",
+    "apps/desktop/src/renderer/assets/providers/README.md": "c3d28fc04bd60df4fb1129cfdd9861d0037bc34058f2ad479bf39e63f1d7eb7d",
+    "apps/desktop/src/renderer/assets/providers/anthropic.svg": "d9eb8a1cb32e3dfefea695ca33326168af56caa710b34c94e5d317d28b422ce0",
+    "apps/desktop/src/renderer/assets/providers/deepseek.svg": "fdc7613fa261eab83bccf6a2e087cf4d83b9050e9222a874689447ad901a84d5",
+    "apps/desktop/src/renderer/assets/providers/google.svg": "32768e91724a46b8f06c3999b491984ef7974194057cc617658635df4ea65240",
+    "apps/desktop/src/renderer/assets/providers/groq.svg": "40578773086b54d5522c7d22f75664b41ccda03f8fab964882a58037de237c55",
+    "apps/desktop/src/renderer/assets/providers/openai.svg": "a495ae1dee53ebf3eab642acb0c6e564ea23ceb7c1565c826f480cb2bf32beda",
+    "apps/desktop/src/renderer/assets/providers/openrouter.svg": "5087a8510fa7e339c0fd9f658e76362d00d39a94a75b90d5fb42b8b28c6b964f",
+    "apps/desktop/src/renderer/provider-picker-state.ts": "d4db62baa47adf923d5b0ab12f63b41cb9b9406dd6b807843a4468c759120447",
+    "apps/desktop/src/renderer/setup.css": "8b85708e0429709c54666e46a966eccc4c4010b6c45dda422652c07cd3af9697",
+    "apps/desktop/src/utility/index.ts": "73890da5c255b00b1c93eda4cc2870b5fbbee21beb8c758db818c481b3c70909",
+    "apps/desktop/test/provider-picker.test.ts": "7b65a9a5a0e6ee46f1eda13faa7c91cc63cc2ba3bf31a4c3177f7f1943dc6fc8",
+    "apps/desktop/test/setup-request.test.ts": "3078ae2c5d7713fb1f29b4212efa94c836a8a745425c2f115315da5705553a1b",
+    "apps/desktop/test/setup-smoke.mjs": "7665f1c2130cf781bd3da3142447b59665e3e53022e672f2a11b1fb1a26fa985",
+    "apps/desktop/test/setup.test.ts": "9e8bd4e9cf26c879bcad2408cd96e3c06f722103f043edf7e543f1647ed79e3d",
+    "packages/ai-providers/src/catalog.ts": "ba29bd1fadf7befd58b331692eca7e476fa80b2dcf277ca23ab23506133eb564",
+    "packages/ai-providers/src/index.ts": "bcedf2eac52fcbbef1c8e5e0b545e7019f9252ed2a8fb7fd1f46f6111864e45a",
+    "packages/ai-providers/src/preflight.ts": "2df9e10d7e99e0b47861d9c4693d11a537a2d5b7416427962eb9b17100dd74b6",
+    "packages/ai-providers/test/catalog.test.ts": "0a4dcffe20b8110b0cf534daaa8079b627fa96b2e81b10cc8e565f7b65ec670f",
+    "packages/ai-providers/test/preflight.test.ts": "8a59e4c0daaad62154d682a0a02ab0d3b38379d093a1296b49a131060a1b7612",
+    "packages/contracts/src/setup.ts": "a9f7b54114bb28cf63da83c32374572572cca92028ad5b3c4d9d0062701518cc",
+    "packages/contracts/test/setup.test.ts": "a734d94ce2228d404aede0f4b036e2d773e634cbb2f60ded7dccfd4ef898974d"
+  },
+  "postVerificationNormalization": "Removed excess trailing blank lines from imported passive SVG assets only; no executable source, SVG elements or behavior changed."
+}

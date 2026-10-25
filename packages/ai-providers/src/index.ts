@@ -1,3 +1,3 @@
-export {normalizeCatalog,getCatalog} from './catalog';
+export {normalizeCatalog,normalizeProviders,getCatalog} from './catalog';
 export {registeredProviders,resolveModel} from './registry';
-export {verifyModel,classifyProviderError} from './preflight';
+export {verifyConnection,verifyModel,classifyProviderError} from './preflight';

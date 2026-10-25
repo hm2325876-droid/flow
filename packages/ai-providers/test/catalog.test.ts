@@ -1,5 +1,5 @@
 import {describe,it,expect,vi} from 'vitest';
-import {getCatalog,normalizeCatalog} from '../src/catalog';
+import {getCatalog,normalizeCatalog,normalizeProviders} from '../src/catalog';
 
 const fixture={openai:{name:'OpenAI',npm:'do-not-import',api:'https://untrusted.invalid',models:{'unit-model':{name:'Unit model',tool_call:true,structured_output:false,reasoning:false,modalities:{input:['text','image'],output:['text']},limit:{context:8192,output:1024},cost:{input:0,output:1}}}},other:{name:'Other catalog provider',models:{'native/model':{name:'Native model'}}}};
 describe('Models.dev discovery and cache',()=>{
@@ -10,10 +10,18 @@ describe('Models.dev discovery and cache',()=>{
   expect(models.find(m=>m.providerId==='other')).toMatchObject({modelId:'native/model',toolCall:null,contextLimit:null,inputPrice:null,adapterAvailable:false});
   expect(JSON.stringify(models)).not.toContain('untrusted.invalid');expect(JSON.stringify(models)).not.toContain('do-not-import');
  });
+ it('discovers only actual providers including zero-model records and preserves exact scoped IDs',()=>{
+  const raw={...fixture,empty:{name:'Empty provider',models:{}},google:{name:'Catalog Google',models:{'Original/ID:v1':{name:'Unrelated display name'},' invalid-id':{name:'Invalid'}}}};
+  const models=normalizeCatalog(raw),providers=normalizeProviders(raw,models);
+  expect(providers.find(p=>p.id==='empty')).toEqual({id:'empty',name:'Empty provider',modelCount:0,adapterAvailable:false});
+  expect(providers.find(p=>p.id==='google')).toMatchObject({name:'Catalog Google',modelCount:1,adapterAvailable:true});
+  expect(providers.some(p=>p.id==='anthropic')).toBe(false);expect(models.find(m=>m.providerId==='google')?.modelId).toBe('Original/ID:v1');expect(models.some(m=>m.modelId==='invalid-id')).toBe(false);
+ });
  it('fetches only the fixed HTTPS endpoint with a bounded signal and validates a snapshot',async()=>{
   const fetcher=vi.fn<typeof fetch>(async()=>new Response(JSON.stringify(fixture)));
   const result=await getCatalog(null,false,fetcher);
   expect(result.source).toBe('network');expect(result.stale).toBe(false);expect(result.models).toHaveLength(2);
+  expect(result.providers).toHaveLength(2);
   expect(fetcher.mock.calls[0][0]).toBe('https://models.dev/api.json');expect(fetcher.mock.calls[0][1]).toMatchObject({redirect:'error'});expect(fetcher.mock.calls[0][1]?.signal).toBeInstanceOf(AbortSignal);
   const headers=new Headers(fetcher.mock.calls[0][1]?.headers);expect([...headers.keys()]).toEqual(['accept']);
  });
@@ -21,6 +29,12 @@ describe('Models.dev discovery and cache',()=>{
   const fetcher=vi.fn<typeof fetch>();
   const result=await getCatalog({fetchedAt:new Date().toISOString(),source:'network',stale:false,warning:null,models:normalizeCatalog(fixture)},false,fetcher);
   expect(result.source).toBe('cache');expect(fetcher).not.toHaveBeenCalled();
+  expect(result.providers?.find(p=>p.id==='openai')).toMatchObject({modelCount:1,adapterAvailable:true});
+ });
+ it('attempts explicit refresh even with a recent cache and marks failed refresh stale',async()=>{
+  const fetcher=vi.fn<typeof fetch>(async()=>{throw new TypeError('sensitive offline details');});
+  const result=await getCatalog({fetchedAt:new Date().toISOString(),source:'network',stale:false,warning:null,models:normalizeCatalog(fixture)},true,fetcher);
+  expect(fetcher).toHaveBeenCalledTimes(1);expect(result.source).toBe('cache');expect(result.stale).toBe(true);expect(result.warning).not.toContain('sensitive');
  });
  it('falls back to stale saved data without dropping stable selections',async()=>{
   const fetcher=vi.fn<typeof fetch>(async()=>{throw new Error('offline with potentially sensitive details')});
