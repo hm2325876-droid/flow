@@ -113,6 +113,8 @@ Only desktop, Contracts and Browser Runtime workspace code was needed. No empty 
 
 ## Final Review
 
+- [x] Repair the manually reported Slice 2 Connect AI error — reproduced in the packaged app before IPC; project catalog selections into identifier-only DTOs, preserve strict validation, sanitize bridge errors and cover actual model-row/Test connection interactions. Typecheck, 49 tests, development setup (14 PASS / 0 FAIL / 1 UNVERIFIED), packaged setup (14 PASS / 0 FAIL / 1 UNVERIFIED) and packaged native regression (12 PASS / 0 FAIL) passed. Valid-key success is unverified; see [`slice-2-connection-fix-results.json`](slice-2-connection-fix-results.json). This resolves the reported defect mechanically, not the overall hands-on review sign-off.
+
 - [ ] Real end-to-end acceptance passed with a configured provider, actual native browser execution, sufficient evidence/reproduction and local restart/reopen; results recorded without secrets.
 - [ ] Final review complete — feedback resolved and learner confirms ready to ship.
 
@@ -142,3 +144,5 @@ Activity mode: Not yet performed; use a focused experienced-developer investigat
 - Approved provider amendment after Slice 1 — Models.dev discovery/advisory metadata plus installed, registered AI SDK execution replaces the fixed provider list. Slice 2 adds catalog search/filter/cache/offline handling and a small real Agent tool-readiness check; preserve existing process/credential boundaries and all completed Slice 1 evidence. Documentation only; no Slice 2 implementation is authorized.
 
 - Slice 2 authorized and implemented only — preserve the native kernel, use six fixed-origin SDK adapters and real catalog metadata, Windows-protected Main-owned credentials, settings-only SQLite/Drizzle and truthful setup readiness. Node bundled SQLite plus the documented Drizzle proxy avoids a third-party native ABI rebuild while preserving storage ownership; compatible Zod/Vite/Vitest security patches were applied. Successful authenticated tool calling remains unverified without an authorized valid key; no test double is a live product success.
+
+- Manual Slice 2 feedback exposed a Renderer-to-Preload DTO bug: TypeScript structural typing retained catalog metadata in an identifier-only select request. Reproduced the exact generic message in a packaged build with unchanged `417ac44` selection/preload/schema sources. Fixed explicit identifier projection, kept strict validation/timeouts/security, added safe stage-coded errors and actual UI-click regressions. No Slice 3 work; earlier results and failed raw reports remain preserved.

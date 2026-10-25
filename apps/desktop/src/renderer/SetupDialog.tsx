@@ -2,6 +2,7 @@ import {useEffect,useMemo,useRef,useState} from 'react';
 import {ArrowLeft,ArrowRight,Check,CheckCircle2,ChevronRight,Database,Globe2,KeyRound,Loader2,LockKeyhole,RefreshCw,Search,ShieldCheck,SlidersHorizontal,Trash2,X} from 'lucide-react';
 import {defaultAuditDraft,targetSchema,modelRefSchema,type AuditDraft,type CatalogModel,type ModelRef,type SetupCommand,type SetupState} from '@flowproof/contracts';
 import {Button} from './components/ui/button';
+import {setupFailureMessage} from './setup-errors';
 
 const capability=(value:boolean|null)=>value===true?'Yes':value===false?'No':'Unknown';
 const tokens=(value:number|null)=>value===null?'Unknown':new Intl.NumberFormat('en',{notation:'compact',maximumFractionDigits:1}).format(value);
@@ -16,7 +17,7 @@ export function SetupDialog({mode,close}:{mode:'audit'|'settings';close:()=>void
  const dialog=useRef<HTMLDivElement>(null),alive=useRef(true),draftRef=useRef(draft),closeRef=useRef<()=>void>(()=>{}),initialSave=useRef(true);
  draftRef.current=draft;
  function accept(next:SetupState){if(alive.current){setState(next);if(next.error)setError(next.error);}}
- async function command(input:SetupCommand,label:string){setBusy(label);setError('');try{const next=await window.flowproof.setup(input);accept(next);return next;}catch{if(alive.current)setError('The setup request could not finish safely. Check the desktop connection and retry.');}finally{if(alive.current)setBusy('');}}
+ async function command(input:SetupCommand,label:string){setBusy(label);setError('');try{const next=await window.flowproof.setup(input);accept(next);return next;}catch(cause){if(alive.current)setError(setupFailureMessage(cause));}finally{if(alive.current)setBusy('');}}
  function dismiss(){setKey('');const current=draftRef.current;void window.flowproof.setup({type:'dismiss'}).catch(()=>{});void window.flowproof.setup({type:'save-draft',draft:current}).catch(()=>{});close();}
  closeRef.current=dismiss;
  useEffect(()=>{
@@ -58,7 +59,7 @@ export function SetupDialog({mode,close}:{mode:'audit'|'settings';close:()=>void
  const validTarget=targetSchema.safeParse({port:Number(draft.port),path:draft.path||'/',consent:true});
  const validDraft=Boolean(draft.projectName.trim()&&draft.goal.trim()&&validTarget.success);
  function edit<K extends keyof AuditDraft>(name:K,value:AuditDraft[K]){setDraft(d=>({...d,[name]:value}));setAuthorized(false);setState(s=>s?{...s,review:null}:s);}
- async function choose(ref:ModelRef){setInspected(ref);setKey('');if(!state?.providers.some(p=>p.id===ref.providerId))return;await command({type:'select',selection:ref},'Saving model selection');}
+ async function choose({providerId,modelId}:ModelRef){const ref:ModelRef={providerId,modelId};setInspected(ref);setKey('');if(!state?.providers.some(p=>p.id===providerId))return;await command({type:'select',selection:ref},'Saving model selection');}
  async function go(next:number){const updated={...draftRef.current,step:next};setDraft(updated);setStep(next);setError('');if(next===3){setReviewing(true);await command({type:'review',draft:updated,authorized},'Checking audit readiness');setReviewing(false);}}
  async function checkReview(consent=authorized,prepare=false){setReviewing(true);await command({type:prepare?'prepare':'review',draft:draftRef.current,authorized:consent},prepare?'Preparing verified configuration':'Checking audit readiness');setReviewing(false);}
  async function saveKey(){if(!reference||!key.trim())return;let value=key;setKey('');await command({type:'save-key',providerId:reference.providerId,key:value},'Protecting provider key');value='';}

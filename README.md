@@ -25,6 +25,12 @@ Catalog discovery is broad; only installed/registered adapters execute. Missing/
 
 Sidebar collapse, workspace/findings navigation, panel resizing, browser enlargement and native Windows titlebar controls remain available.
 
+## Slice 2 connection fix
+
+Manual testing after `417ac44` exposed a catalog-row selection bug: full model metadata was sent to a strict identifier-only bridge contract, which rejected it before Main/Utility/provider execution. Selection now sends only `providerId` and `modelId`; strict validation remains enabled. Close any older FlowProof copy and launch the updated `apps/desktop/dist/slice2-connection-fix/win-unpacked/FlowProof AI.exe`, or rebuild/run development. Saved protected keys remain Main-owned and can be reused without displaying their values.
+
+The regression now clicks an actual catalog row and the actual Test connection button. Packaged selection persists and real invalid-key provider errors display safely without a stuck spinner. Internal bridge failures have distinct request/IPC/response codes; diagnostics contain only fixed stage/code metadata. Valid-key authenticated inference remains unverified. Exact red/green evidence: [`slice-2-connection-fix-results.json`](devpost/slice-2-connection-fix-results.json).
+
 ## Verify
 
 ```powershell
@@ -55,15 +61,15 @@ Default output: `apps/desktop/dist/win-unpacked/FlowProof AI.exe`. Keep **the en
 The Slice 2 checkpoint's **current-code** side-by-side output is:
 
 ```text
-apps/desktop/dist/slice2-final/win-unpacked/FlowProof AI.exe
+apps/desktop/dist/slice2-connection-fix/win-unpacked/FlowProof AI.exe
 ```
 
 A manually opened older copy was locking the default output during the final rebuild. It was left running; the current candidate was built side-by-side with the same configuration:
 
 ```powershell
 npm run build
-npm run package:win --workspace @flowproof/desktop -- --config.directories.output=dist/slice2-final
-$env:FLOWPROOF_PACKAGED_EXE = "$PWD/apps/desktop/dist/slice2-final/win-unpacked/FlowProof AI.exe"
+npm run package:win --workspace @flowproof/desktop -- --config.directories.output=dist/slice2-connection-fix
+$env:FLOWPROOF_PACKAGED_EXE = "$PWD/apps/desktop/dist/slice2-connection-fix/win-unpacked/FlowProof AI.exe"
 npm run smoke:packaged
 npm run smoke:setup:packaged
 ```

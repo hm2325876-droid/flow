@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "base_commit": "417ac44",
+  "scope": "Targeted Slice 2 catalog-row/Connect AI bug fix only; no Slice 3 or architecture change.",
+  "recorded_at": "2026-10-25T12:01:39.087289+00:00",
+  "root_cause": {
+    "component": "Renderer model selection -> Preload setupCommandSchema/modelRefSchema validation",
+    "operation": "select",
+    "description": "Catalog-row onClick passed the entire CatalogModel object to choose(ref). TypeScript structural typing did not remove metadata at runtime. The strict model-reference schema accepts only providerId/modelId, so Preload rejected extra catalog fields before ipcRenderer.invoke. Renderer swallowed that rejection into the reported generic error.",
+    "not_reached_on_failure": [
+      "Electron Main setup handler",
+      "credential encryption/storage",
+      "Utility request ID allocation",
+      "AI SDK model probe",
+      "provider network request"
+    ],
+    "prior_test_gap": "Earlier smoke tests selected models with an already minimal bridge payload; they did not click a real catalog row."
+  },
+  "packaged_red_reproduction": {
+    "report": "test-results/slice2/2026-10-25T11-41-51-729Z-packaged/report.json",
+    "summary": {
+      "pass": 2,
+      "fail": 1,
+      "unverified": 0
+    },
+    "original_selection_preload_and_contract_sources_match_417ac44": true,
+    "observed_error": {
+      "error": "Actual catalog-row selection failed: {\"error\":\"The setup request could not finish safely. Check the desktop connection and retry.\",\"busy\":false,\"persistedSelection\":null}\n+ actual - expected\n\n+ 'The setup request could not finish safely. Check the desktop connection and retry.'\n- ''\n"
+    },
+    "runtime": [
+      {
+        "electron": "45.0.0",
+        "chromium": "156.0.8078.48",
+        "isPackaged": true,
+        "pid": 13176,
+        "utilityPid": 13452
+      }
+    ],
+    "artifact": {
+      "executable": "apps\\desktop\\dist\\slice2-connection-repro\\win-unpacked\\FlowProof AI.exe",
+      "executableSha256": "4c489254deff8b0afb250ba54e659dc948bacce55a088e8a0a87290372905b30",
+      "asarSha256": "23505dcead2654f63424eba1ca8815308b8c757a02f9b0818eed8ec4b698bece"
+    }
+  },
+  "fix": [
+    "Explicitly construct {providerId,modelId} in the renderer chooser before saving inspected state or invoking the bridge.",
+    "Keep strict outgoing-request and incoming-response validation. Publish fixed request-validation, desktop-IPC and response-validation error codes with actionable fixed UI guidance.",
+    "Structured failure diagnostics contain only event, stage and a fixed code; no request payload, key, Authorization header, raw exception or provider body.",
+    "Preserve the existing finally-based busy cleanup and assert it through actual row clicks and UI-triggered provider verification.",
+    "Add the missing actual catalog-row click regression and exercise the actual Test connection button through Preload/Main/Utility/SDK rather than invoking only the bridge."
+  ],
+  "trace_after_fix": [
+    "Actual React catalog row -> minimal select payload -> strict Preload validation -> trusted Main IPC -> selected identifiers persist.",
+    "Actual Test connection button -> verify command -> Main transient protected-key release -> bounded Utility request/reply -> installed AI SDK adapter -> real provider authentication rejection -> safe verification status -> validated Main/Preload response -> actionable UI feedback with busy cleared."
+  ],
+  "checks": {
+    "typecheck": "PASS",
+    "unit_and_integration": {
+      "status": "PASS",
+      "tests": 49,
+      "files": 10,
+      "new_tests": 3,
+      "command": "npm test"
+    },
+    "production_build": "PASS",
+    "windows_x64_packaging": "PASS",
+    "development_setup": {
+      "report": "test-results/slice2/2026-10-25T11-57-39-070Z-development/report.json",
+      "summary": {
+        "pass": 14,
+        "fail": 0,
+        "unverified": 1
+      }
+    },
+    "packaged_setup": {
+      "report": "test-results/slice2/2026-10-25T11-54-54-366Z-packaged/report.json",
+      "summary": {
+        "pass": 14,
+        "fail": 0,
+        "unverified": 1
+      }
+    },
+    "packaged_native_regression": {
+      "report": "test-results/slice1/2026-10-25T11-55-24-214Z-packaged/report.json",
+      "summary": {
+        "pass": 12,
+        "fail": 0,
+        "unverified": 0
+      }
+    }
+  },
+  "packaged_selection_observation": {
+    "clicked": {
+      "name": "Claude Fable 5"
+    },
+    "persistedSelection": {
+      "providerId": "anthropic",
+      "modelId": "claude-fable-5"
+    },
+    "genericErrorAbsent": true,
+    "busyCleared": true
+  },
+  "packaged_ui_provider_response": {
+    "verification": {
+      "providerId": "openai",
+      "modelId": "gpt-daybreak-blue-latest",
+      "status": "authentication",
+      "message": "The provider rejected authentication. Replace the key or check model access for this account.",
+      "connectivity": false,
+      "toolCalling": false,
+      "checkedAt": "2026-10-25T11:55:05.757Z",
+      "expiresAt": null
+    },
+    "uiFeedback": "The provider rejected authentication. Replace the key or check model access for this account.",
+    "busyCleared": true
+  },
+  "authenticated_success": "UNVERIFIED: tests used an intentionally invalid placeholder, not a valid authorized provider key. No successful authenticated inference or live Ready handoff is claimed.",
+  "unchanged_boundaries": [
+    "Main owns OS-backed credentials and SQLite; stored keys never return to Renderer.",
+    "Utility owns provider execution; registry, installed adapters and fixed HTTPS origins are unchanged.",
+    "SDK 40-second probe and 55-second Utility deadlines remain bounded and unchanged.",
+    "No validation was relaxed and no timeout was removed.",
+    "Slice 1 browser host/policy and Slice 1/Slice 2 original result files are unchanged.",
+    "No dependencies were installed or changed; no later-slice implementation or push."
+  ],
+  "limitations": [
+    "Successful valid-key inference/tool calling is unverified.",
+    "An earlier development replay reached 11 passes but missed its restart observation deadline; the final independent development replay and packaged restart checks passed. Historical raw reports remain intact."
+  ],
+  "files_changed": [
+    "apps/desktop/src/renderer/SetupDialog.tsx",
+    "apps/desktop/src/renderer/setup-errors.ts",
+    "apps/desktop/src/preload/index.ts",
+    "apps/desktop/src/preload/setup-request.ts",
+    "packages/contracts/src/setup.ts",
+    "apps/desktop/src/main/smoke-control.ts",
+    "apps/desktop/test/setup-smoke.mjs",
+    "apps/desktop/test/setup-request.test.ts",
+    "README.md",
+    "devpost/checklist.md",
+    "devpost/slice-2-connection-fix-results.json"
+  ],
+  "artifact": {
+    "executable": "apps\\desktop\\dist\\slice2-connection-fix\\win-unpacked\\FlowProof AI.exe",
+    "executableSha256": "1b60db475ab059769dcf2a701793ae155251567ee916ecb6ae7a42f9eacee063",
+    "asarSha256": "674b91672fff17c716fb17f496fa8d161e189d70c8a31806fbb78c1a4a9b7e4e"
+  },
+  "source_sha256": {
+    "package.json": "eea515367611413e530f923ca6d4112130b893cac9b86734ac8692e4e423c56f",
+    "package-lock.json": "073b5114ee787b3cee0abd9d45f522fb58cdec70a13c77724bc5dd9e1a7f830f",
+    "apps/desktop/package.json": "db8c1e2a1035b77c2b6df387105da5e707eff3b975eff381512731824de9e0bc",
+    "apps/desktop/electron.vite.config.ts": "7fdb268dadb7f1ae2bbe13b75fb6abb248d894b01e831d40ad3f2d1067af15ec",
+    "apps/desktop/electron-builder.yml": "06e1cbd69e84f7d466c0a722d63a105b95e864e02aa5d6037a117356efd226bf",
+    "apps/desktop/src/main/index.ts": "2bf14bed8e47b82d9f799e4f194568925f0e4c17e6caed0c0383c7559362c611",
+    "apps/desktop/src/main/setup.ts": "29bf79ef9636bb5426a8c3fa0e8e5eef914ca86ba94bfe76832b6a1dc3c444be",
+    "apps/desktop/src/main/credentials.ts": "3a4ae004358bd5112f5c62f8bfb6338e18e9e8e4e2701a29d96bce38042f1c55",
+    "apps/desktop/src/main/agent-supervisor.ts": "626fab6f8e6ca4337dc3d19f2a02ea9bc69f461a95b9de125a9fd8c88c6ed413",
+    "apps/desktop/src/main/smoke-control.ts": "3843a1aeae9c0ce85388587949c1ccccaafb552126517fd0797c6f237fe547a6",
+    "apps/desktop/test/setup-smoke.mjs": "1400339891d68fadc605b83f779ddc5c9b4379a1f2405eeed91fb6c8d6bbedff",
+    "apps/desktop/src/preload/index.ts": "83b6c697f620c92399598069ecc10b8f137e17703b2d96606fa1c7f836f7faac",
+    "apps/desktop/src/preload/setup-request.ts": "b0bfdf1226c62c796a1e9c8865cbb6273d9025141659fdcb871090c39e23a76e",
+    "apps/desktop/src/utility/index.ts": "4939020436bb8ea5793e9dd893d301fb3821461586d13027d088e7c8c7d5911f",
+    "apps/desktop/src/renderer/App.tsx": "52d58cfea94e5cc102ed7b27f5ca120ccce2fba160b2fc9b7bdfec79ba5f45eb",
+    "apps/desktop/src/renderer/SetupDialog.tsx": "48a3c2d6428d030b7f860e27e3266d74a11dc315c76f15dd826136b0ed745e92",
+    "apps/desktop/src/renderer/setup-errors.ts": "46cdc406d5bf779002abafeb39e33d01447a5c73d90852a92b13e8af533cc6d3",
+    "apps/desktop/src/renderer/styles.css": "792c65fc302c08038f46f7be74f11831179044507eb045f0a4821e1c701ec7ed",
+    "apps/desktop/src/renderer/setup.css": "ff53c44424511de90d0d78b99ec55d79e569e70ccb170b91e98b12d8b68d34f8",
+    "packages/contracts/src/setup.ts": "1b57e68fad4dbde00cd13a8c34960ff16a0fd47e0e6ac898c8f2b99863a22d9a",
+    "packages/ai-providers/package.json": "9d66504217f065bc370f73614d62c44ab414a7f1b9dd48ef9e745780fe8abd01",
+    "packages/ai-providers/src/index.ts": "c7fe3c17507a4eb450b4a78a034f56f3f9815d9d48d047ba3508e6340dbb1e08",
+    "packages/ai-providers/src/catalog.ts": "db94310e7442999bd956ed426a44f96a8936e3e8abd521396b05b0c1fa85f016",
+    "packages/ai-providers/src/registry.ts": "3e30caf155827f43a9b333cfd1a335c19bd6fe3d1bd35d06931952d38aa2cabf",
+    "packages/ai-providers/src/preflight.ts": "f52f41d3d6e35420e610c3e23a0317e2b53b9bc110e6a1e471e04b5342991e6c",
+    "packages/persistence/package.json": "b94d8d4a655782a097abbf67a2c97b250016e65dfbf15321a0d7022538a1ba5f",
+    "packages/persistence/src/index.ts": "bfbb960969e0fc9ef7605c91afe7c3587b02e7341df78e730778224c097cf901"
+  },
+  "historical_development_timeout_report": "test-results/slice2/2026-10-25T11-51-22-586Z-development/report.json"
+}

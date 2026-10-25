@@ -1,5 +1,7 @@
 import {z} from 'zod';
 
+export const setupBridgeErrorCodes={request:'FLOWPROOF_SETUP_REQUEST_INVALID',communication:'FLOWPROOF_SETUP_COMMUNICATION_FAILED',response:'FLOWPROOF_SETUP_RESPONSE_INVALID'} as const;
+
 export const providerIdSchema=z.string().min(1).max(100).regex(/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/);
 export const modelIdSchema=z.string().trim().min(1).max(300).refine(s=>!/[\u0000-\u0020\u007f\\?#]/.test(s)&&!s.includes('://')&&!s.split('/').some(part=>part==='.'||part==='..'),'Use a provider model identifier, not a URL or path traversal');
 export const modelRefSchema=z.object({providerId:providerIdSchema,modelId:modelIdSchema}).strict();
