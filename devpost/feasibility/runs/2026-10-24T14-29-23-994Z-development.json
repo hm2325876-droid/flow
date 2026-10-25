@@ -1,0 +1,77 @@
+{
+  "schema_version": 2,
+  "run_id": "2026-10-24T14-29-23-994Z-development",
+  "stage": "development",
+  "selected_case": "security-cdp-unauthorized",
+  "candidate_status": "PROVISIONAL",
+  "started_at": "2026-10-24T14:29:23.994Z",
+  "command": "FP_LAB_ONLY=security-cdp-unauthorized npm run test:dev",
+  "host": {
+    "platform": "win32",
+    "arch": "x64",
+    "release": "10.0.22631",
+    "node": "v24.13.0"
+  },
+  "tests": [
+    {
+      "id": "security-cdp-unauthorized",
+      "category": "security",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Scoped local endpoint; missing auth, valid-token browser Origin, concurrent valid client and same-character-count multibyte invalid token"
+      },
+      "expected": "Invalid peers receive 401, concurrent valid client receives 409, and malformed auth cannot stall or terminate the host",
+      "observed": {
+        "unauthorizedStatus": 401,
+        "browserOriginStatus": 401,
+        "secondAuthorizedStatus": 409,
+        "malformedMultibyteStatus": 401,
+        "hostStillResponsive": true
+      },
+      "evidence": [],
+      "limitations": [
+        "No compromise of the trusted controller/process memory is simulated."
+      ],
+      "status": "PASS",
+      "duration_ms": 32
+    }
+  ],
+  "limitations": [
+    "Diagnostic integration, not the FlowProof application or complete Agent runtime.",
+    "Win32 SendInput exercises the OS/native input path; actual human hardware, IME composition, accessibility, touch and drag/drop remain manual gates.",
+    "Business effects are enforced against an explicit trusted diagnostic route catalog, not automatically inferred for arbitrary applications.",
+    "Unsigned unpacked Windows distribution; installer, signing, ASAR integrity enforcement and upgrade lifecycle are not validated."
+  ],
+  "runtime": {
+    "electron": "45.0.0",
+    "chromium": "156.0.8078.48",
+    "embeddedNode": "24.22.0",
+    "pid": 8676,
+    "schedulingSwitches": [
+      "disable-background-timer-throttling",
+      "disable-backgrounding-occluded-windows",
+      "disable-renderer-backgrounding"
+    ],
+    "isPackaged": false,
+    "asar": false,
+    "executable_sha256": "8e84549b05d27d444da2957653200d1e0ac287eff0fc5722b92835b9e0821a59"
+  },
+  "target": {
+    "url": "http://localhost:49803/",
+    "origin": "http://localhost:49803",
+    "synthetic": true
+  },
+  "finished_at": "2026-10-24T14:29:53.262Z",
+  "overall_gate": "OPEN",
+  "source_sha256": {
+    "src/host.cjs": "87b8d2ee5eda3fd0fc1429b44dc7a6f6c116f8f7f80f2ebd211b4becd1c610db",
+    "src/cdp-bridge.cjs": "d204133bfd3dfea8d03747636d6a55f50f66a11e32d0b7ad577cbcafc2d4e901",
+    "src/ownership.cjs": "498fcaa8e69e5104bbc945bca8f3d9b8ee4d0a94df8d239e3b193a090ec210fe",
+    "test/run.cjs": "7cdf7de864893e265d040d21551bf94ff909ff7c6656bb7ba18a105956414015",
+    "test/native-input.ps1": "aa99c9047345b07b6b02d0d784908cfc82ef22ee8fe4a297025dc3cf5009d0e9",
+    "tools/fuses.cjs": "8e31a63b24276f3e0f9aeaecf39fb9da42d644fc068420828a12655fdd446c03",
+    "package.json": "f9001eef568344a2248213169296f9ac65d4777ff800a78e7df3693b020356e8",
+    "package-lock.json": "754f668b249bfb8db56190689264fb9666f7028ab9d87731096fe6bb09898e3b"
+  }
+}

@@ -27,15 +27,16 @@ export class AuditController {
   if(command.type==='start'){
    if(this.active)throw new Error('FLOWPROOF_AUDIT_ACTIVE');if(this.failed)throw new Error('FLOWPROOF_AUDIT_STORAGE');
    this.starting=true;
-   let attached=false;
+   let attached=false;let stage:'setup'|'browser'|'model'|'utility'='setup';
    try{
     const state=await this.p.setup.handle({type:'prepare',draft:command.draft,authorized:command.authorized});
     const config=state.review?.handoff;if(!config||!state.review?.ready||!command.authorized)throw new Error('FLOWPROOF_AUDIT_NOT_READY');
     const auditId=randomUUID();this.expected={auditId,config};this.approvals.clear();this.denied.clear();this.secrets.clear();
-    attached=true;const connection=await this.p.attach(config);this.p.getHost()!.beginAudit();
-    await this.p.setup.withExecutionKey(config.selection,key=>this.p.worker.request({type:'audit-start',auditId,config,key,connection}));
+    stage='browser';attached=true;const connection=await this.p.attach(config);const host=this.p.getHost();if(!host)throw new Error('FLOWPROOF_AUDIT_TARGET');host.beginAudit();
+    stage='model';
+    await this.p.setup.withExecutionKey(config.selection,key=>{stage='utility';return this.p.worker.request({type:'audit-start',auditId,config,key,connection});});
     return this.value;
-   }catch(cause){this.expected=null;if(attached)await this.p.finish().catch(()=>{});throw cause;}
+   }catch(cause){this.expected=null;if(attached)await this.p.finish().catch(()=>{});if(cause instanceof Error&&/^FLOWPROOF_AUDIT_/.test(cause.message))throw cause;throw new Error(({setup:'FLOWPROOF_AUDIT_SETUP',browser:'FLOWPROOF_AUDIT_TARGET',model:'FLOWPROOF_AUDIT_MODEL',utility:'FLOWPROOF_AUDIT_RUNTIME'} as const)[stage]);}
    finally{this.starting=false;}
   }
   if(!this.value||command.auditId!==this.value.auditId||!this.running)throw new Error('FLOWPROOF_AUDIT_STALE');

@@ -1,0 +1,2944 @@
+{
+  "schema_version": 2,
+  "run_id": "2026-10-23T20-53-31-229Z-development",
+  "stage": "development",
+  "candidate_status": "PROVISIONAL",
+  "started_at": "2026-10-23T20:53:31.230Z",
+  "command": "npm run test:dev",
+  "host": {
+    "platform": "win32",
+    "arch": "x64",
+    "release": "10.0.22631",
+    "node": "v24.13.0"
+  },
+  "tests": [
+    {
+      "id": "identity-same-native-target",
+      "category": "identity",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "One native guest, isolated partition, scoped CDP bridge"
+      },
+      "expected": "CDP target maps to the exact view WebContents; no duplicate audit page",
+      "observed": {
+        "targetCount": 1,
+        "identityMatches": true
+      },
+      "evidence": [
+        {
+          "seq": 1,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 2,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [],
+      "status": "PASS",
+      "duration_ms": 12
+    },
+    {
+      "id": "session-authentication-reload",
+      "category": "session",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Synthetic HttpOnly SameSite=Strict sign-in; native reads and server ledger independent of Playwright"
+      },
+      "expected": "Authenticated server state, native cookie and scoped context API agree after reload",
+      "observed": {
+        "serverAcceptedAuthentication": true,
+        "nativeAuditCookie": true,
+        "uiCookie": false,
+        "playwrightCookieCount": 1,
+        "reloadAuthenticated": true
+      },
+      "evidence": [
+        {
+          "seq": 1,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 2,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 3,
+          "type": "operation-begin",
+          "leaseId": 1,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 4,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/auth/login",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 5,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 6,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 7,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 8,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [
+        "Controlled local auth contract; OAuth, WebAuthn, CHIPS and cross-origin auth are not covered."
+      ],
+      "status": "PASS",
+      "duration_ms": 352
+    },
+    {
+      "id": "session-storage-native-consistency",
+      "category": "session",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Same guest and partition before/after reload"
+      },
+      "expected": "Playwright writes are independently visible in native DOM/storage and survive reload",
+      "observed": {
+        "sessionStorageMatches": true,
+        "localStorageMatches": true
+      },
+      "evidence": [
+        {
+          "seq": 1,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 2,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 3,
+          "type": "operation-begin",
+          "leaseId": 1,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 4,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/auth/login",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 5,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 6,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 7,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 8,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 9,
+          "type": "operation-begin",
+          "leaseId": 2,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 10,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 11,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 12,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [],
+      "status": "PASS",
+      "duration_ms": 82
+    },
+    {
+      "id": "input-agent-cdp-with-shield",
+      "category": "input",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Agent owns control; native shield visible above guest"
+      },
+      "expected": "Normal Playwright click/typing has observed native effects while the shield remains active",
+      "observed": {
+        "observedField": true,
+        "observedCounterDelta": 1,
+        "shield": true
+      },
+      "evidence": [
+        {
+          "seq": 1,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 2,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 3,
+          "type": "operation-begin",
+          "leaseId": 1,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 4,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/auth/login",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 5,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 6,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 7,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 8,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 9,
+          "type": "operation-begin",
+          "leaseId": 2,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 10,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 11,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 12,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 13,
+          "type": "operation-begin",
+          "leaseId": 3,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 14,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [],
+      "status": "PASS",
+      "duration_ms": 163
+    },
+    {
+      "id": "input-native-mouse-agent",
+      "category": "input",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Win32 SendInput to owned foreground diagnostic window and known guest button"
+      },
+      "expected": "Native path hits the shield and does not increment guest counter",
+      "observed": {
+        "reason": "Owned diagnostic window could not become foreground",
+        "status": "INCONCLUSIVE"
+      },
+      "evidence": [
+        {
+          "seq": 1,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 2,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 3,
+          "type": "operation-begin",
+          "leaseId": 1,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 4,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/auth/login",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 5,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 6,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 7,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 8,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 9,
+          "type": "operation-begin",
+          "leaseId": 2,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 10,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 11,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 12,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 13,
+          "type": "operation-begin",
+          "leaseId": 3,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 14,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [
+        "Win32 SendInput exercises the OS/native input path; actual human hardware, IME composition, accessibility, touch and drag/drop remain manual gates."
+      ],
+      "status": "INCONCLUSIVE",
+      "duration_ms": 3261
+    },
+    {
+      "id": "input-native-keyboard-agent",
+      "category": "input",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Native click then Unicode SendInput while Agent control shield owns focus"
+      },
+      "expected": "Guest manual field stays empty and Agent value stays intact",
+      "observed": {
+        "status": "INCONCLUSIVE",
+        "reason": "Owned diagnostic window could not become foreground"
+      },
+      "evidence": [
+        {
+          "seq": 1,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 2,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 3,
+          "type": "operation-begin",
+          "leaseId": 1,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 4,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/auth/login",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 5,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 6,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 7,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 8,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 9,
+          "type": "operation-begin",
+          "leaseId": 2,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 10,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 11,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 12,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 13,
+          "type": "operation-begin",
+          "leaseId": 3,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 14,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [
+        "Win32 SendInput exercises the OS/native input path; actual human hardware, IME composition, accessibility, touch and drag/drop remain manual gates."
+      ],
+      "status": "INCONCLUSIVE",
+      "duration_ms": 3082
+    },
+    {
+      "id": "handoff-inflight-serialization",
+      "category": "handoff",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "One approved slow diagnostic effect is running; request Take Control before it settles"
+      },
+      "expected": "Handoff Pending rejects new leases and excludes manual input until the observed effect completes exactly once",
+      "observed": {
+        "pendingRejectedNewWork": true,
+        "serverEffectDelta": 1,
+        "observedNativeEffect": true,
+        "finalState": "User"
+      },
+      "evidence": [
+        {
+          "seq": 7,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 8,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 9,
+          "type": "operation-begin",
+          "leaseId": 2,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 10,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 11,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 12,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 13,
+          "type": "operation-begin",
+          "leaseId": 3,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 14,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 15,
+          "type": "operation-approved",
+          "path": "/slow-effect",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 16,
+          "type": "operation-begin",
+          "leaseId": 4,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 17,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/slow-effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 18,
+          "type": "take-control",
+          "generation": 1,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 19,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 20,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "User"
+        }
+      ],
+      "limitations": [
+        "Controlled server delay; arbitrary non-idempotent application workflows are not automatically classified."
+      ],
+      "status": "PASS",
+      "duration_ms": 718
+    },
+    {
+      "id": "input-user-native-path",
+      "category": "input",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "User owns control; shield removed; Agent facade blocked"
+      },
+      "expected": "Native mouse/keyboard affect the same page while new Agent work is refused",
+      "observed": {
+        "status": "INCONCLUSIVE",
+        "click": {
+          "reason": "Owned diagnostic window could not become foreground",
+          "status": "INCONCLUSIVE"
+        },
+        "typing": {
+          "reason": "Owned diagnostic window could not become foreground",
+          "status": "INCONCLUSIVE"
+        }
+      },
+      "evidence": [
+        {
+          "seq": 7,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 8,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 9,
+          "type": "operation-begin",
+          "leaseId": 2,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 10,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 11,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 12,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 13,
+          "type": "operation-begin",
+          "leaseId": 3,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 14,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 15,
+          "type": "operation-approved",
+          "path": "/slow-effect",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 16,
+          "type": "operation-begin",
+          "leaseId": 4,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 17,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/slow-effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 18,
+          "type": "take-control",
+          "generation": 1,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 19,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 20,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "User"
+        }
+      ],
+      "limitations": [
+        "Win32 SendInput exercises the OS/native input path; actual human hardware, IME composition, accessibility, touch and drag/drop remain manual gates."
+      ],
+      "status": "INCONCLUSIVE",
+      "duration_ms": 4365
+    },
+    {
+      "id": "security-operation-policy-user",
+      "category": "security",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "User control, same localhost; hard-restricted and unapproved meaningful effects"
+      },
+      "expected": "Native request policy blocks both without changing the independent server ledger",
+      "observed": {
+        "restrictedEffects": 0,
+        "unknownGetEffects": 0,
+        "approvedOnceEffectDelta": 1,
+        "repeatBlocked": true
+      },
+      "evidence": [
+        {
+          "seq": 18,
+          "type": "take-control",
+          "generation": 1,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 19,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 20,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 21,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/danger",
+          "allowed": false,
+          "reason": "hard-restriction",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 22,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 23,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 24,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 25,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/unknown-effect",
+          "allowed": false,
+          "reason": "unknown-effect-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 26,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 27,
+          "type": "operation-approved",
+          "path": "/effect",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 28,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 29,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 30,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 31,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        }
+      ],
+      "limitations": [
+        "Business effects are enforced against an explicit trusted diagnostic route catalog, not automatically inferred for arbitrary applications."
+      ],
+      "status": "PASS",
+      "duration_ms": 64
+    },
+    {
+      "id": "handoff-return-inspection",
+      "category": "handoff",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "User has changed the page; Return Control explicitly requested"
+      },
+      "expected": "Shield engages, actual native URL/target/state and server effect count are reconciled before Agent state",
+      "observed": {
+        "inspections": {
+          "boundary": true,
+          "session": true,
+          "history": true
+        },
+        "state": "Agent",
+        "manualInputExcluded": true
+      },
+      "evidence": [
+        {
+          "seq": 19,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 20,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 21,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/danger",
+          "allowed": false,
+          "reason": "hard-restriction",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 22,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 23,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 24,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 25,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/unknown-effect",
+          "allowed": false,
+          "reason": "unknown-effect-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 26,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 27,
+          "type": "operation-approved",
+          "path": "/effect",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 28,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 29,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 30,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 31,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 32,
+          "type": "return-control",
+          "accepted": true,
+          "checks": {
+            "boundary": true,
+            "session": true,
+            "history": true
+          },
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [],
+      "status": "PASS",
+      "duration_ms": 6
+    },
+    {
+      "id": "security-cdp-unauthorized",
+      "category": "security",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Scoped local WebSocket endpoint; no Authorization header"
+      },
+      "expected": "Unauthenticated handshake returns 401 and browser-origin connection is rejected",
+      "observed": {
+        "unauthorizedStatus": 401
+      },
+      "evidence": [
+        {
+          "seq": 19,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 20,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 21,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/danger",
+          "allowed": false,
+          "reason": "hard-restriction",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 22,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 23,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 24,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 25,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/unknown-effect",
+          "allowed": false,
+          "reason": "unknown-effect-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 26,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 27,
+          "type": "operation-approved",
+          "path": "/effect",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 28,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 29,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 30,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 31,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 32,
+          "type": "return-control",
+          "accepted": true,
+          "checks": {
+            "boundary": true,
+            "session": true,
+            "history": true
+          },
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [
+        "No compromise of the trusted controller/process memory is simulated."
+      ],
+      "status": "PASS",
+      "duration_ms": 11
+    },
+    {
+      "id": "security-cdp-workspace-confinement",
+      "category": "security",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Authenticated CDP client knows the trusted workspace target ID for this negative test"
+      },
+      "expected": "Only audit target is enumerated; attaching to workspace and closing browser are rejected",
+      "observed": {
+        "workspaceAttachDenied": true,
+        "browserCloseDenied": true
+      },
+      "evidence": [
+        {
+          "seq": 21,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/danger",
+          "allowed": false,
+          "reason": "hard-restriction",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 22,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 23,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 24,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 25,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/unknown-effect",
+          "allowed": false,
+          "reason": "unknown-effect-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 26,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 27,
+          "type": "operation-approved",
+          "path": "/effect",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 28,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 29,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 30,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 31,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 32,
+          "type": "return-control",
+          "accepted": true,
+          "checks": {
+            "boundary": true,
+            "session": true,
+            "history": true
+          },
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 33,
+          "type": "cdp-denied",
+          "method": "Target.attachToTarget",
+          "reason": "Denied target scope",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 34,
+          "type": "cdp-denied",
+          "method": "Browser.close",
+          "reason": "Denied browser scope",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [],
+      "status": "PASS",
+      "duration_ms": 15
+    },
+    {
+      "id": "security-raw-debug-port",
+      "category": "security",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Launch explicitly supplied remote-debugging-port; host strips unrestricted switch"
+      },
+      "expected": "No unrestricted Chrome debugging listener answers the requested port",
+      "observed": {
+        "connectionRefused": true
+      },
+      "evidence": [
+        {
+          "seq": 21,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/danger",
+          "allowed": false,
+          "reason": "hard-restriction",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 22,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 23,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 24,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 25,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/unknown-effect",
+          "allowed": false,
+          "reason": "unknown-effect-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 26,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 27,
+          "type": "operation-approved",
+          "path": "/effect",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 28,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 29,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 30,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 31,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 32,
+          "type": "return-control",
+          "accepted": true,
+          "checks": {
+            "boundary": true,
+            "session": true,
+            "history": true
+          },
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 33,
+          "type": "cdp-denied",
+          "method": "Target.attachToTarget",
+          "reason": "Denied target scope",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 34,
+          "type": "cdp-denied",
+          "method": "Browser.close",
+          "reason": "Denied browser scope",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [],
+      "status": "PASS",
+      "duration_ms": 20
+    },
+    {
+      "id": "security-navigation-and-isolation",
+      "category": "security",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Reachable second loopback server; native navigation and same-origin redirect; untrusted guest"
+      },
+      "expected": "Origin escape is cancelled before destination hit; guest lacks Node/bridge privileges and cannot create a second tab",
+      "observed": {
+        "escapedRequests": 0,
+        "node": "undefined",
+        "require": "undefined",
+        "privilegedBridge": "undefined",
+        "auditPages": 1
+      },
+      "evidence": [
+        {
+          "seq": 29,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 30,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 31,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 32,
+          "type": "return-control",
+          "accepted": true,
+          "checks": {
+            "boundary": true,
+            "session": true,
+            "history": true
+          },
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 33,
+          "type": "cdp-denied",
+          "method": "Target.attachToTarget",
+          "reason": "Denied target scope",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 34,
+          "type": "cdp-denied",
+          "method": "Browser.close",
+          "reason": "Denied browser scope",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 35,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/escaped",
+          "allowed": false,
+          "reason": "origin",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 36,
+          "type": "operation-begin",
+          "leaseId": 5,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 37,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/redirect-out",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 38,
+          "type": "navigation-cancel",
+          "guard": "will-redirect",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 39,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 40,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 41,
+          "type": "popup-denied",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 42,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [
+        "Known navigation/redirect cases only; not universal service-worker/WebRTC/worker coverage."
+      ],
+      "status": "PASS",
+      "duration_ms": 444
+    },
+    {
+      "id": "security-operation-policy-agent",
+      "category": "security",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Agent control with the same native route policy used for User control"
+      },
+      "expected": "Denied/unknown actions produce no server effects; explicit one-operation approval is consumed once",
+      "observed": {
+        "deniedEffectDelta": 0,
+        "approvedEffectDelta": 1,
+        "repeatBlocked": true
+      },
+      "evidence": [
+        {
+          "seq": 37,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/redirect-out",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 38,
+          "type": "navigation-cancel",
+          "guard": "will-redirect",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 39,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 40,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 41,
+          "type": "popup-denied",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 42,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 43,
+          "type": "operation-begin",
+          "leaseId": 6,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 44,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/danger",
+          "allowed": false,
+          "reason": "hard-restriction",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 45,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 46,
+          "type": "operation-approved",
+          "path": "/effect",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 47,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 48,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 49,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 50,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [
+        "Business effects are enforced against an explicit trusted diagnostic route catalog, not automatically inferred for arbitrary applications."
+      ],
+      "status": "PASS",
+      "duration_ms": 316
+    },
+    {
+      "id": "session-logout-consistency",
+      "category": "session",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Authenticated same-session page and partition-scoped adapter"
+      },
+      "expected": "Logout expires HttpOnly cookie and server/native/page return to anonymous",
+      "observed": {
+        "authenticatedCookieRemoved": true,
+        "pageAnonymous": true
+      },
+      "evidence": [
+        {
+          "seq": 41,
+          "type": "popup-denied",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 42,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 43,
+          "type": "operation-begin",
+          "leaseId": 6,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 44,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/danger",
+          "allowed": false,
+          "reason": "hard-restriction",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 45,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 46,
+          "type": "operation-approved",
+          "path": "/effect",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 47,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 48,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 49,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 50,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 51,
+          "type": "operation-begin",
+          "leaseId": 7,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 52,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/auth/logout",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 53,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 54,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        }
+      ],
+      "limitations": [],
+      "status": "PASS",
+      "duration_ms": 102
+    },
+    {
+      "id": "recovery-user-control",
+      "category": "recovery",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "User ownership before forced renderer crash"
+      },
+      "expected": "Fresh native guest generation restores User, revokes stale transport, and does not authorize Agent work",
+      "observed": {
+        "generationAdvanced": true,
+        "state": "User",
+        "agentDenied": true
+      },
+      "evidence": [
+        {
+          "seq": 46,
+          "type": "operation-approved",
+          "path": "/effect",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 47,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 48,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 49,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/effect",
+          "allowed": false,
+          "reason": "approval-required",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 50,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 51,
+          "type": "operation-begin",
+          "leaseId": 7,
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 52,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/auth/logout",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 53,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 54,
+          "type": "operation-finish",
+          "accepted": true,
+          "outcome": "observed-complete",
+          "generation": 1,
+          "state": "Agent"
+        },
+        {
+          "seq": 55,
+          "type": "take-control",
+          "generation": 1,
+          "state": "User"
+        },
+        {
+          "seq": 56,
+          "type": "renderer-crash",
+          "reason": "crashed",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 57,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 58,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 59,
+          "type": "recovered",
+          "guestId": 4,
+          "generation": 2,
+          "state": "User"
+        }
+      ],
+      "limitations": [
+        "Renderer failure only; not browser-host/main-process termination or complete audit persistence."
+      ],
+      "status": "PASS",
+      "duration_ms": 336
+    },
+    {
+      "id": "recovery-pending-handoff",
+      "category": "recovery",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Agent returns, starts an approved slow operation, then pending handoff renderer crashes"
+      },
+      "expected": "Incomplete handoff becomes Awaiting Control Decision, stale completion is rejected, and uncertain work is never automatically replayed",
+      "observed": {
+        "state": "Awaiting Control Decision",
+        "staleCompletionRejected": true,
+        "serverOperationCountDelta": 1,
+        "noReplay": true,
+        "historyHasUnknown": true
+      },
+      "evidence": [
+        {
+          "seq": 56,
+          "type": "renderer-crash",
+          "reason": "crashed",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 57,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 58,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 59,
+          "type": "recovered",
+          "guestId": 4,
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 60,
+          "type": "return-control",
+          "accepted": true,
+          "checks": {
+            "boundary": true,
+            "session": true,
+            "history": true
+          },
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 61,
+          "type": "operation-approved",
+          "path": "/slow-effect",
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 62,
+          "type": "operation-begin",
+          "leaseId": 8,
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 63,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/slow-effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 64,
+          "type": "take-control",
+          "generation": 2,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 65,
+          "type": "renderer-crash",
+          "reason": "crashed",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 66,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 67,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 68,
+          "type": "recovered",
+          "guestId": 5,
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 69,
+          "type": "operation-finish",
+          "accepted": false,
+          "outcome": "stale-rejected",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        }
+      ],
+      "limitations": [
+        "The controlled server can finish after renderer failure; absence of browser completion is not treated as server failure."
+      ],
+      "status": "PASS",
+      "duration_ms": 1160
+    },
+    {
+      "id": "packaging-runtime",
+      "category": "packaging",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Launch path selected for this run"
+      },
+      "expected": "Packaged stage reports app.isPackaged and app.asar, while development stage is identified honestly",
+      "observed": {
+        "isPackaged": false,
+        "asar": false
+      },
+      "evidence": [
+        {
+          "seq": 56,
+          "type": "renderer-crash",
+          "reason": "crashed",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 57,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 58,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 59,
+          "type": "recovered",
+          "guestId": 4,
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 60,
+          "type": "return-control",
+          "accepted": true,
+          "checks": {
+            "boundary": true,
+            "session": true,
+            "history": true
+          },
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 61,
+          "type": "operation-approved",
+          "path": "/slow-effect",
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 62,
+          "type": "operation-begin",
+          "leaseId": 8,
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 63,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/slow-effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 64,
+          "type": "take-control",
+          "generation": 2,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 65,
+          "type": "renderer-crash",
+          "reason": "crashed",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 66,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 67,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 68,
+          "type": "recovered",
+          "guestId": 5,
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 69,
+          "type": "operation-finish",
+          "accepted": false,
+          "outcome": "stale-rejected",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        }
+      ],
+      "limitations": [
+        "Unsigned unpacked Windows distribution; installer, signing, ASAR integrity enforcement and upgrade lifecycle are not validated."
+      ],
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "id": "packaging-fuses",
+      "category": "packaging",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Read the produced executable fuse wire"
+      },
+      "expected": "Packaged RunAsNode, NodeOptions, NodeCliInspect disabled; ASAR-only and file-protocol restriction configured",
+      "observed": {
+        "status": "INCONCLUSIVE",
+        "reason": "Fuse hardening is checked against the packaged executable only"
+      },
+      "evidence": [
+        {
+          "seq": 56,
+          "type": "renderer-crash",
+          "reason": "crashed",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 57,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 58,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 59,
+          "type": "recovered",
+          "guestId": 4,
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 60,
+          "type": "return-control",
+          "accepted": true,
+          "checks": {
+            "boundary": true,
+            "session": true,
+            "history": true
+          },
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 61,
+          "type": "operation-approved",
+          "path": "/slow-effect",
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 62,
+          "type": "operation-begin",
+          "leaseId": 8,
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 63,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/slow-effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 64,
+          "type": "take-control",
+          "generation": 2,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 65,
+          "type": "renderer-crash",
+          "reason": "crashed",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 66,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 67,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 68,
+          "type": "recovered",
+          "guestId": 5,
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 69,
+          "type": "operation-finish",
+          "accepted": false,
+          "outcome": "stale-rejected",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        }
+      ],
+      "limitations": [
+        "Unsigned unpacked Windows distribution; installer, signing, ASAR integrity enforcement and upgrade lifecycle are not validated."
+      ],
+      "status": "INCONCLUSIVE",
+      "duration_ms": 0
+    },
+    {
+      "id": "input-manual-hardware-and-ime",
+      "category": "input",
+      "setup": {
+        "stage": "development",
+        "configuration": "src/host.cjs + src/cdp-bridge.cjs; pinned package-lock",
+        "precondition": "Automated OS-path tests completed; no human operator composition session was supplied"
+      },
+      "expected": "Human keyboard/mouse/IME/touch/accessibility/drag-drop require separately observed checks",
+      "observed": {
+        "status": "INCONCLUSIVE",
+        "reason": "Actual human hardware and composition/accessibility matrix not executed"
+      },
+      "evidence": [
+        {
+          "seq": 56,
+          "type": "renderer-crash",
+          "reason": "crashed",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 57,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 58,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 59,
+          "type": "recovered",
+          "guestId": 4,
+          "generation": 2,
+          "state": "User"
+        },
+        {
+          "seq": 60,
+          "type": "return-control",
+          "accepted": true,
+          "checks": {
+            "boundary": true,
+            "session": true,
+            "history": true
+          },
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 61,
+          "type": "operation-approved",
+          "path": "/slow-effect",
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 62,
+          "type": "operation-begin",
+          "leaseId": 8,
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 63,
+          "type": "request-policy",
+          "method": "POST",
+          "path": "/slow-effect",
+          "allowed": true,
+          "reason": "explicit-one-operation-approval",
+          "generation": 2,
+          "state": "Agent"
+        },
+        {
+          "seq": 64,
+          "type": "take-control",
+          "generation": 2,
+          "state": "Handoff Pending"
+        },
+        {
+          "seq": 65,
+          "type": "renderer-crash",
+          "reason": "crashed",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 66,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 67,
+          "type": "request-policy",
+          "method": "GET",
+          "path": "/state",
+          "allowed": true,
+          "reason": "known-low-risk-contract",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 68,
+          "type": "recovered",
+          "guestId": 5,
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        },
+        {
+          "seq": 69,
+          "type": "operation-finish",
+          "accepted": false,
+          "outcome": "stale-rejected",
+          "generation": 3,
+          "state": "Awaiting Control Decision"
+        }
+      ],
+      "limitations": [
+        "Win32 SendInput exercises the OS/native input path; actual human hardware, IME composition, accessibility, touch and drag/drop remain manual gates."
+      ],
+      "status": "INCONCLUSIVE",
+      "duration_ms": 1
+    }
+  ],
+  "limitations": [
+    "Diagnostic integration, not the FlowProof application or complete Agent runtime.",
+    "Win32 SendInput exercises the OS/native input path; actual human hardware, IME composition, accessibility, touch and drag/drop remain manual gates.",
+    "Business effects are enforced against an explicit trusted diagnostic route catalog, not automatically inferred for arbitrary applications.",
+    "Unsigned unpacked Windows distribution; installer, signing, ASAR integrity enforcement and upgrade lifecycle are not validated."
+  ],
+  "runtime": {
+    "electron": "45.0.0",
+    "chromium": "156.0.8078.48",
+    "embeddedNode": "24.22.0",
+    "pid": 9832,
+    "isPackaged": false,
+    "asar": false,
+    "executable_sha256": "8e84549b05d27d444da2957653200d1e0ac287eff0fc5722b92835b9e0821a59"
+  },
+  "finished_at": "2026-10-23T20:53:52.865Z",
+  "overall_gate": "OPEN",
+  "source_sha256": {
+    "src/host.cjs": "dc9f069dde293ff3e1fad00b895dcc6f9b716dbeb582b512f7f86bdfaf84fe78",
+    "src/cdp-bridge.cjs": "00f82ecd863a5eb9143957160fd6983993c0fdb4c4749e4c1826f1e9e6414be8",
+    "src/ownership.cjs": "49a5345243145cf0a03fb987f029f430262cd4d56593340c0147337030f51d52",
+    "test/run.cjs": "6c91f757ecb2c6691a8e09dd2f2ce668d0d1ca03456f0842b9b91778ef8b308c",
+    "test/native-input.ps1": "4e5a97a9a2bc174916e1423488c84e2405f58723cd57dd43e4d6e4e78d81c8f7",
+    "package.json": "f9001eef568344a2248213169296f9ac65d4777ff800a78e7df3693b020356e8",
+    "package-lock.json": "754f668b249bfb8db56190689264fb9666f7028ab9d87731096fe6bb09898e3b"
+  }
+}

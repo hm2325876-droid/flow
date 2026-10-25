@@ -1,0 +1,204 @@
+{
+  "schema_version": 2,
+  "stage": "contracts",
+  "started_at": "2026-10-24T14:32:13.810Z",
+  "finished_at": "2026-10-24T14:32:14.854Z",
+  "command": "node tools/contracts-report.cjs",
+  "tests": [
+    {
+      "id": "ownership-contract-1",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Agent obtains one exclusive operation lease and rejects overlapping work",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 39.4172\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.9526\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.8535\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.6963\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 1.2083\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 1.9117\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.4718\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.6451\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 12.1372\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 744.2493\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-2",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Take Control blocks new work until independently observed in-flight completion",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 39.4172\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.9526\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.8535\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.6963\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 1.2083\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 1.9117\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.4718\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.6451\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 12.1372\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 744.2493\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-3",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Return Control requires explicit transition and every inspection/reconciliation gate",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 39.4172\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.9526\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.8535\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.6963\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 1.2083\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 1.9117\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.4718\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.6451\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 12.1372\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 744.2493\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-4",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Pending-handoff crash invalidates the lease and requires an explicit ownership choice",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 39.4172\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.9526\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.8535\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.6963\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 1.2083\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 1.9117\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.4718\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.6451\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 12.1372\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 744.2493\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-5",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "User-control crash restores User ownership without automatic Agent authorization",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 39.4172\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.9526\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.8535\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.6963\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 1.2083\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 1.9117\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.4718\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.6451\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 12.1372\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 744.2493\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-6",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 39.4172\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.9526\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.8535\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.6963\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 1.2083\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 1.9117\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.4718\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.6451\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 12.1372\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 744.2493\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-7",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Agent work stays excluded during recreation until fresh boundary and session checks pass",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 39.4172\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.9526\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.8535\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.6963\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 1.2083\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 1.9117\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.4718\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.6451\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 12.1372\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 744.2493\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-8",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "An uncertain in-flight result remains unknown and does not imply successful completion",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 39.4172\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.9526\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.8535\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.6963\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 1.2083\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 1.9117\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.4718\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.6451\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 12.1372\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 744.2493\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-9",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Unknown in-flight completion cannot grant User control from Handoff Pending",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 39.4172\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.9526\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.8535\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.6963\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 1.2083\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 1.9117\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.4718\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.6451\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 12.1372\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 744.2493\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    }
+  ],
+  "source_sha256": {
+    "src/ownership.cjs": "498fcaa8e69e5104bbc945bca8f3d9b8ee4d0a94df8d239e3b193a090ec210fe",
+    "test/contracts.test.cjs": "cc040869f3431affb2ec3ddfba9a764376a337c35f425ae6bf6a499996f3be9e",
+    "tools/contracts-report.cjs": "8cdb3bc048cdf4366eedea474a005169de5c89106ba292b9f2755c3da6b10256"
+  },
+  "exit_code": 0
+}

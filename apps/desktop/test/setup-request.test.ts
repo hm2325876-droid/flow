@@ -1,6 +1,8 @@
 import {describe,it,expect,vi} from 'vitest';
 import {requestSetup} from '../src/preload/setup-request';
 import {setupFailureMessage} from '../src/renderer/setup-errors';
+import {auditStartFailureMessage} from '../src/renderer/setup-errors';
+import {requestAudit} from '../src/preload/audit-request';
 import {defaultAuditDraft,supportedProviderDescriptors,setupBridgeErrorCodes,type SetupState} from '@flowproof/contracts';
 
 const state:SetupState={catalog:null,catalogError:null,providers:supportedProviderDescriptors,selection:{providerId:'openai',modelId:'unit-model'},credentials:[],verification:null,draft:defaultAuditDraft,review:null,secureStorageAvailable:true,error:null};
@@ -32,5 +34,12 @@ describe('validated setup bridge failures',()=>{
   expect(JSON.stringify(report.mock.calls)+setupFailureMessage(error)+setupFailureMessage(new Error(privateMarker))).not.toContain(privateMarker);
   expect(setupFailureMessage(error)).toContain('Internal desktop communication error');
   expect(setupFailureMessage(new Error(setupBridgeErrorCodes.request))).toContain('request format');
+ });
+ it('shows the safe categorized Start Audit bridge message instead of replacing it with a generic alert',async()=>{
+  let caught:unknown;
+  try{await requestAudit({type:'start',draft:defaultAuditDraft,authorized:true},async()=>{throw new Error('FLOWPROOF_AUDIT_TARGET');});}catch(cause){caught=cause;}
+  expect(auditStartFailureMessage(caught)).toContain('exact port/path');
+  expect(auditStartFailureMessage(new Error('raw Authorization: Bearer private-marker'))).toContain('could not start safely');
+  expect(auditStartFailureMessage(new Error('raw Authorization: Bearer private-marker'))).not.toContain('private-marker');
  });
 });

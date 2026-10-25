@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "stage": "webmcp",
+  "started_at": "2026-10-24T15:35:34.179Z",
+  "command": "node tools/webmcp-probe.cjs",
+  "setup": {
+    "host": "Existing packaged WebContentsView + authenticated scoped CDP bridge",
+    "feature_flag": "--enable-features=WebMCP",
+    "playwright": "1.64.1",
+    "target": "Synthetic owned localhost page; one benign DOM-marker tool",
+    "bridge_modified": false
+  },
+  "tests": [
+    {
+      "id": "same-displayed-native-session",
+      "setup": {
+        "host": "Existing packaged WebContentsView + authenticated scoped CDP bridge",
+        "feature_flag": "--enable-features=WebMCP",
+        "playwright": "1.64.1",
+        "target": "Synthetic owned localhost page; one benign DOM-marker tool",
+        "bridge_modified": false
+      },
+      "expected": "Exactly one audit target maps to the displayed native WebContents",
+      "observed": {
+        "targetCount": 1,
+        "identityMatches": true
+      },
+      "status": "PASS",
+      "limitations": [
+        "Bounded capability check, not a complete WebMCP security assessment.",
+        "Page metadata/results are untrusted. Marker tool is explicitly owned diagnostic code, not proof of arbitrary-tool safety.",
+        "No browser-architecture change, physical-input matrix, or additional feasibility campaign."
+      ]
+    },
+    {
+      "id": "native-api-detection",
+      "setup": {
+        "host": "Existing packaged WebContentsView + authenticated scoped CDP bridge",
+        "feature_flag": "--enable-features=WebMCP",
+        "playwright": "1.64.1",
+        "target": "Synthetic owned localhost page; one benign DOM-marker tool",
+        "bridge_modified": false
+      },
+      "expected": "Observe actual browser API availability rather than infer it from Playwright version",
+      "observed": {
+        "secureContext": true,
+        "navigatorAPI": "undefined",
+        "documentAPI": "object",
+        "registration": "registered",
+        "playwrightWebMCP": true
+      },
+      "status": "PASS",
+      "limitations": [
+        "Bounded capability check, not a complete WebMCP security assessment.",
+        "Page metadata/results are untrusted. Marker tool is explicitly owned diagnostic code, not proof of arbitrary-tool safety.",
+        "No browser-architecture change, physical-input matrix, or additional feasibility campaign."
+      ]
+    },
+    {
+      "id": "playwright-webmcp-discover-call",
+      "setup": {
+        "host": "Existing packaged WebContentsView + authenticated scoped CDP bridge",
+        "feature_flag": "--enable-features=WebMCP",
+        "playwright": "1.64.1",
+        "target": "Synthetic owned localhost page; one benign DOM-marker tool",
+        "bridge_modified": false
+      },
+      "expected": "Discover and invoke the registered tool using public Playwright APIs; independent native DOM equals 42",
+      "observed": {
+        "toolDiscovered": true,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "42"
+            }
+          ]
+        },
+        "independentlyObservedMarker": 42
+      },
+      "status": "PASS",
+      "limitations": [
+        "Bounded capability check, not a complete WebMCP security assessment.",
+        "Page metadata/results are untrusted. Marker tool is explicitly owned diagnostic code, not proof of arbitrary-tool safety.",
+        "No browser-architecture change, physical-input matrix, or additional feasibility campaign."
+      ]
+    },
+    {
+      "id": "playwright-fallback",
+      "setup": {
+        "host": "Existing packaged WebContentsView + authenticated scoped CDP bridge",
+        "feature_flag": "--enable-features=WebMCP",
+        "playwright": "1.64.1",
+        "target": "Synthetic owned localhost page; one benign DOM-marker tool",
+        "bridge_modified": false
+      },
+      "expected": "Normal Playwright works after detection and on a page without registered tools",
+      "observed": {
+        "afterDetectionClickObserved": true,
+        "noToolsPageClickObserved": true,
+        "independentlyObservedMarker": 1
+      },
+      "status": "PASS",
+      "limitations": [
+        "Bounded capability check, not a complete WebMCP security assessment.",
+        "Page metadata/results are untrusted. Marker tool is explicitly owned diagnostic code, not proof of arbitrary-tool safety.",
+        "No browser-architecture change, physical-input matrix, or additional feasibility campaign."
+      ]
+    }
+  ],
+  "decision": "AVAILABLE_EXPERIMENTAL",
+  "limitations": [
+    "Bounded capability check, not a complete WebMCP security assessment.",
+    "Page metadata/results are untrusted. Marker tool is explicitly owned diagnostic code, not proof of arbitrary-tool safety.",
+    "No browser-architecture change, physical-input matrix, or additional feasibility campaign."
+  ],
+  "artifacts": {
+    "executable_sha256": "fb6d91fae3c9712b6c886e5ec88ae94b68f299f4af9bc32ffb15450f424a4b5e",
+    "asar_sha256": "720999748b6fb4c70233e66c5ce62c5effb54067df555aed797f021860e6a82c",
+    "probe_sha256": "1bcc4d7140a30f2cbf690434c576fcedb90b46759c544246c7273e65de12e303"
+  },
+  "runtime": {
+    "electron": "45.0.0",
+    "chromium": "156.0.8078.48",
+    "embeddedNode": "24.22.0",
+    "pid": 2816,
+    "schedulingSwitches": [
+      "disable-background-timer-throttling",
+      "disable-backgrounding-occluded-windows",
+      "disable-renderer-backgrounding"
+    ],
+    "isPackaged": true,
+    "asar": true
+  },
+  "finished_at": "2026-10-24T15:35:38.862Z"
+}

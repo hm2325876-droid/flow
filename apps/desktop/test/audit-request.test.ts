@@ -5,5 +5,7 @@ it('rejects privileged secret-reference injection before IPC and never forwards 
  await expect(requestAudit({type:'answer',auditId:crypto.randomUUID(),questionId:crypto.randomUUID(),answer:{outcome:'answered',secretRef:crypto.randomUUID()}},invoke)).rejects.toThrow('Invalid audit request');expect(invoke).not.toHaveBeenCalled();
  await expect(requestAudit({type:'snapshot'},async()=>{throw new Error('Authorization: Bearer private-test-marker');})).rejects.toThrow('Internal desktop communication error');
  await expect(requestAudit({type:'snapshot'},async()=>{throw new Error('FLOWPROOF_AUDIT_ACTIVE');})).rejects.toThrow('already active');
+ await expect(requestAudit({type:'snapshot'},async()=>{throw new Error('FLOWPROOF_AUDIT_MODEL_START');})).rejects.toThrow('could not be initialized');
+ await expect(requestAudit({type:'snapshot'},async()=>{throw new Error('FLOWPROOF_AUDIT_TARGET');})).rejects.toThrow('exact port/path');
  await expect(requestAudit({type:'snapshot'},async()=>({key:'private-test-marker'}))).rejects.toThrow('invalid audit response');
 });

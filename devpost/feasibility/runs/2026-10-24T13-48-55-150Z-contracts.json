@@ -1,0 +1,204 @@
+{
+  "schema_version": 2,
+  "stage": "contracts",
+  "started_at": "2026-10-24T13:48:55.150Z",
+  "finished_at": "2026-10-24T13:48:55.514Z",
+  "command": "node tools/contracts-report.cjs",
+  "tests": [
+    {
+      "id": "ownership-contract-1",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Agent obtains one exclusive operation lease and rejects overlapping work",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 4.017\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.7776\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.6444\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.5182\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 0.4009\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 0.4337\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.7975\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.3847\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nnot ok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 2.4263\n  type: 'test'\n  location: 'D:\\\\FlowProof-AI\\\\devpost\\\\feasibility\\\\browser-lab\\\\test\\\\contracts.test.cjs:59:1'\n  failureType: 'testCodeFailure'\n  error: 'Uncertain completion must not release the native input shield'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'User'\n  actual: 'User'\n  operator: 'notStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (D:\\FlowProof-AI\\devpost\\feasibility\\browser-lab\\test\\contracts.test.cjs:62:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1106:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:788:18)\n    Test.postRun (node:internal/test_runner/test:1235:19)\n    Test.run (node:internal/test_runner/test:1163:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 8\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 241.6594\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-2",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Take Control blocks new work until independently observed in-flight completion",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 4.017\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.7776\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.6444\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.5182\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 0.4009\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 0.4337\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.7975\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.3847\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nnot ok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 2.4263\n  type: 'test'\n  location: 'D:\\\\FlowProof-AI\\\\devpost\\\\feasibility\\\\browser-lab\\\\test\\\\contracts.test.cjs:59:1'\n  failureType: 'testCodeFailure'\n  error: 'Uncertain completion must not release the native input shield'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'User'\n  actual: 'User'\n  operator: 'notStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (D:\\FlowProof-AI\\devpost\\feasibility\\browser-lab\\test\\contracts.test.cjs:62:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1106:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:788:18)\n    Test.postRun (node:internal/test_runner/test:1235:19)\n    Test.run (node:internal/test_runner/test:1163:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 8\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 241.6594\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-3",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Return Control requires explicit transition and every inspection/reconciliation gate",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 4.017\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.7776\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.6444\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.5182\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 0.4009\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 0.4337\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.7975\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.3847\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nnot ok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 2.4263\n  type: 'test'\n  location: 'D:\\\\FlowProof-AI\\\\devpost\\\\feasibility\\\\browser-lab\\\\test\\\\contracts.test.cjs:59:1'\n  failureType: 'testCodeFailure'\n  error: 'Uncertain completion must not release the native input shield'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'User'\n  actual: 'User'\n  operator: 'notStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (D:\\FlowProof-AI\\devpost\\feasibility\\browser-lab\\test\\contracts.test.cjs:62:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1106:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:788:18)\n    Test.postRun (node:internal/test_runner/test:1235:19)\n    Test.run (node:internal/test_runner/test:1163:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 8\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 241.6594\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-4",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Pending-handoff crash invalidates the lease and requires an explicit ownership choice",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 4.017\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.7776\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.6444\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.5182\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 0.4009\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 0.4337\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.7975\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.3847\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nnot ok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 2.4263\n  type: 'test'\n  location: 'D:\\\\FlowProof-AI\\\\devpost\\\\feasibility\\\\browser-lab\\\\test\\\\contracts.test.cjs:59:1'\n  failureType: 'testCodeFailure'\n  error: 'Uncertain completion must not release the native input shield'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'User'\n  actual: 'User'\n  operator: 'notStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (D:\\FlowProof-AI\\devpost\\feasibility\\browser-lab\\test\\contracts.test.cjs:62:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1106:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:788:18)\n    Test.postRun (node:internal/test_runner/test:1235:19)\n    Test.run (node:internal/test_runner/test:1163:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 8\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 241.6594\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-5",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "User-control crash restores User ownership without automatic Agent authorization",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 4.017\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.7776\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.6444\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.5182\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 0.4009\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 0.4337\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.7975\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.3847\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nnot ok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 2.4263\n  type: 'test'\n  location: 'D:\\\\FlowProof-AI\\\\devpost\\\\feasibility\\\\browser-lab\\\\test\\\\contracts.test.cjs:59:1'\n  failureType: 'testCodeFailure'\n  error: 'Uncertain completion must not release the native input shield'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'User'\n  actual: 'User'\n  operator: 'notStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (D:\\FlowProof-AI\\devpost\\feasibility\\browser-lab\\test\\contracts.test.cjs:62:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1106:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:788:18)\n    Test.postRun (node:internal/test_runner/test:1235:19)\n    Test.run (node:internal/test_runner/test:1163:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 8\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 241.6594\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-6",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 4.017\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.7776\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.6444\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.5182\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 0.4009\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 0.4337\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.7975\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.3847\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nnot ok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 2.4263\n  type: 'test'\n  location: 'D:\\\\FlowProof-AI\\\\devpost\\\\feasibility\\\\browser-lab\\\\test\\\\contracts.test.cjs:59:1'\n  failureType: 'testCodeFailure'\n  error: 'Uncertain completion must not release the native input shield'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'User'\n  actual: 'User'\n  operator: 'notStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (D:\\FlowProof-AI\\devpost\\feasibility\\browser-lab\\test\\contracts.test.cjs:62:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1106:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:788:18)\n    Test.postRun (node:internal/test_runner/test:1235:19)\n    Test.run (node:internal/test_runner/test:1163:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 8\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 241.6594\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-7",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Agent work stays excluded during recreation until fresh boundary and session checks pass",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 4.017\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.7776\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.6444\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.5182\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 0.4009\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 0.4337\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.7975\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.3847\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nnot ok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 2.4263\n  type: 'test'\n  location: 'D:\\\\FlowProof-AI\\\\devpost\\\\feasibility\\\\browser-lab\\\\test\\\\contracts.test.cjs:59:1'\n  failureType: 'testCodeFailure'\n  error: 'Uncertain completion must not release the native input shield'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'User'\n  actual: 'User'\n  operator: 'notStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (D:\\FlowProof-AI\\devpost\\feasibility\\browser-lab\\test\\contracts.test.cjs:62:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1106:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:788:18)\n    Test.postRun (node:internal/test_runner/test:1235:19)\n    Test.run (node:internal/test_runner/test:1163:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 8\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 241.6594\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-8",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "An uncertain in-flight result remains unknown and does not imply successful completion",
+      "observed": {
+        "assertion": "ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 4.017\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.7776\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.6444\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.5182\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 0.4009\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 0.4337\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.7975\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.3847\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nnot ok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 2.4263\n  type: 'test'\n  location: 'D:\\\\FlowProof-AI\\\\devpost\\\\feasibility\\\\browser-lab\\\\test\\\\contracts.test.cjs:59:1'\n  failureType: 'testCodeFailure'\n  error: 'Uncertain completion must not release the native input shield'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'User'\n  actual: 'User'\n  operator: 'notStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (D:\\FlowProof-AI\\devpost\\feasibility\\browser-lab\\test\\contracts.test.cjs:62:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1106:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:788:18)\n    Test.postRun (node:internal/test_runner/test:1235:19)\n    Test.run (node:internal/test_runner/test:1163:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 8\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 241.6594\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ownership-contract-9",
+      "setup": {
+        "implementation": "src/ownership.cjs",
+        "test": "test/contracts.test.cjs",
+        "browser": "none; actual coordinator object"
+      },
+      "expected": "Unknown in-flight completion cannot grant User control from Handoff Pending",
+      "observed": {
+        "assertion": "not ok",
+        "tap": "TAP version 13\n# Subtest: Agent obtains one exclusive operation lease and rejects overlapping work\nok 1 - Agent obtains one exclusive operation lease and rejects overlapping work\n  ---\n  duration_ms: 4.017\n  type: 'test'\n  ...\n# Subtest: Take Control blocks new work until independently observed in-flight completion\nok 2 - Take Control blocks new work until independently observed in-flight completion\n  ---\n  duration_ms: 0.7776\n  type: 'test'\n  ...\n# Subtest: Return Control requires explicit transition and every inspection/reconciliation gate\nok 3 - Return Control requires explicit transition and every inspection/reconciliation gate\n  ---\n  duration_ms: 0.6444\n  type: 'test'\n  ...\n# Subtest: Pending-handoff crash invalidates the lease and requires an explicit ownership choice\nok 4 - Pending-handoff crash invalidates the lease and requires an explicit ownership choice\n  ---\n  duration_ms: 0.5182\n  type: 'test'\n  ...\n# Subtest: User-control crash restores User ownership without automatic Agent authorization\nok 5 - User-control crash restores User ownership without automatic Agent authorization\n  ---\n  duration_ms: 0.4009\n  type: 'test'\n  ...\n# Subtest: Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\nok 6 - Two failed recreation attempts within one crash are bounded and exhaustion is Interrupted\n  ---\n  duration_ms: 0.4337\n  type: 'test'\n  ...\n# Subtest: Agent work stays excluded during recreation until fresh boundary and session checks pass\nok 7 - Agent work stays excluded during recreation until fresh boundary and session checks pass\n  ---\n  duration_ms: 11.7975\n  type: 'test'\n  ...\n# Subtest: An uncertain in-flight result remains unknown and does not imply successful completion\nok 8 - An uncertain in-flight result remains unknown and does not imply successful completion\n  ---\n  duration_ms: 0.3847\n  type: 'test'\n  ...\n# Subtest: Unknown in-flight completion cannot grant User control from Handoff Pending\nnot ok 9 - Unknown in-flight completion cannot grant User control from Handoff Pending\n  ---\n  duration_ms: 2.4263\n  type: 'test'\n  location: 'D:\\\\FlowProof-AI\\\\devpost\\\\feasibility\\\\browser-lab\\\\test\\\\contracts.test.cjs:59:1'\n  failureType: 'testCodeFailure'\n  error: 'Uncertain completion must not release the native input shield'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'User'\n  actual: 'User'\n  operator: 'notStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (D:\\FlowProof-AI\\devpost\\feasibility\\browser-lab\\test\\contracts.test.cjs:62:10)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1106:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:788:18)\n    Test.postRun (node:internal/test_runner/test:1235:19)\n    Test.run (node:internal/test_runner/test:1163:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 8\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 241.6594\n"
+      },
+      "evidence": [
+        "test/contracts.test.cjs",
+        "src/ownership.cjs"
+      ],
+      "limitations": [
+        "Unit state-machine contract; does not establish browser or packaged behavior."
+      ],
+      "status": "FAIL"
+    }
+  ],
+  "source_sha256": {
+    "src/ownership.cjs": "18a50a4a9acb76df8b8883a52819be236dd0003e1cff5848f28c3c112765c58d",
+    "test/contracts.test.cjs": "cc040869f3431affb2ec3ddfba9a764376a337c35f425ae6bf6a499996f3be9e",
+    "tools/contracts-report.cjs": "8cdb3bc048cdf4366eedea474a005169de5c89106ba292b9f2755c3da6b10256"
+  },
+  "exit_code": 1
+}

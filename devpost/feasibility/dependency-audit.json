@@ -1,0 +1,11 @@
+{
+  "schema_version": 2,
+  "stage": "diagnostic_dependency_audit",
+  "checked_on": "2026-10-24",
+  "setup": { "directory": "devpost/feasibility/browser-lab", "configuration": "Pinned package.json/package-lock.json", "command": "npm audit --json", "toolchain": "Node 24.13.0; diagnostic lab dependencies" },
+  "expected": "Record known advisory counts for the installed diagnostic dependency tree; do not infer complete application security.",
+  "observed": { "auditReportVersion": 2, "vulnerabilities": { "info": 0, "low": 0, "moderate": 0, "high": 0, "critical": 0, "total": 0 }, "dependencies": { "prod": 2, "dev": 273, "optional": 18, "peer": 0, "peerOptional": 0, "total": 274 } },
+  "evidence": ["npm audit --json returned exit code 0 and an empty vulnerabilities object", "An earlier npm audit --omit=dev --json also returned zero known runtime advisories"],
+  "limitations": ["Point-in-time registry advisory snapshot, not a source/binary security proof.", "Installation emitted transitive deprecation warnings for inflight@1.0.6, glob@7.2.3 and boolean@3.2.0; zero audit advisories does not remove maintenance risk.", "The full FlowProof application dependency tree has not been implemented or assessed."],
+  "status": "PASS"
+}

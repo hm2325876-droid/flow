@@ -2,7 +2,7 @@ import {useEffect,useRef,useState} from 'react';
 import {ArrowLeft,ArrowRight,Check,CheckCircle2,ChevronRight,Globe2,Loader2,LockKeyhole,RefreshCw,ShieldCheck,X} from 'lucide-react';
 import {defaultAuditDraft,targetSchema,type AuditDraft,type SetupCommand,type SetupState} from '@flowproof/contracts';
 import {Button} from './components/ui/button';
-import {setupFailureMessage} from './setup-errors';
+import {setupFailureMessage,auditStartFailureMessage} from './setup-errors';
 
 import {ProviderPicker} from './ProviderPicker';
 import {freshVerification} from './provider-picker-state';
@@ -44,7 +44,7 @@ export function SetupDialog({mode,close}:{mode:'audit'|'settings';close:()=>void
  function edit<K extends keyof AuditDraft>(name:K,value:AuditDraft[K]){setDraft(d=>({...d,[name]:value}));setAuthorized(false);setState(s=>s?{...s,review:null}:s);}
  async function go(next:number){const updated={...draftRef.current,step:next};setDraft(updated);setStep(next);setError('');if(next===3){setReviewing(true);await command({type:'review',draft:updated,authorized},'Checking audit readiness');setReviewing(false);}}
  async function checkReview(consent=authorized){setReviewing(true);await command({type:'review',draft:draftRef.current,authorized:consent},'Checking audit readiness');setReviewing(false);}
- async function startAudit(){if(!authorized||!state?.review?.ready||busy)return;setBusy('Revalidating and starting audit');setError('');try{const started=await window.flowproof.audit({type:'start',draft:draftRef.current,authorized});if(started)close();else if(alive.current)setError('The audit could not start. Retry readiness checks before starting again.');}catch{if(alive.current)setError('The audit could not start safely. Recheck the model, localhost target and authorization, then retry.');}finally{if(alive.current)setBusy('');}}
+ async function startAudit(){if(!authorized||!state?.review?.ready||busy)return;setBusy('Revalidating and starting audit');setError('');try{const started=await window.flowproof.audit({type:'start',draft:draftRef.current,authorized});if(started)close();else if(alive.current)setError('The audit could not start. Retry readiness checks before starting again.');}catch(cause){if(alive.current)setError(auditStartFailureMessage(cause));}finally{if(alive.current)setBusy('');}}
  return <div className="dialog-backdrop setup-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)dismiss();}}>
   <div className="setup-dialog" role="dialog" aria-modal="true" aria-label={mode==='settings'?'AI connections':'New audit setup'} ref={dialog} data-setup-dialog>
    <header className="setup-header"><div><span className="eyebrow">{mode==='settings'?'YOUR MODELS. YOUR KEYS.':'PREPARE YOUR NEXT AUDIT'}</span><h2>{mode==='settings'?'AI connections':'A little setup. A clearer picture.'}</h2><p>{mode==='settings'?'Discover a model and verify its tools before you put it to work.':'Connect a model, define your goal, and confirm the scope.'}</p></div><Button variant="ghost" size="icon" onClick={dismiss} aria-label="Close setup" data-setup-close><X size={20}/></Button></header>

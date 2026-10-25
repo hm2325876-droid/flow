@@ -38,7 +38,7 @@ parent.on('message',async event=>{
     }else if(message.type==='audit-interrupt')await agent?.interrupt(message.reason);
     else{if(!agent||agent.snapshot().auditId!==message.auditId)throw new Error('Stale audit command');if(message.type==='audit-answer')agent.answer(message.questionId,message.answer);else if(message.type==='audit-control'){if(message.owner==='user')await agent.takeControl();else if(message.owner==='agent')await agent.returnControl();else throw new Error();}else if(message.type==='audit-recover')await agent.browserFailed();}
     parent.postMessage({type:'reply',id:message.id,ok:true,result:{accepted:true}});
-   }catch{parent.postMessage({type:'reply',id:message.id,ok:false,error:'Audit command was stale, invalid or unavailable.'});}
+   }catch{parent.postMessage({type:'reply',id:message.id,ok:false,error:message.type==='audit-start'?'FLOWPROOF_AUDIT_MODEL_START':'Audit command was stale, invalid or unavailable.'});}
    finally{if(message.type==='audit-start')message.key='';}return;
   }
   if(message.type==='provider'){

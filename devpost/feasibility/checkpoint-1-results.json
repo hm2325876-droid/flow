@@ -1,0 +1,63 @@
+{
+  "doc": "browser-feasibility-results",
+  "historical_checkpoint": 1,
+  "checkpoint_date": "2026-10-23",
+  "candidate": "BrowserWindow with native WebContentsView; Playwright connectOverCDP",
+  "overall_gate": "open_not_approved",
+  "scope": "Disposable browser-mechanics probe outside the application workspace; no provider keys or existing project data used.",
+  "runtime": {
+    "host_platform": "win32",
+    "host_arch": "x64",
+    "windows_kernel_release": "10.0.22631",
+    "host_node": "24.13.0",
+    "electron": "45.0.0",
+    "electron_chromium": "156.0.8078.48",
+    "electron_node": "24.22.0",
+    "playwright_core": "1.64.1",
+    "playwright_reference_chromium": "156.0.8078.4",
+    "native_guest_bounds": { "x": 20, "y": 80, "width": 900, "height": 520 },
+    "cdp_options": { "noDefaults": true, "timeout_ms": 10000 },
+    "guest": { "sandbox": true, "contextIsolation": true, "nodeIntegration": false, "webSecurity": true, "partition": "unique non-persistent audit partition" }
+  },
+  "observations": [
+    { "name": "displayed-target-identity", "outcome": "passed", "evidence": "CDP target type page mapped through webContents.fromDevToolsTargetId to guest WebContents ID 2; the view displayed that same WebContents." },
+    { "name": "native-window-visible", "outcome": "passed", "evidence": { "window_visible": true, "minimized": false, "focused": true, "guest_view_visible": true } },
+    { "name": "default-background-throttling-baseline", "outcome": "failed_baseline", "evidence": { "latest_document_visibility": "visible", "animation_frames_in_1500ms": 0, "prior_runs": "Included hidden document state and normal-click actionability timeouts before the throttling adjustment." } },
+    { "name": "background-throttling-disabled", "outcome": "passed", "evidence": { "adjustment": "guest.webContents.setBackgroundThrottling(false)", "document_visibility": "visible", "animation_frames_in_1500ms": 10, "normal_playwright_click": "completed", "observed_counter": 1 }, "limit": "No physical display capture, DPI matrix, or long-running resource benchmark was performed." },
+    { "name": "playwright-native-dom-roundtrip", "outcome": "passed", "evidence": "Playwright-filled input and sessionStorage nonce matched independent reads from the displayed WebContents; actual click counter was 1." },
+    { "name": "guest-node-isolation", "outcome": "passed_limited", "evidence": { "typeof_process": "undefined", "typeof_require": "undefined", "sandbox": true, "contextIsolation": true }, "limit": "This is not a full sandbox or IPC penetration test." },
+    { "name": "native-partition-cookie-isolation", "outcome": "passed", "evidence": { "guest_test_cookie_count": 1, "trusted_ui_test_cookie_count": 0 } },
+    { "name": "playwright-context-cookie-fidelity", "outcome": "failed", "evidence": { "electron_guest_cookie_count": 1, "playwright_returned_context_cookie_count": 0 }, "consequence": "Do not assume Playwright's returned BrowserContext maps Electron's isolated partition correctly. Session-scoped ancillary APIs need explicit validation/adaptation." },
+    { "name": "playwright-page-route", "outcome": "passed_limited", "evidence": "page.route aborted a known local diagnostic request; that request did not reach the diagnostic server." },
+    { "name": "blanket-native-input-guard", "outcome": "failed", "evidence": { "guard": "before-mouse-event/before-input-event preventDefault while Agent owns control", "playwright_click_resolved": true, "counter_before": 1, "counter_after": 1 }, "consequence": "A blanket guard vetoes automated clicks too. Physical-user exclusion and trusted CDP input need a separately validated mechanism; a resolved tool call is not proof of the action's effect." },
+    { "name": "escape-destination-reachability", "outcome": "passed", "evidence": "A separate loopback-only 127.0.0.1 diagnostic destination returned HTTP 200 to the controller before boundary testing." },
+    { "name": "programmatic-navigation-boundary", "outcome": "passed_limited", "evidence": { "destinationReachable": true, "loaded": false, "error": "ERR_BLOCKED_BY_CLIENT (-20)", "cancelled_by": "webRequest.onBeforeRequest", "path": "/escaped-native", "guestId": 2, "escaped_request_reached_server": false } },
+    { "name": "redirect-boundary", "outcome": "passed_limited", "evidence": { "redirect_source_reached": true, "destinationReachable": true, "cancelled_by": "will-redirect", "path": "/escaped-redirect", "guestId": 2, "escaped_request_reached_server": false } },
+    { "name": "popup-single-audit-page", "outcome": "passed_limited", "evidence": "window.open was denied; one audit page remained. The trusted UI renderer is separate and is not a second audit browser." },
+    { "name": "user-control-renderer-crash-rebind", "outcome": "passed_prototype", "evidence": { "recovery_attempt": 1, "new_guest_webContents_id": 3, "cdp_mapped_id": 3, "prototype_owner": "User" }, "limit": "Only renderer replacement, target rebinding, and the probe's owner marker were exercised; full Agent scheduling/history reconciliation was not implemented." },
+    { "name": "handoff-pending-renderer-crash-rebind", "outcome": "passed_prototype", "evidence": { "recovery_attempt": 2, "new_guest_webContents_id": 4, "cdp_mapped_id": 4, "prototype_owner": "Awaiting Control Decision" }, "limit": "This does not prove an in-flight operation race, recovery-exhaustion path, or production control handoff." }
+  ],
+  "unvalidated": [
+    "Physical keyboard, mouse, wheel, IME, drag/drop, accessibility input, and focus exclusion while trusted automation remains functional",
+    "Correct partition-scoped cookie/storage/permission/context lifecycle APIs and a constrained production automation transport",
+    "Meaningful business-effect permission enforcement in both ownership modes; origins and HTTP methods alone are insufficient",
+    "Full Agent/TODO/event-history reconciliation, uncertainty handling, verification, budgets, and secret redaction",
+    "Packaged-app hardening and exposure of browser-wide CDP targets",
+    "Whole browser-host/main-process failure, as distinct from an audit renderer crash",
+    "DPI, resizing, native layering, modal interactions, background execution, and performance coverage"
+  ],
+  "probe_location": "C:\\Users\\Hala\\AppData\\Local\\Temp\\opencode\\flowproof-browser-probe",
+  "probe_source_sha256": {
+    "package.json": "6bd84e4b0708b7603549e1cdae6dc7cb6e3351bbda980bf000d0e638eade9219",
+    "electron-main.cjs": "93e010e191e98676aa864d8671701d86bb9ca41ad5ce23df9b54d351dec5ba47",
+    "probe.cjs": "013a8d8c331d8ee4551ecc3b53758a0dc8ab9b936f6dfa1eed60b19c6420d289"
+  },
+  "execution_notes": [
+    "Initial cold binary download exceeded a shell timeout; it was not a browser compatibility result.",
+    "Electron's GUI process received EOF on stdin in this launch environment. The probe control channel was corrected to a temporary Windows named pipe before interpreting browser results.",
+    "The final probe finished its bounded checks and cleanup. No Electron process remained in the immediate post-run process inspection.",
+    "Independent read-only review identified weak boundary-test causality. The final probe added destination reachability, redirect-source, explicit cancellation-event, and no-escaped-request assertions before recording the boundary results.",
+    "The prototype's temporary loopback CDP listener is not an approved production security architecture.",
+    "Diagnostic failures are preserved. Successful harness execution does not mean all feasibility gates passed."
+  ]
+}

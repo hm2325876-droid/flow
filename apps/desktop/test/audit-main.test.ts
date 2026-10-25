@@ -45,6 +45,11 @@ describe('Main audit activation, authorization and secret boundary',()=>{
   const notReady=await fixture({prepare:async()=>({review:{ready:false,handoff:null}})});await expect(notReady.start()).rejects.toThrow('NOT_READY');expect(notReady.worker.request).not.toHaveBeenCalled();
   const corrupt=await fixture({corrupt:true});await expect(corrupt.start()).rejects.toThrow('STORAGE');expect(corrupt.setup.handle).not.toHaveBeenCalled();
  });
+ it('classifies start failures by the actual startup boundary and never forwards exception text',async()=>{
+  const browser=await fixture();browser.attach.mockRejectedValueOnce(new Error('private browser diagnostic marker'));await expect(browser.start()).rejects.toThrow('FLOWPROOF_AUDIT_TARGET');expect(browser.controller.snapshot()).toBeNull();expect(browser.worker.request).not.toHaveBeenCalled();
+  const model=await fixture();model.setup.withExecutionKey.mockRejectedValueOnce(new Error('private key diagnostic marker'));await expect(model.start()).rejects.toThrow('FLOWPROOF_AUDIT_MODEL');expect(model.controller.snapshot()).toBeNull();expect(model.worker.request).not.toHaveBeenCalled();
+  const runtime=await fixture();runtime.worker.request.mockRejectedValueOnce(new Error('private utility diagnostic marker'));await expect(runtime.start()).rejects.toThrow('FLOWPROOF_AUDIT_RUNTIME');expect(runtime.controller.snapshot()).toBeNull();
+ });
  it('gates exact one-use approvals by document binding and exclusive native ownership',async()=>{
   const f=await fixture();await f.start();const auditId=f.controller.snapshot()!.auditId,actionId=randomUUID(),action:BrowserAction={kind:'click',locator:{by:'role',role:'button',value:'Change test preference'}};f.setDecision('approval');
   expect(await f.controller.service(auditId,{type:'lease',actionId,action})).toMatchObject({code:'approval-required',approvalId:actionId});expect(f.host.beginAction).not.toHaveBeenCalled();

@@ -1,0 +1,7 @@
+const fs=require('node:fs');const path=require('node:path');const crypto=require('node:crypto');const {spawnSync}=require('node:child_process');
+const root=path.resolve(__dirname,'..');const started=new Date().toISOString();
+const result=spawnSync(process.execPath,['--test','--test-reporter=tap','test/contracts.test.cjs'],{cwd:root,encoding:'utf8'});
+const tests=[...result.stdout.matchAll(/^(not ok|ok) \d+ - (.+)$/gm)].map((m,index)=>({id:'ownership-contract-'+(index+1),setup:{implementation:'src/ownership.cjs',test:'test/contracts.test.cjs',browser:'none; actual coordinator object'},expected:m[2],observed:{assertion:m[1],tap:result.stdout},evidence:['test/contracts.test.cjs','src/ownership.cjs'],limitations:['Unit state-machine contract; does not establish browser or packaged behavior.'],status:m[1]==='ok'?'PASS':'FAIL'}));
+const report={schema_version:2,stage:'contracts',started_at:started,finished_at:new Date().toISOString(),command:'node tools/contracts-report.cjs',tests,source_sha256:{},exit_code:result.status};
+for(const file of ['src/ownership.cjs','test/contracts.test.cjs','tools/contracts-report.cjs'])report.source_sha256[file]=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
+const out=path.resolve(root,'..','runs');fs.mkdirSync(out,{recursive:true});const file=path.join(out,started.replace(/[:.]/g,'-')+'-contracts.json');fs.writeFileSync(file,JSON.stringify(report,null,2)+'\n');console.log(result.stdout);console.log('CONTRACT_REPORT:'+file);process.exitCode=result.status||0;

@@ -1,0 +1,31 @@
+{
+  "name": "flowproof-browser-feasibility-lab",
+  "version": "0.0.2",
+  "private": true,
+  "description": "4-spec diagnostic integration only; not the FlowProof AI application",
+  "main": "src/host.cjs",
+  "author": "FlowProof AI feasibility lab",
+  "scripts": {
+    "test:contracts": "node --test test/contracts.test.cjs",
+    "test:dev": "node test/run.cjs development",
+    "test:packaged": "node test/run.cjs packaged",
+    "build:win": "electron-builder --win --x64 --dir --publish never"
+  },
+  "dependencies": { "ws": "8.22.0" },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "playwright-core": "1.64.1",
+    "electron-builder": "26.15.3",
+    "@electron/fuses": "2.1.3"
+  },
+  "build": {
+    "appId": "local.flowproof.feasibility.lab",
+    "productName": "FlowProof Feasibility Lab",
+    "asar": true,
+    "npmRebuild": false,
+    "directories": { "output": "out" },
+    "files": ["src/**/*", "package.json"],
+    "afterPack": "tools/fuses.cjs",
+    "win": { "target": "dir", "signAndEditExecutable": false }
+  }
+}
